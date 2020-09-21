@@ -18,6 +18,7 @@ module.exports = (api) => {
 					root: ['./'],
 					alias: {
 						src: './src',
+						module: './src/module',
 					},
 				},
 			],
