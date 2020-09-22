@@ -6,8 +6,8 @@
 		"moduleResolution": "node",
 		"sourceMap": true,
 		"outDir": "build",
-		"baseUrl": "./src",
 		"experimentalDecorators": true,
+		"baseUrl": ".",
 		"paths": {
 			"base/*": ["./src/base/*"],
 			"bootstrap/*": ["./src/bootstrap/*"],

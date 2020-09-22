@@ -3,7 +3,7 @@ module.exports = {
 		browser: true,
 		es2020: true,
 	},
-	extends: ['airbnb-base', 'plugin:prettier/recommended'],
+	extends: ['plugin:@typescript-eslint/recommended', 'airbnb-base', 'plugin:prettier/recommended'],
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		ecmaVersion: 11,
@@ -12,6 +12,8 @@ module.exports = {
 	plugins: ['@typescript-eslint', 'prettier'],
 	rules: {
 		'no-plusplus': 'off',
+		'@typescript-eslint/no-explicit-any': 'off',
+		'class-methods-use-this': 'off',
 	},
 	settings: {
 		'prettier/prettier': ['error'],

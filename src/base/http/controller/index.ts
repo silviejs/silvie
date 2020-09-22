@@ -1,29 +1,33 @@
 import HTTPServer from 'base/http/server';
 import { middlewares } from 'base/http/middleware';
 
-export default interface Controller {}
+export default class Controller {}
 
 /**
  * Register class method as HTTP route
  * @param method Defines HTTP verb
  * @param url Specifies the url for accessing route
  */
-export function route(method: string, url: string) {
+export function route(method: string, url: string): MethodDecorator {
 	const methodName = method.toLowerCase();
 
-	return (target, key, descriptor) => {
-		HTTPServer.registerRoute(methodName, url, descriptor.middlewares, descriptor.value.bind(target));
+	return (target: any, key: string, descriptor: PropertyDescriptor) => {
+		HTTPServer.registerRoute(methodName, url, (descriptor as any).middlewares, descriptor.value.bind(target));
 	};
 }
 
-export function withMiddleware(...middlewareNames: string[]) {
-	return (target, key, descriptor) => {
-		const func = descriptor;
+/**
+ *
+ * @param middlewareNames
+ */
+export function withMiddleware(...middlewareNames: string[]): MethodDecorator {
+	return (target: any, key: string, descriptor: PropertyDescriptor): PropertyDescriptor => {
+		const func = descriptor as any;
 		func.middlewares = [];
 
-		middlewareNames.forEach((name) => {
+		middlewareNames.forEach((name: string) => {
 			if (name in middlewares) {
-				descriptor.middlewares.push(middlewares[name]);
+				func.middlewares.push(middlewares[name]);
 			} else {
 				throw new Error(`Unknown middleware '${name}'`);
 			}

@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 
 @middleware('example')
 export default class ExampleMiddleware implements Middleware {
-	static handler(req: Request, res: Response, next: Function) {
+	handler(req: Request, res: Response, next: () => void): void {
 		console.log('in the middleware');
 
 		next();

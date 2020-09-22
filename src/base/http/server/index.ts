@@ -5,12 +5,22 @@ import Middleware from 'base/http/middleware';
 class HTTPServer {
 	app: any;
 
-	constructor(app) {
-		this.app = app;
+	/**
+	 * Initialize a new HTTP Server
+	 */
+	constructor() {
+		this.app = Express();
 
-		app.use(cors());
+		this.app.use(cors());
 	}
 
+	/**
+	 * Registers a route handler with some middlewares
+	 * @param method HTTP Verb
+	 * @param url Route URL
+	 * @param middlewares Middlewares array
+	 * @param handler Route handler
+	 */
 	registerRoute(
 		method: string,
 		url: string,
@@ -19,22 +29,30 @@ class HTTPServer {
 	) {
 		this.app[method](
 			url,
-			middlewares.map((middleware) => middleware.handler),
+			middlewares.map((middleware) => (middleware as any).prototype.handler),
 			handler
 		);
 	}
 
-	registerGlobalMiddleware(handler) {
-		this.app.use(handler);
+	/**
+	 * Registers a middleware on the whole HTTP Server
+	 * @param middleware The middleware to register
+	 */
+	registerGlobalMiddleware(middleware: Middleware) {
+		this.app.use((middleware as any).prototype.handler);
 	}
 
-	start(port: number = 4000) {
+	/**
+	 * Starts listening on a port
+	 * @param port Port number
+	 */
+	start(port = 4000) {
 		this.app.listen(port, () => {
 			console.log(`Example app listening at http://localhost:${port}`);
 		});
 	}
 }
 
-const server = new HTTPServer(Express());
+const server = new HTTPServer();
 
 export default server;

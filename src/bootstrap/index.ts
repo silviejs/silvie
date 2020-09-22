@@ -12,11 +12,4 @@ dotenv.config();
 // Parse command line arguments
 process.args = minimist(process.argv.slice(2));
 
-const message: string = 'Hello TS!';
-// stripped comment
-
 HTTPServer.start(3000);
-
-console.log(message);
-console.log(process.env.DB_PORT);
-console.log(process.args);
