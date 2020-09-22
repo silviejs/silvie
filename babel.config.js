@@ -2,7 +2,7 @@ module.exports = (api) => {
 	api.cache(true);
 
 	return {
-		presets: ['@babel/preset-env', '@babel/preset-typescript'],
+		presets: [['@babel/preset-env', { modules: 'cjs' }], '@babel/preset-typescript'],
 		plugins: [
 			'@babel/plugin-proposal-optional-chaining',
 			['@babel/plugin-proposal-decorators', { legacy: true }],
@@ -18,7 +18,10 @@ module.exports = (api) => {
 					root: ['./'],
 					alias: {
 						src: './src',
-						module: './src/module',
+						base: './src/base',
+						bootstrap: './src/bootstrap',
+						controllers: './src/controllers',
+						middlewares: './src/middlewares',
 					},
 				},
 			],

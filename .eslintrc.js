@@ -20,7 +20,10 @@ module.exports = {
 			alias: {
 				map: [
 					['src', './src'],
-					['module', './src/module'],
+					['base', './src/base'],
+					['bootstrap', './src/bootstrap'],
+					['controllers', './src/controllers'],
+					['middlewares', './src/middlewares'],
 				],
 				extensions: ['.js', '.ts', '.gql', '.json'],
 			},

@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "description": "Karnameh Website API",
-  "main": "index.js",
+  "main": "./src/bootstrap/index.ts",
   "scripts": {
     "dev": "nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
     "build": "rm -rf build/* && babel src -d build -x \".js,.ts\"",
@@ -53,6 +53,9 @@
     "webpack-node-externals": "^2.5.2"
   },
   "dependencies": {
-    "dotenv": "^8.2.0"
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "minimist": "^1.2.5"
   }
 }

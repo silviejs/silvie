@@ -1,6 +1,5 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-const TerserPlugin = require('terser-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
@@ -56,18 +55,7 @@ module.exports = (env) => {
 	}
 
 	if (isProduction) {
-		config.optimization.minimizer = [
-			new TerserPlugin({
-				cache: true,
-				sourceMap: false,
-				parallel: true,
-				terserOptions: {
-					output: {
-						comments: false,
-					},
-				},
-			}),
-		];
+		config.optimization.minimizer = [];
 	}
 
 	return config;
