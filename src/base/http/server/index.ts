@@ -1,5 +1,6 @@
 import Express, { Request, Response } from 'express';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 import IMiddleware from 'base/http/middleware';
 
 class HTTPServer {
@@ -11,7 +12,15 @@ class HTTPServer {
 	constructor() {
 		this.app = Express();
 
+		this.app.use(bodyParser.json({ limit: '50mb' }));
 		this.app.use(cors());
+	}
+
+	/**
+	 * Return express server instance
+	 */
+	get server() {
+		return this.app;
 	}
 
 	/**
