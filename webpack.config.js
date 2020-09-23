@@ -1,7 +1,8 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-const Dotenv = require('dotenv-webpack');
+const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const Dotenv = require('./lib/webpack/plugins/dotenv');
 
 const isProduction = process.env.NODE_ENV !== 'development';
 
@@ -33,6 +34,9 @@ module.exports = (env) => {
 					exclude: /node_modules/,
 					use: {
 						loader: 'babel-loader',
+						options: {
+							plugins: [['./lib/babel/plugins/wildcard-import', {}]],
+						},
 					},
 				},
 				{
@@ -45,7 +49,7 @@ module.exports = (env) => {
 			],
 		},
 
-		plugins: [new Dotenv()],
+		plugins: [Dotenv()],
 
 		optimization: {},
 	};
@@ -55,7 +59,18 @@ module.exports = (env) => {
 	}
 
 	if (isProduction) {
-		config.optimization.minimizer = [];
+		config.optimization.minimizer = [
+			new TerserPlugin({
+				cache: true,
+				sourceMap: false,
+				parallel: true,
+				terserOptions: {
+					output: {
+						comments: false,
+					},
+				},
+			}),
+		];
 	}
 
 	return config;

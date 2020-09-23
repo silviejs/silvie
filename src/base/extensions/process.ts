@@ -1,5 +1,5 @@
 declare global {
-	module NodeJS {
+	namespace NodeJS {
 		interface Process {
 			args: any;
 		}

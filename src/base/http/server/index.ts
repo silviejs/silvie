@@ -1,6 +1,6 @@
 import Express, { Request, Response } from 'express';
 import cors from 'cors';
-import Middleware from 'base/http/middleware';
+import IMiddleware from 'base/http/middleware';
 
 class HTTPServer {
 	app: any;
@@ -18,13 +18,13 @@ class HTTPServer {
 	 * Registers a route handler with some middlewares
 	 * @param method HTTP Verb
 	 * @param url Route URL
-	 * @param middlewares Middlewares array
+	 * @param middlewares IMiddlewares array
 	 * @param handler Route handler
 	 */
 	registerRoute(
 		method: string,
 		url: string,
-		middlewares: Middleware[] = [],
+		middlewares: IMiddleware[] = [],
 		handler: (req: Request, res: Response) => void
 	) {
 		this.app[method](
@@ -38,7 +38,7 @@ class HTTPServer {
 	 * Registers a middleware on the whole HTTP Server
 	 * @param middleware The middleware to register
 	 */
-	registerGlobalMiddleware(middleware: Middleware) {
+	registerGlobalMiddleware(middleware: IMiddleware) {
 		this.app.use((middleware as any).prototype.handler);
 	}
 

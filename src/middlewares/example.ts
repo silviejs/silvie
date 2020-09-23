@@ -1,10 +1,10 @@
-import Middleware, { middleware } from 'base/http/middleware';
+import IMiddleware, { middleware } from 'base/http/middleware';
 import { Request, Response } from 'express';
 
 @middleware('example')
-export default class ExampleMiddleware implements Middleware {
+export default class ExampleMiddleware implements IMiddleware {
 	handler(req: Request, res: Response, next: () => void): void {
-		console.log('in the middleware');
+		res.set('In-The', 'Middleware');
 
 		next();
 	}

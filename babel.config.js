@@ -25,13 +25,7 @@ module.exports = (api) => {
 					},
 				},
 			],
-			[
-				'wildcard',
-				{
-					exts: ['js', 'ts', 'json', 'gql'],
-					noModifyCase: true,
-				},
-			],
+			['./lib/babel/plugins/wildcard-import', { changeExtensions: { ts: 'js' } }],
 		],
 	};
 };

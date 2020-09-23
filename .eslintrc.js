@@ -3,16 +3,15 @@ module.exports = {
 		browser: true,
 		es2020: true,
 	},
-	extends: ['plugin:@typescript-eslint/recommended', 'airbnb-base', 'plugin:prettier/recommended'],
-	parser: '@typescript-eslint/parser',
+	extends: ['airbnb-base', 'plugin:prettier/recommended'],
 	parserOptions: {
 		ecmaVersion: 11,
 		sourceType: 'module',
 	},
 	plugins: ['@typescript-eslint', 'prettier'],
 	rules: {
+		'import/no-unresolved': 'off',
 		'no-plusplus': 'off',
-		'@typescript-eslint/no-explicit-any': 'off',
 		'class-methods-use-this': 'off',
 	},
 	settings: {
@@ -31,4 +30,22 @@ module.exports = {
 			},
 		},
 	},
+
+	overrides: [
+		{
+			files: ['**/*.ts'],
+
+			extends: ['plugin:@typescript-eslint/recommended', 'airbnb-base', 'plugin:prettier/recommended'],
+			parser: '@typescript-eslint/parser',
+
+			plugins: ['@typescript-eslint', 'prettier'],
+			rules: {
+				'import/no-unresolved': 'off',
+				'no-plusplus': 'off',
+				'class-methods-use-this': 'off',
+				'@typescript-eslint/no-namespace': 'off',
+				'@typescript-eslint/no-explicit-any': 'off',
+			},
+		},
+	],
 };

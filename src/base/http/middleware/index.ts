@@ -3,8 +3,12 @@ import HTTPServer from 'base/http/server';
 
 export const middlewares = {};
 
-export default interface Middleware {
-	handler(req: Request, res: Response, next: () => void): void;
+export interface IMiddlewareHandler {
+	(request: Request, res: Response, next: () => void): void;
+}
+
+export default interface IMiddleware {
+	handler: IMiddlewareHandler;
 }
 
 /**
@@ -12,8 +16,8 @@ export default interface Middleware {
  * @param name The name to access middleware
  * @param global Weather to register this middleware in global scope or not
  */
-export function middleware(name: string, global = false): (target: Middleware) => Middleware {
-	return (target: Middleware): Middleware => {
+export function middleware(name: string, global = false): (target: any) => any {
+	return (target: IMiddleware): IMiddleware => {
 		middlewares[name] = target;
 
 		if (global) {

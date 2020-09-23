@@ -1,10 +1,11 @@
-import 'base/extensions/process';
+import 'base/extensions';
 
 import * as dotenv from 'dotenv';
 import minimist from 'minimist';
+
 import HTTPServer from 'base/http/server';
-import 'middlewares';
-import 'controllers';
+import 'src/middlewares';
+import 'src/controllers';
 
 // Parse .env file
 dotenv.config();
