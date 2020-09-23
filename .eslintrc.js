@@ -4,14 +4,15 @@ module.exports = {
 		es2020: true,
 	},
 	extends: ['airbnb-base', 'plugin:prettier/recommended'],
-	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		ecmaVersion: 11,
 		sourceType: 'module',
 	},
 	plugins: ['@typescript-eslint', 'prettier'],
 	rules: {
+		'import/no-unresolved': 'off',
 		'no-plusplus': 'off',
+		'class-methods-use-this': 'off',
 	},
 	settings: {
 		'prettier/prettier': ['error'],
@@ -20,10 +21,32 @@ module.exports = {
 			alias: {
 				map: [
 					['src', './src'],
-					['module', './src/module'],
+					['base', './src/base'],
+					['bootstrap', './src/bootstrap'],
+					['controllers', './src/controllers'],
+					['graphql', './src/graphql'],
+					['middlewares', './src/middlewares'],
 				],
 				extensions: ['.js', '.ts', '.gql', '.json'],
 			},
 		},
 	},
+
+	overrides: [
+		{
+			files: ['**/*.ts'],
+
+			extends: ['plugin:@typescript-eslint/recommended', 'airbnb-base', 'plugin:prettier/recommended'],
+			parser: '@typescript-eslint/parser',
+
+			plugins: ['@typescript-eslint', 'prettier'],
+			rules: {
+				'import/no-unresolved': 'off',
+				'no-plusplus': 'off',
+				'class-methods-use-this': 'off',
+				'@typescript-eslint/no-namespace': 'off',
+				'@typescript-eslint/no-explicit-any': 'off',
+			},
+		},
+	],
 };

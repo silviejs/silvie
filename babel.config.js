@@ -1,8 +1,8 @@
 module.exports = (api) => {
-	api.cache(true);
+	api.cache(false);
 
 	return {
-		presets: ['@babel/preset-env', '@babel/preset-typescript'],
+		presets: [['@babel/preset-env', { modules: 'cjs' }], '@babel/preset-typescript'],
 		plugins: [
 			'@babel/plugin-proposal-optional-chaining',
 			['@babel/plugin-proposal-decorators', { legacy: true }],
@@ -12,23 +12,24 @@ module.exports = (api) => {
 			'@babel/plugin-proposal-class-properties',
 			'@babel/plugin-transform-named-capturing-groups-regex',
 			'@babel/plugin-proposal-optional-catch-binding',
+			'@babel/plugin-transform-runtime',
 			[
 				'module-resolver',
 				{
 					root: ['./'],
 					alias: {
 						src: './src',
-						module: './src/module',
+						base: './src/base',
+						bootstrap: './src/bootstrap',
+						config: './src/config',
+						controllers: './src/controllers',
+						graphql: './src/graphql',
+						middlewares: './src/middlewares',
 					},
 				},
 			],
-			[
-				'wildcard',
-				{
-					exts: ['js', 'ts', 'json', 'gql'],
-					noModifyCase: true,
-				},
-			],
+			['./lib/babel/plugins/wildcard-import', { changeExtensions: { ts: 'js' } }],
+			'./lib/babel/plugins/graphql-import',
 		],
 	};
 };

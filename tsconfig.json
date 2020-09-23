@@ -6,6 +6,16 @@
 		"moduleResolution": "node",
 		"sourceMap": true,
 		"outDir": "build",
-		"baseUrl": "./src",
+		"experimentalDecorators": true,
+		"baseUrl": ".",
+		"paths": {
+			"src/*": ["./src/*"],
+			"base/*": ["./src/base/*"],
+			"bootstrap/*": ["./src/bootstrap/*"],
+			"config/*": ["./src/config/*"],
+			"controllers/*": ["./src/controllers/*"],
+			"graphql/*": ["./src/graphql/*"],
+			"middlewares/*": ["./src/middlewares/*"]
+		}
 	}
 }
