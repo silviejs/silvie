@@ -20,4 +20,4 @@ process.args = minimist(process.argv.slice(2));
 
 GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
-HTTPServer.start(3000);
+HTTPServer.start();
