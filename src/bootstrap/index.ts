@@ -24,8 +24,7 @@ dotenv.config({
 // Parse command line arguments
 process.args = minimist(process.argv.slice(2));
 
-HTTPServer.initUploads();
-HTTPServer.initStatics();
+HTTPServer.init();
 
 GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 

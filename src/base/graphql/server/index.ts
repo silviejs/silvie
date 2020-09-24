@@ -65,7 +65,7 @@ class GraphQLServer {
 		const path = config.path ?? '/graphql';
 
 		if (config.middleware && middlewares[config.middleware])
-			httpServer.server.use(path, (middlewares[config.middleware] as any).prototype.handler);
+			httpServer.server.use(path, middlewares[config.middleware]);
 
 		if (config.allowUpload) {
 			httpServer.server.use(

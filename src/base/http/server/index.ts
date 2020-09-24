@@ -8,7 +8,7 @@ import multer from 'multer';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import Express, { Request, Response } from 'express';
-import IMiddleware from 'base/http/middleware';
+import { middlewares } from 'base/http/middleware';
 
 import config from 'config/http';
 
@@ -17,15 +17,29 @@ class HTTPServer {
 
 	upload: any;
 
+	globalMiddlewares: string[] = [];
+
+	routes = [];
+
 	/**
 	 * Initialize a new HTTP Server
 	 */
-	constructor() {
-		const app = Express();
+	init() {
+		this.app = Express();
 
-		// Configure cors
+		this.initCORS();
+		this.initBodyParser();
+		this.initCookie();
+		this.initSession();
+		this.initUploads();
+		this.initGlobalMiddlewares();
+		this.initStatics();
+		this.initRoutes();
+	}
+
+	initCORS() {
 		if (config.cors.enabled) {
-			app.use(
+			this.app.use(
 				cors({
 					origin: config.cors.originsAllowed,
 					methods: config.cors.methodsAllowed,
@@ -38,11 +52,12 @@ class HTTPServer {
 				})
 			);
 		}
+	}
 
-		// Configure body parser
+	initBodyParser() {
 		if (config.body.enabled) {
 			if (config.body.json.enabled) {
-				app.use(
+				this.app.use(
 					bodyParser.json({
 						limit: config.body.json.limit,
 						inflate: config.body.json.inflate,
@@ -52,7 +67,7 @@ class HTTPServer {
 				);
 			}
 			if (config.body.urlencoded.enabled) {
-				app.use(
+				this.app.use(
 					bodyParser.urlencoded({
 						inflate: config.body.urlencoded.inflate,
 						extended: config.body.urlencoded.extended,
@@ -63,7 +78,7 @@ class HTTPServer {
 				);
 			}
 			if (config.body.text.enabled) {
-				app.use(
+				this.app.use(
 					bodyParser.text({
 						inflate: config.body.text.inflate,
 						limit: config.body.text.limit,
@@ -73,7 +88,7 @@ class HTTPServer {
 				);
 			}
 			if (config.body.raw.enabled) {
-				app.use(
+				this.app.use(
 					bodyParser.raw({
 						inflate: config.body.raw.inflate,
 						limit: config.body.raw.limit,
@@ -82,17 +97,9 @@ class HTTPServer {
 				);
 			}
 		}
+	}
 
-		// Configure cookie parser
-		if (config.cookie.enabled) {
-			if (config.session.enabled && config.session.secret !== config.cookie.secret) {
-				throw new Error('Cookie and Session secrets do not match');
-			}
-
-			app.use(cookieParser(config.cookie.secret));
-		}
-
-		// Configure session
+	initSession() {
 		if (config.session.enabled) {
 			if (config.cookie.enabled && config.cookie.secret !== config.session.secret) {
 				throw new Error('Cookie and Session secrets do not match');
@@ -104,8 +111,16 @@ class HTTPServer {
 				throw new Error(`Invalid session driver '${config.session.driver}'`);
 			}
 		}
+	}
 
-		this.app = app;
+	initCookie() {
+		if (config.cookie.enabled) {
+			if (config.session.enabled && config.session.secret !== config.cookie.secret) {
+				throw new Error('Cookie and Session secrets do not match');
+			}
+
+			this.app.use(cookieParser(config.cookie.secret));
+		}
 	}
 
 	initUploads() {
@@ -141,6 +156,50 @@ class HTTPServer {
 		});
 	}
 
+	initGlobalMiddlewares() {
+		this.globalMiddlewares.forEach((middlewareName) => {
+			if (middlewareName in middlewares) {
+				this.app.use(middlewares[middlewareName]);
+			} else {
+				throw new Error(`Unknown global middleware '${middlewareName}'`);
+			}
+		});
+	}
+
+	initRoutes() {
+		this.routes.forEach((route) => {
+			const middlewareHandlers = route.middlewares.map((middlewareName) => {
+				if (middlewareName in middlewares) {
+					return middlewares[middlewareName];
+				}
+
+				throw new Error(
+					`Used unknown middleware '${middlewareName}' for route '${route.method.toUpperCase()} ${route.url}'`
+				);
+			});
+
+			if (route.upload) {
+				if (route.upload.action === 'block') {
+					middlewareHandlers.push(this.upload.none());
+				} else if (route.upload.action === 'any') {
+					middlewareHandlers.push(this.upload.any());
+				} else if (route.upload.action === 'multiple') {
+					middlewareHandlers.push(this.upload.fields(route.upload.options));
+				} else if (route.upload.action === 'array') {
+					middlewareHandlers.push(this.upload.array(route.upload.options.fieldName, route.upload.options.maxCount));
+				} else if (route.upload.action === 'single') {
+					middlewareHandlers.push(this.upload.single(route.upload.options));
+				} else {
+					throw new Error(
+						`Invalid upload type '${route.upload.action}' for route '${route.method.toUpperCase()} ${route.url}'`
+					);
+				}
+			}
+
+			this.app[route.method](route.url, middlewareHandlers, route.handler);
+		});
+	}
+
 	/**
 	 * Return express server instance
 	 */
@@ -152,28 +211,32 @@ class HTTPServer {
 	 * Registers a route handler with some middlewares
 	 * @param method HTTP Verb
 	 * @param url Route URL
-	 * @param middlewares IMiddlewares array
+	 * @param routeMiddlewares Route middlewares array
+	 * @param upload Upload configuration
 	 * @param handler Route handler
 	 */
 	registerRoute(
 		method: string,
 		url: string,
-		middlewares: IMiddleware[] = [],
+		routeMiddlewares: string[] = [],
+		upload: { action: string; options?: any } = null,
 		handler: (req: Request, res: Response) => void
 	) {
-		this.app[method](
+		this.routes.push({
+			method,
 			url,
-			middlewares.map((middleware) => (middleware as any).prototype.handler),
-			handler
-		);
+			middlewares: routeMiddlewares,
+			upload,
+			handler,
+		});
 	}
 
 	/**
 	 * Registers a middleware on the whole HTTP Server
-	 * @param middleware The middleware to register
+	 * @param middlewareName The name middleware to register
 	 */
-	registerGlobalMiddleware(middleware: IMiddleware) {
-		this.app.use((middleware as any).prototype.handler);
+	globalMiddleware(middlewareName: string) {
+		this.globalMiddlewares.push(middlewareName);
 	}
 
 	/**
