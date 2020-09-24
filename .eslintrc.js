@@ -10,6 +10,7 @@ module.exports = {
 	},
 	plugins: ['@typescript-eslint', 'prettier'],
 	rules: {
+		'no-param-reassign': 'off',
 		'import/no-unresolved': 'off',
 		'no-plusplus': 'off',
 		'class-methods-use-this': 'off',
@@ -24,6 +25,7 @@ module.exports = {
 					['base', './src/base'],
 					['bootstrap', './src/bootstrap'],
 					['controllers', './src/controllers'],
+					['graphql', './src/graphql'],
 					['middlewares', './src/middlewares'],
 				],
 				extensions: ['.js', '.ts', '.gql', '.json'],
@@ -40,6 +42,7 @@ module.exports = {
 
 			plugins: ['@typescript-eslint', 'prettier'],
 			rules: {
+				'no-param-reassign': 'off',
 				'import/no-unresolved': 'off',
 				'no-plusplus': 'off',
 				'class-methods-use-this': 'off',

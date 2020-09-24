@@ -1,0 +1,8 @@
+type Example {
+	id: Int!
+	name: String!
+}
+
+extend type Query {
+	getExample: Example
+}
