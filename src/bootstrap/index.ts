@@ -12,8 +12,6 @@ import * as schemas from 'graphql/schemas';
 import * as resolvers from 'graphql/resolvers';
 import * as dataLoaders from 'graphql/dataloaders';
 
-// console.log(schemas, resolvers, dataLoaders);
-
 // Parse .env file
 dotenv.config();
 

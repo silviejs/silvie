@@ -10,6 +10,7 @@ module.exports = {
 	},
 	plugins: ['@typescript-eslint', 'prettier'],
 	rules: {
+		'no-param-reassign': 'off',
 		'import/no-unresolved': 'off',
 		'no-plusplus': 'off',
 		'class-methods-use-this': 'off',
@@ -41,6 +42,7 @@ module.exports = {
 
 			plugins: ['@typescript-eslint', 'prettier'],
 			rules: {
+				'no-param-reassign': 'off',
 				'import/no-unresolved': 'off',
 				'no-plusplus': 'off',
 				'class-methods-use-this': 'off',
