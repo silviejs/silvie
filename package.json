@@ -4,7 +4,7 @@
   "description": "Karnameh Website API",
   "main": "./src/bootstrap/index.ts",
   "scripts": {
-    "dev": "nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
+    "dev": "NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
     "build": "NODE_ENV=production rm -rf build/* && babel src -d build -x \".js,.ts\"",
     "bundle": "NODE_ENV=production webpack --env.clean",
     "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
