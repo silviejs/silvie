@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -50,7 +51,13 @@ module.exports = (env) => {
 			],
 		},
 
-		plugins: [Dotenv(), new CopyWebpackPlugin({ patterns: [{ from: './assets', to: './assets' }] })],
+		plugins: [
+			Dotenv(),
+			new webpack.DefinePlugin({ 'process.relativeRootPath': "'./'" }),
+			new CopyWebpackPlugin({
+				patterns: [{ from: 'src/assets', to: './assets' }],
+			}),
+		],
 
 		optimization: {},
 	};

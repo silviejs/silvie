@@ -3,16 +3,19 @@ import https from 'https';
 import spdy from 'spdy';
 import fs from 'fs';
 import path from 'path';
-import Express, { Request, Response } from 'express';
 import cors from 'cors';
+import multer from 'multer';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import Express, { Request, Response } from 'express';
 import IMiddleware from 'base/http/middleware';
 
 import config from 'config/http';
 
 class HTTPServer {
 	app: any;
+
+	upload: any;
 
 	/**
 	 * Initialize a new HTTP Server
@@ -89,6 +92,7 @@ class HTTPServer {
 			app.use(cookieParser(config.cookie.secret));
 		}
 
+		// Configure session
 		if (config.session.enabled) {
 			if (config.cookie.enabled && config.cookie.secret !== config.session.secret) {
 				throw new Error('Cookie and Session secrets do not match');
@@ -101,12 +105,28 @@ class HTTPServer {
 			}
 		}
 
-		// Configure static serves
+		this.app = app;
+	}
+
+	initUploads() {
+		if (config.uploads.enabled) {
+			this.upload = multer({
+				dest: path.resolve(
+					process.rootPath,
+					(process.env.NODE_ENV === 'development' ? `../` : '') + config.uploads.tempDirectory
+				),
+				limits: {
+					fieldSize: config.uploads.maxFileSize,
+				},
+			});
+		}
+	}
+
+	initStatics() {
 		config.statics.forEach((statics) => {
-			console.log('registering static', statics.alias, statics.path);
-			app.use(
+			this.app.use(
 				statics.alias ?? '/',
-				Express.static(path.resolve(process.cwd(), statics.path), {
+				Express.static(path.resolve(process.rootPath, statics.path), {
 					cacheControl: statics.options.cacheControl,
 					dotfiles: statics.options.dotfiles,
 					etag: statics.options.etag,
@@ -119,8 +139,6 @@ class HTTPServer {
 				})
 			);
 		});
-
-		this.app = app;
 	}
 
 	/**
@@ -143,7 +161,6 @@ class HTTPServer {
 		middlewares: IMiddleware[] = [],
 		handler: (req: Request, res: Response) => void
 	) {
-		console.log('registering route', method, url);
 		this.app[method](
 			url,
 			middlewares.map((middleware) => (middleware as any).prototype.handler),
@@ -160,7 +177,7 @@ class HTTPServer {
 	}
 
 	/**
-	 * Starts listening on a port in this order: --port, -p, .env.APP_PORT, config.port, customPort
+	 * Starts listening on a port in this order: --port, -P, .env.APP_PORT, config.port, customPort
 	 */
 	start(customPort = 5000) {
 		let server = null;
@@ -202,7 +219,7 @@ class HTTPServer {
 		} else {
 			server = http.createServer(this.app);
 		}
-		const port = process.args.port || process.args.p || process.env.APP_PORT || config.port || customPort;
+		const port = process.args.port || process.args.P || process.env.APP_PORT || config.port || customPort;
 		server.listen(port, (error) => {
 			if (error) console.log('An error occurred');
 

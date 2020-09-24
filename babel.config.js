@@ -1,8 +1,6 @@
 module.exports = (api) => {
 	api.cache(true);
 
-	console.log(process.env.NODE_ENV);
-
 	return {
 		presets: [['@babel/preset-env', { modules: 'cjs' }], '@babel/preset-typescript'],
 		plugins: [

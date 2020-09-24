@@ -75,6 +75,7 @@ export default {
 	uploads: {
 		enabled: true,
 		tempDirectory: './tmp',
+		maxFileSize: 10485760, // 10 MB
 	},
 
 	cors: {
