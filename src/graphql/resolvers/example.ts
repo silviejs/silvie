@@ -1,4 +1,9 @@
 export default {
+	Example: {
+		exponential(self, params, { loaders }) {
+			return loaders.example.load(self.id);
+		},
+	},
 	Query: {
 		getExample(): any {
 			return {

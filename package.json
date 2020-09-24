@@ -4,7 +4,7 @@
   "description": "Karnameh Website API",
   "main": "./src/bootstrap/index.ts",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
+    "dev": "BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
     "build": "NODE_ENV=production rm -rf build/* && babel src -d build -x \".js,.ts\"",
     "bundle": "NODE_ENV=production webpack --env.clean",
     "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
@@ -20,6 +20,7 @@
     "apollo-server-express": "^2.18.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphql-tools": "^6.2.3",

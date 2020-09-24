@@ -1,6 +1,7 @@
 type Example {
 	id: Int!
 	name: String!
+	exponential: Int!
 }
 
 extend type Query {
