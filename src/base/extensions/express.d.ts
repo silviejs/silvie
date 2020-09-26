@@ -1,4 +1,6 @@
-export interface MulterRequest extends Request {
+export interface ExtendedRequest extends Request {
 	file: any;
 	files: any;
+	session: any;
+	cookie: any;
 }

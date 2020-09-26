@@ -129,9 +129,9 @@ class HTTPServer {
 
 				store = new RedisStore({
 					client: redisClient,
-					host: config.session.driverOptions.redis.host ?? process.env.REDIS_HOST,
-					port: config.session.driverOptions.redis.port ?? process.env.REDIS_PORT,
-					password: config.session.driverOptions.redis.password ?? process.env.REDIS_PASSWORD,
+					host: config.session.driverOptions.redis.host || process.env.REDIS_HOST,
+					port: config.session.driverOptions.redis.port || process.env.REDIS_PORT,
+					password: config.session.driverOptions.redis.password || process.env.REDIS_PASSWORD,
 					ttl: config.session.driverOptions.redis.ttl,
 					prefix: config.session.driverOptions.redis.prefix,
 				});
