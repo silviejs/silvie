@@ -6,7 +6,12 @@ export default class ExampleController implements Controller {
 	@route('GET', '/example')
 	@withMiddleware('example')
 	example(req: Request, res: Response): void {
-		res.send('Example API');
+		if (req.session.time) {
+			res.send(`${req.session.time}\nExample API`);
+		} else {
+			req.session.time = Date.now();
+			res.send('No time has been set in session\nExample API');
+		}
 	}
 
 	@route('POST', '/example/upload')

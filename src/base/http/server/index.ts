@@ -9,6 +9,11 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import Express, { Request, Response } from 'express';
 import { middlewares } from 'base/http/middleware';
+import session from 'express-session';
+import { v4 as uuid } from 'uuid';
+import redis from 'redis';
+import redisStore from 'connect-redis';
+import fileStore from 'session-file-store';
 
 import config from 'config/http';
 
@@ -26,6 +31,10 @@ class HTTPServer {
 	 */
 	init() {
 		this.app = Express();
+
+		if (config.trustProxy) {
+			this.app.set('trust proxy', 1);
+		}
 
 		this.initCORS();
 		this.initBodyParser();
@@ -105,11 +114,43 @@ class HTTPServer {
 				throw new Error('Cookie and Session secrets do not match');
 			}
 
+			let store;
 			if (config.session.driver === 'file') {
+				const FileStore = fileStore(session);
+
+				store = new FileStore({
+					path: path.resolve(process.rootPath, config.session.driverOptions.file.path),
+					extension: config.session.driverOptions.file.extension,
+					ttl: config.session.driverOptions.file.ttl,
+				});
 			} else if (config.session.driver === 'redis') {
+				const RedisStore = redisStore(session);
+				const redisClient = redis.createClient();
+
+				store = new RedisStore({
+					client: redisClient,
+					host: config.session.driverOptions.redis.host ?? process.env.REDIS_HOST,
+					port: config.session.driverOptions.redis.port ?? process.env.REDIS_PORT,
+					password: config.session.driverOptions.redis.password ?? process.env.REDIS_PASSWORD,
+					ttl: config.session.driverOptions.redis.ttl,
+					prefix: config.session.driverOptions.redis.prefix,
+				});
 			} else {
 				throw new Error(`Invalid session driver '${config.session.driver}'`);
 			}
+
+			this.app.use(
+				session({
+					genid: () => uuid(),
+					secret: config.session.secret || process.env.APP_KEY,
+					resave: config.session.reSave,
+					saveUninitialized: config.session.saveUninitialized,
+					unset: config.session.unsetAction,
+					trustProxy: config.session.trustProxy,
+					store,
+					name: config.session.cookie.name,
+				})
+			);
 		}
 	}
 
@@ -119,7 +160,7 @@ class HTTPServer {
 				throw new Error('Cookie and Session secrets do not match');
 			}
 
-			this.app.use(cookieParser(config.cookie.secret));
+			this.app.use(cookieParser(config.cookie.secret || process.env.APP_KEY));
 		}
 	}
 

@@ -1,6 +1,7 @@
 export default {
 	HTTP2: false,
 	port: 4000,
+	trustProxy: true,
 
 	statics: [
 		{
@@ -56,13 +57,40 @@ export default {
 
 	cookie: {
 		enabled: true,
-		secret: 'F^7otgBO*T*7B&T%*(&t87bv2re775ev',
+		secret: '', // Defaults to APP_KEY
 	},
 
 	session: {
 		enabled: true,
-		secret: 'F^7otgBO*T*7B&T%*(&t87bv2re775ev',
+		secret: '', // Defaults to APP_KEY
+		reSave: false,
+		saveUninitialized: false,
+		unset: 'destroy',
+		trustProxy: true,
+
 		driver: 'file',
+		driverOptions: {
+			file: {
+				path: './session',
+				extension: '.json',
+				ttl: 86400,
+			},
+			redis: {
+				host: '', // Defaults to REDIS_HOST
+				port: '', // Defaults to REDIS_PORT
+				password: '', // Defaults to REDIS_PASSWORD
+				ttl: 86400,
+				prefix: 'sess:',
+			},
+		},
+		cookie: {
+			name: 'sid',
+			path: '/',
+			httpOnly: true,
+			maxAge: 86400000, // 1 day in milliseconds
+			sameSite: true,
+			secure: true,
+		},
 	},
 
 	ssl: {
