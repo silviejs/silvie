@@ -4,8 +4,8 @@
   "description": "Karnameh Website API",
   "main": "./src/bootstrap/index.ts",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
-    "build": "NODE_ENV=production rm -rf build/* && babel src -d build -x \".js,.ts\"",
+    "dev": "BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
+    "build": "rm -rf build/* && cp -r src/assets build/assets && cp -r .env build/.env && NODE_ENV=production babel src -d build -x \".js,.ts\"",
     "bundle": "NODE_ENV=production webpack --env.clean",
     "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
     "test": ""
@@ -19,14 +19,23 @@
   "dependencies": {
     "apollo-server-express": "^2.18.0",
     "body-parser": "^1.19.0",
+    "connect-redis": "^5.0.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "graphql-tools": "^6.2.3",
     "graphql-type-json": "^0.3.2",
     "graphql-upload": "^11.0.0",
     "lodash": "^4.17.20",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "multer": "^1.4.2",
+    "redis": "^3.0.2",
+    "session-file-store": "^1.4.0",
+    "spdy": "^4.0.2",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
@@ -49,6 +58,7 @@
     "babel-plugin-import-graphql": "^2.7.0",
     "babel-plugin-module-resolver": "^4.0.0",
     "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^6.1.1",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.11.0",
