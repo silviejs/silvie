@@ -51,6 +51,10 @@ export class Database {
 	dropTableIfExists(tableName: string): Promise<any> {
 		return this.driver.dropTableIfExists(tableName);
 	}
+
+	closeConnection(): void {
+		this.driver.closeConnection();
+	}
 }
 
 export default Database.getInstance();

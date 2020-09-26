@@ -25,6 +25,7 @@ module.exports = {
 					['base', './src/base'],
 					['bootstrap', './src/bootstrap'],
 					['controllers', './src/controllers'],
+					['database', './src/database'],
 					['graphql', './src/graphql'],
 					['middlewares', './src/middlewares'],
 				],

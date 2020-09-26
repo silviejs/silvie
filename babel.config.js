@@ -23,6 +23,7 @@ module.exports = (api) => {
 						bootstrap: './src/bootstrap',
 						config: './src/config',
 						controllers: './src/controllers',
+						database: './src/database',
 						graphql: './src/graphql',
 						middlewares: './src/middlewares',
 					},
