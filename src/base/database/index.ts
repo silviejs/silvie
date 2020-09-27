@@ -2,6 +2,7 @@ import Table from 'base/database/table';
 import IDatabaseDriver from 'base/database/driver';
 import drivers from 'base/database/drivers';
 import config from 'config/database';
+import { TBaseValue } from 'base/database/builders/condition';
 
 export class Database {
 	/**
@@ -52,6 +53,10 @@ export class Database {
 				...(config[type] ?? {}),
 			});
 		}
+	}
+
+	raw(query: string, params?: TBaseValue[]): Promise<any> {
+		return this.driver.execute(query, params);
 	}
 
 	/**

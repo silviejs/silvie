@@ -2,6 +2,8 @@ import mysql from 'mysql';
 import IDatabaseDriver from 'base/database/driver';
 import Table from 'base/database/table';
 import Column from 'base/database/column';
+import QueryBuilder from 'base/database/builders/query';
+import { TBaseValue } from 'base/database/builders/condition';
 
 interface MySQLOptions {
 	host: string;
@@ -14,52 +16,48 @@ interface MySQLOptions {
 	multipleStatements?: boolean;
 }
 
+export const MySQLTypes = {
+	TinyInteger: 'TINYINT',
+	SmallInteger: 'SMALLINT',
+	MediumInteger: 'MEDIUMINT',
+	Integer: 'INT',
+	BigInteger: 'BIGINT',
+	Bit: 'BIT',
+	Boolean: 'TINYINT(1)',
+	Decimal: 'DECIMAL()',
+	Float: 'FLOAT',
+	Double: 'DOUBLE',
+	Year: 'YEAR',
+	Date: 'DATE',
+	Time: 'TIME',
+	DateTime: 'DATETIME',
+	Timestamp: 'TIMESTAMP',
+	Character: 'CHAR',
+	String: 'VARCHAR',
+	Binary: 'BINARY',
+	TinyBlob: 'TINYBLOB',
+	Blob: 'BLOB',
+	MediumBlob: 'MEDIUMBLOB',
+	LongBlob: 'LONGBLOB',
+	TinyText: 'TINYTEXT',
+	Text: 'TEXT',
+	MediumText: 'MEDIUMTEXT',
+	LongText: 'LONGTEXT',
+	Enum: 'ENUM',
+	Set: 'SET',
+	Geometry: 'GEOMETRY',
+	Point: 'POINT',
+	LineString: 'LINESTRING',
+	Polygon: 'POLYGON',
+	GeometryCollection: 'GEOMETRYCOLLECTION',
+	MultiPoint: 'MULTIPOINT',
+	MultiLineString: 'MULTILINESTRING',
+	MultiPolygon: 'MULTIPOLYGON',
+	JSON: 'JSON',
+};
+
 export default class MySQLDriver implements IDatabaseDriver {
-	pool: any;
-
-	private types = {
-		TinyInteger: 'TINYINT',
-		SmallInteger: 'SMALLINT',
-		MediumInteger: 'MEDIUMINT',
-		Integer: 'INT',
-		BigInteger: 'BIGINT',
-		Bit: 'BIT',
-		Boolean: 'TINYINT(1)',
-		Decimal: 'DECIMAL()',
-		Float: 'FLOAT',
-		Double: 'DOUBLE',
-		Year: 'YEAR',
-		Date: 'DATE',
-		Time: 'TIME',
-		DateTime: 'DATETIME',
-		Timestamp: 'TIMESTAMP',
-		Character: 'CHAR',
-		String: 'VARCHAR',
-		Binary: 'BINARY',
-		TinyBlob: 'TINYBLOB',
-		Blob: 'BLOB',
-		MediumBlob: 'MEDIUMBLOB',
-		LongBlob: 'LONGBLOB',
-		TinyText: 'TINYTEXT',
-		Text: 'TEXT',
-		MediumText: 'MEDIUMTEXT',
-		LongText: 'LONGTEXT',
-		Enum: 'ENUM',
-		Set: 'SET',
-		Geometry: 'GEOMETRY',
-		Point: 'POINT',
-		LineString: 'LINESTRING',
-		Polygon: 'POLYGON',
-		GeometryCollection: 'GEOMETRYCOLLECTION',
-		MultiPoint: 'MULTIPOINT',
-		MultiLineString: 'MULTILINESTRING',
-		MultiPolygon: 'MULTIPOLYGON',
-		JSON: 'JSON',
-	};
-
-	resolveType(typeName: string): string {
-		return this.types[typeName];
-	}
+	private pool: any;
 
 	constructor(config: MySQLOptions) {
 		this.pool = mysql.createPool({
@@ -76,7 +74,19 @@ export default class MySQLDriver implements IDatabaseDriver {
 		});
 	}
 
-	prepareValue(value: unknown): string {
+	private static resolveType(typeName: string): string {
+		return MySQLTypes[typeName];
+	}
+
+	private static prepareColumn(columnName: string): string {
+		return columnName
+			.replace(/['"`]/, '')
+			.split('.')
+			.map((part) => `\`${part}\``)
+			.join('.');
+	}
+
+	private static prepareValue(value: unknown): string {
 		if (value === null) {
 			return 'NULL';
 		}
@@ -84,7 +94,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return `'${value}'`;
 	}
 
-	compileColumn(column: Column): string {
+	private static compileColumn(column: Column): string {
 		const parts = [];
 
 		parts.push(`\`${column.name}\``);
@@ -105,7 +115,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return parts.join(' ');
 	}
 
-	compileCreateTable(table: Table): string {
+	private static compileCreateTable(table: Table): string {
 		const { indices, fullTextIndices, spatialIndices, primaries, uniques } = table.getConstraints();
 
 		let query = `CREATE TABLE ${table.name} (`;
@@ -147,7 +157,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 	}
 
 	createTable(table: Table): Promise<any> {
-		return this.execute(this.compileCreateTable(table));
+		return this.execute(MySQLDriver.compileCreateTable(table));
 	}
 
 	truncateTable(tableName: string): Promise<any> {
@@ -162,7 +172,63 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return this.execute(`DROP TABLE \`${tableName}\`;`);
 	}
 
-	execute(query: string, params: string[] = []): Promise<any> {
+	select(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	exists(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	insert(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	insertOrIgnore(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	update(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	delete(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	softDelete(queryBuilder: QueryBuilder): Promise<any> {
+		const query = '';
+		const params = [];
+
+		return this.execute(query, params);
+	}
+
+	execute(query: string, params: TBaseValue[] = []): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.pool.query(query, params, (error, result) => {
 				if (error) return reject(error);
