@@ -18,10 +18,10 @@ export default interface IMiddleware {
  */
 export function middleware(name: string, global = false): (target: any) => any {
 	return (target: IMiddleware): IMiddleware => {
-		middlewares[name] = target;
+		middlewares[name] = (target as any).prototype.handler;
 
 		if (global) {
-			HTTPServer.registerGlobalMiddleware(target);
+			HTTPServer.globalMiddleware(name);
 		}
 
 		return target;

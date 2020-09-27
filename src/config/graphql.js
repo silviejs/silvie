@@ -4,7 +4,7 @@ export default {
 	path: '/graphql',
 	middleware: 'example',
 
-	playground: process.env.NODE_ENV !== 'production',
+	playground: process.env.NODE_ENV === 'development',
 	introspection: true,
 
 	allowJSON: true,

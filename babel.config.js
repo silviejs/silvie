@@ -1,5 +1,5 @@
 module.exports = (api) => {
-	api.cache(false);
+	api.cache(true);
 
 	return {
 		presets: [['@babel/preset-env', { modules: 'cjs' }], '@babel/preset-typescript'],
@@ -28,7 +28,10 @@ module.exports = (api) => {
 					},
 				},
 			],
-			['./lib/babel/plugins/wildcard-import', { changeExtensions: { ts: 'js' } }],
+			[
+				'./lib/babel/plugins/wildcard-import',
+				{ changeExtensions: { enabled: process.env.NODE_ENV === 'production', extensions: { ts: 'js' } } },
+			],
 			'./lib/babel/plugins/graphql-import',
 		],
 	};

@@ -1,8 +1,8 @@
 import { ApolloServer } from 'apollo-server-express';
 import { merge } from 'lodash';
-import { makeExecutableSchema } from 'graphql-tools';
+import { makeExecutableSchema, ITypeDefinitions, ITypedef } from 'graphql-tools';
 import { graphqlUploadExpress } from 'graphql-upload';
-import { middlewares } from "base/http/middleware";
+import { middlewares } from 'base/http/middleware';
 
 import config from 'config/graphql';
 import BaseQuery from 'base/graphql/base/schemas/query.gql';
@@ -15,16 +15,16 @@ import JSONSchema from 'base/graphql/base/schemas/json.gql';
 import JSONResolver from 'base/graphql/base/resolvers/json';
 
 function makeSchema(schemas, resolvers) {
-	const typeDefsCollection = [BaseQuery, BaseMutation];
+	const typeDefsCollection: ITypeDefinitions = [BaseQuery as ITypedef, BaseMutation as ITypedef];
 	const resolversCollection = [];
 
 	if (config.allowUpload) {
-		typeDefsCollection.push(UploadSchema);
+		typeDefsCollection.push(UploadSchema as ITypedef);
 		resolversCollection.push(UploadResolver);
 	}
 
 	if (config.allowJSON) {
-		typeDefsCollection.push(JSONSchema);
+		typeDefsCollection.push(JSONSchema as ITypedef);
 		resolversCollection.push(JSONResolver);
 	}
 
@@ -65,7 +65,7 @@ class GraphQLServer {
 		const path = config.path ?? '/graphql';
 
 		if (config.middleware && middlewares[config.middleware])
-			httpServer.server.use(path, (middlewares[config.middleware] as any).prototype.handler);
+			httpServer.server.use(path, middlewares[config.middleware]);
 
 		if (config.allowUpload) {
 			httpServer.server.use(
