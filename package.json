@@ -8,7 +8,7 @@
     "build": "rm -rf build/* && cp -r src/assets build/assets && cp -r .env build/.env && NODE_ENV=production babel src -d build -x \".js,.ts\"",
     "bundle": "NODE_ENV=production webpack --env.clean",
     "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
-    "cli": "babel-node -x \".js,.ts\" lib/cli/index.ts",
+    "cli": "babel-node -x \".js,.ts\" cli/index.ts",
     "test": ""
   },
   "repository": {

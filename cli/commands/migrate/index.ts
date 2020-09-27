@@ -1,8 +1,10 @@
 import migrations from 'database/migrations';
-import IMigration from 'base/database/migration';
+import Database from 'base/database';
 
-export default async (args): Promise<any> => {
+export default async (args: { _: string[]; rollback: boolean; refresh: boolean }): Promise<any> => {
 	const filename = args._[1];
+
+	Database.init();
 
 	if (filename) {
 		const migration = migrations[filename];
@@ -37,4 +39,6 @@ export default async (args): Promise<any> => {
 				.flat()
 		);
 	}
+
+	Database.closeConnection();
 };

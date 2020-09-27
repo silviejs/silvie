@@ -4,13 +4,28 @@ import drivers from 'base/database/drivers';
 import config from 'config/database';
 
 export class Database {
+	/**
+	 * [SINGLETON] The database instance
+	 * @private
+	 */
 	private static instance: Database;
 
+	/**
+	 * The database driver instance
+	 * @private
+	 */
 	private driver: IDatabaseDriver;
 
+	/**
+	 * [SINGLETON] Disable the constructor
+	 * @private
+	 */
 	// eslint-disable-next-line no-empty-function,no-useless-constructor,@typescript-eslint/no-empty-function
 	private constructor() {}
 
+	/**
+	 * [SINGLETON] Creates a new or returns the existing database instance
+	 */
 	public static getInstance(): Database {
 		if (!Database.instance) {
 			Database.instance = new Database();
@@ -19,6 +34,9 @@ export class Database {
 		return Database.instance;
 	}
 
+	/**
+	 * Initializes a database driver based on the given config
+	 */
 	init(): void {
 		const type = config.type || process.env.DB_TYPE;
 
@@ -36,22 +54,41 @@ export class Database {
 		}
 	}
 
+	/**
+	 * Creates a table from the given table instance
+	 * @param table
+	 */
 	createTable(table: Table): Promise<any> {
 		return this.driver.createTable(table);
 	}
 
+	/**
+	 * Empties a table
+	 * @param tableName
+	 */
 	truncateTable(tableName: string): Promise<any> {
 		return this.driver.truncateTable(tableName);
 	}
 
+	/**
+	 * Drops a table without any further checks
+	 * @param tableName
+	 */
 	dropTable(tableName: string): Promise<any> {
 		return this.driver.dropTable(tableName);
 	}
 
+	/**
+	 * Drops a table if it exists
+	 * @param tableName
+	 */
 	dropTableIfExists(tableName: string): Promise<any> {
 		return this.driver.dropTableIfExists(tableName);
 	}
 
+	/**
+	 * Closes the current database connection
+	 */
 	closeConnection(): void {
 		this.driver.closeConnection();
 	}
