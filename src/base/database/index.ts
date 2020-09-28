@@ -68,6 +68,18 @@ export class Database {
 		return this.driver.insert(queryBuilder);
 	}
 
+	delete(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.delete(queryBuilder);
+	}
+
+	softDelete(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.softDelete(queryBuilder);
+	}
+
+	undelete(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.undelete(queryBuilder);
+	}
+
 	raw(query: string, params?: TBaseValue[]): Promise<any> {
 		return this.driver.execute(query, params);
 	}

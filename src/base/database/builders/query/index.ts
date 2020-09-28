@@ -83,9 +83,17 @@ export default class QueryBuilder {
 
 	bulkUpdate(data: any[]): Promise<any> {}
 
-	delete(): Promise<any> {}
+	delete(): Promise<any> {
+		return Database.delete(this);
+	}
 
-	softDelete(): Promise<any> {}
+	softDelete(): Promise<any> {
+		return Database.softDelete(this);
+	}
+
+	undelete(): Promise<any> {
+		return Database.undelete(this);
+	}
 
 	sharedLock() {
 		this.options.lock = 'shared';

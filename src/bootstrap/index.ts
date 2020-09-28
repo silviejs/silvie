@@ -36,6 +36,6 @@ GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 HTTPServer.start();
 
 new QueryBuilder('examples')
-	.where('id', '>', 55)
-	.exists()
-	.then((result) => console.log(result ? 'YES' : 'NO'));
+	.where('id', '=', 4)
+	.delete()
+	.then((result) => console.log(result));

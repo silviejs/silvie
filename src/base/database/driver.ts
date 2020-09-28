@@ -14,6 +14,7 @@ export default interface IDatabaseDriver {
 
 	delete(queryBuilder: QueryBuilder): Promise<any>;
 	softDelete(queryBuilder: QueryBuilder): Promise<any>;
+	undelete(queryBuilder: QueryBuilder): Promise<any>;
 
 	createTable(table: Table): Promise<any>;
 	truncateTable(tableName: string): Promise<any>;

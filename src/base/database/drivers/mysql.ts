@@ -524,7 +524,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		let query = `SELECT ${fieldsQuery} `;
 		if (qb.options.selectInto) query += `INTO ${qb.options.selectInto} `;
 		query += `FROM ${this.prepareTable(qb.options.table)} `;
-		query += [joinQuery, whereQuery, groupQuery, orderQuery, limitQuery, unionQuery].filter((q) => !!q).join(' ');
+		query += [joinQuery, whereQuery, groupQuery, orderQuery, limitQuery, unionQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
 	}
@@ -586,18 +586,55 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return this.execute(query, params);
 	}
 
-	delete(queryBuilder: QueryBuilder): Promise<any> {
-		const query = '';
-		const params = [];
+	private static compileDelete(qb: QueryBuilder): [string, TBaseValue[]] {
+		const [whereQuery, whereParams] = this.compileWhere(qb);
+		const [orderQuery, orderParams] = this.compileOrder(qb);
+		const [limitQuery, limitParams] = this.compileLimit(qb);
 
-		return this.execute(query, params);
+		const params = [...whereParams, ...orderParams, ...limitParams];
+
+		let query = `DELETE FROM ${this.prepareTable(qb.options.table)} `;
+		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
+
+		return [query, params];
+	}
+
+	delete(queryBuilder: QueryBuilder): Promise<any> {
+		return this.execute(...MySQLDriver.compileDelete(queryBuilder));
+	}
+
+	private static compileSoftDelete(qb: QueryBuilder): [string, TBaseValue[]] {
+		const [whereQuery, whereParams] = this.compileWhere(qb);
+		const [orderQuery, orderParams] = this.compileOrder(qb);
+		const [limitQuery, limitParams] = this.compileLimit(qb);
+
+		const params = [...whereParams, ...orderParams, ...limitParams];
+
+		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET \`deleted_at\` = CURRENT_TIMESTAMP `;
+		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
+
+		return [query, params];
 	}
 
 	softDelete(queryBuilder: QueryBuilder): Promise<any> {
-		const query = '';
-		const params = [];
+		return this.execute(...MySQLDriver.compileSoftDelete(queryBuilder));
+	}
 
-		return this.execute(query, params);
+	private static compileUndelete(qb: QueryBuilder): [string, TBaseValue[]] {
+		const [whereQuery, whereParams] = this.compileWhere(qb);
+		const [orderQuery, orderParams] = this.compileOrder(qb);
+		const [limitQuery, limitParams] = this.compileLimit(qb);
+
+		const params = [...whereParams, ...orderParams, ...limitParams];
+
+		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET \`deleted_at\` = NULL `;
+		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
+
+		return [query, params];
+	}
+
+	undelete(queryBuilder: QueryBuilder): Promise<any> {
+		return this.execute(...MySQLDriver.compileUndelete(queryBuilder));
 	}
 
 	execute(query: string, params: TBaseValue[] = []): Promise<any> {
