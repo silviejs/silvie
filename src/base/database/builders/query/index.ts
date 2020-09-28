@@ -335,7 +335,8 @@ export default class QueryBuilder {
 			const conditionBuilder = new WhereConditionBuilder();
 			lhs(conditionBuilder);
 
-			condition.conditionBuilder = conditionBuilder;
+			condition.type = 'group';
+			condition.conditions = conditionBuilder.conditions;
 		} else {
 			condition.leftHandSide = lhs;
 
@@ -365,7 +366,7 @@ export default class QueryBuilder {
 
 	where(
 		column: TColumn | QueryBuilder | ((conditionBuilder: WhereConditionBuilder) => void),
-		operator: TOperator | TValue | QueryBuilder,
+		operator?: TOperator | TValue | QueryBuilder,
 		value?: TValue | QueryBuilder
 	): QueryBuilder {
 		return this.baseWhere('value', 'and', column, operator, value);
@@ -373,7 +374,7 @@ export default class QueryBuilder {
 
 	orWhere(
 		column: TColumn | QueryBuilder | ((conditionBuilder: WhereConditionBuilder) => void),
-		operator: TOperator | TValue | QueryBuilder,
+		operator?: TOperator | TValue | QueryBuilder,
 		value?: TValue | QueryBuilder
 	): QueryBuilder {
 		return this.baseWhere('value', 'or', column, operator, value);
@@ -582,7 +583,8 @@ export default class QueryBuilder {
 			const conditionBuilder = new HavingConditionBuilder();
 			lhs(conditionBuilder);
 
-			condition.conditionBuilder = conditionBuilder;
+			condition.type = 'group';
+			condition.conditions = conditionBuilder.conditions;
 		} else {
 			condition.leftHandSide = lhs;
 

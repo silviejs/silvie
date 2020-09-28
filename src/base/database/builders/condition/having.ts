@@ -12,6 +12,10 @@ import QueryBuilder from 'base/database/builders/query';
 export default class HavingConditionBuilder implements IConditionBuilder {
 	conditions: ICondition[];
 
+	constructor() {
+		this.conditions = [];
+	}
+
 	private baseHaving(
 		type: TConditionType,
 		relation: 'and' | 'or',
@@ -29,7 +33,8 @@ export default class HavingConditionBuilder implements IConditionBuilder {
 			const conditionBuilder = new HavingConditionBuilder();
 			lhs(conditionBuilder);
 
-			condition.conditionBuilder = conditionBuilder;
+			condition.type = 'group';
+			condition.conditions = conditionBuilder.conditions;
 		} else {
 			condition.leftHandSide = lhs;
 

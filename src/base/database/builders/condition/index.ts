@@ -6,6 +6,7 @@ export declare type TValue = string | number | boolean | TValue[];
 export declare type TColumn = string;
 export declare type TTable = string;
 export declare type TConditionType =
+	| 'group'
 	| 'value'
 	| 'column'
 	| 'null'
@@ -27,7 +28,7 @@ export interface ICondition {
 	leftHandSide?: TColumn | QueryBuilder | ((conditionBuilder: IConditionBuilder) => void);
 	operator?: TOperator;
 	rightHandSide?: TColumn | TValue | QueryBuilder;
-	conditionBuilder?: IConditionBuilder;
+	conditions?: ICondition[];
 	relation?: 'and' | 'or';
 	type: TConditionType;
 	query?: string;
