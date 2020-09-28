@@ -2,7 +2,7 @@ import QueryBuilder from 'base/database/builders/query';
 
 export declare type TOperator = '=' | '!=' | '>' | '>=' | '<' | '<=';
 export declare type TBaseValue = string | number | boolean;
-export declare type TValue = string | number | boolean | TValue[];
+export declare type TValue = string | number | boolean | TBaseValue[];
 export declare type TColumn = string;
 export declare type TTable = string;
 export declare type TConditionType =

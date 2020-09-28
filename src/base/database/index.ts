@@ -56,6 +56,10 @@ export class Database {
 		}
 	}
 
+	select(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.select(queryBuilder);
+	}
+
 	insert(queryBuilder: QueryBuilder): Promise<any> {
 		return this.driver.insert(queryBuilder);
 	}

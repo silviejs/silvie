@@ -1,11 +1,12 @@
-import { TBaseValue, TTable, TColumn, TOperator, TValue } from 'base/database/builders/condition';
+import { TBaseValue, TTable, TColumn, TOperator, ICondition } from 'base/database/builders/condition';
 import QueryBuilder from 'base/database/builders/query';
 import JoinConditionBuilder from 'base/database/builders/condition/join';
 
 export interface IOrder {
-	column?: TColumn | QueryBuilder;
+	column?: TColumn;
+	queryBuilder?: QueryBuilder;
 	direction?: 'asc' | 'desc' | 'ASC' | 'DESC';
-	type: 'column' | 'raw';
+	type: 'column' | 'raw' | 'query';
 	query?: string;
 	params?: TBaseValue[];
 }
@@ -28,7 +29,7 @@ export interface IUnion {
 export interface IJoin {
 	table?: TTable;
 	queryBuilder?: QueryBuilder;
-	conditionBuilder?: JoinConditionBuilder;
+	conditions?: ICondition[];
 	column1?: TColumn;
 	operator?: TOperator;
 	column2?: TColumn;

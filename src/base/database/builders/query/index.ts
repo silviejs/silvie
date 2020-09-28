@@ -55,7 +55,19 @@ export default class QueryBuilder {
 		};
 	}
 
-	get(): Promise<any> {}
+	get(): Promise<any> {
+		return Database.select(this);
+	}
+
+	async first(): Promise<any> {
+		const limitBeforeQuery = this.options.limit;
+
+		this.options.limit = 1;
+		const results = await Database.select(this);
+		this.options.limit = limitBeforeQuery;
+
+		return results[0] || null;
+	}
 
 	insert(data: any[]): Promise<any> {
 		this.options.insert = data;
@@ -119,15 +131,24 @@ export default class QueryBuilder {
 	selectRaw(query: string, params?: TBaseValue[]) {
 		this.options.select.push({
 			query,
-			params,
+			params: params || [],
 			type: 'raw',
 		});
 
 		return this;
 	}
 
-	orderBy(column: string, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
-		this.options.order.push({ column, direction: direction || 'ASC', type: 'column' });
+	orderBy(column: TColumn | QueryBuilder, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
+		const order: IOrder = { direction: direction || 'ASC', type: 'column' };
+
+		if (column instanceof QueryBuilder) {
+			order.queryBuilder = column;
+			order.type = 'query';
+		} else {
+			order.column = column;
+		}
+
+		this.options.order.push(order);
 
 		return this;
 	}
@@ -251,9 +272,10 @@ export default class QueryBuilder {
 		};
 
 		if (column1 instanceof Function) {
-			join.conditionBuilder = new JoinConditionBuilder();
-			column1(join.conditionBuilder);
+			const conditionBuilder = new JoinConditionBuilder();
+			column1(conditionBuilder);
 
+			join.conditions = conditionBuilder.conditions;
 			if (typeof operator === 'string') {
 				join.alias = operator;
 			}
@@ -281,6 +303,20 @@ export default class QueryBuilder {
 
 		if (table instanceof QueryBuilder) {
 			join.queryBuilder = table;
+
+			if (alias === undefined) {
+				if (column2 === undefined) {
+					throw new Error(`Invalid usage of ${type} join with query builder`);
+				} else {
+					join.operator = '=';
+					join.column2 = operator;
+					join.alias = column2;
+				}
+			} else {
+				join.operator = operator as TOperator;
+				join.column2 = column2;
+				join.alias = alias;
+			}
 		} else {
 			join.table = table;
 		}
@@ -418,35 +454,35 @@ export default class QueryBuilder {
 		return this.baseWhere('not null', 'or', column);
 	}
 
-	whereBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	whereBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('between', 'and', column, values);
 	}
 
-	orWhereBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	orWhereBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('between', 'and', column, values);
 	}
 
-	whereNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	whereNotBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('not between', 'and', column, values);
 	}
 
-	orWhereNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	orWhereNotBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('not between', 'and', column, values);
 	}
 
-	whereIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	whereIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('in', 'and', column, values);
 	}
 
-	orWhereIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	orWhereIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('in', 'or', column, values);
 	}
 
-	whereNotIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	whereNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('not in', 'and', column, values);
 	}
 
-	orWhereNotIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	orWhereNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseWhere('not in', 'or', column, values);
 	}
 
@@ -466,19 +502,11 @@ export default class QueryBuilder {
 		return this.baseWhere('not like', 'or', column, value);
 	}
 
-	whereColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): QueryBuilder {
+	whereColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): QueryBuilder {
 		return this.baseWhere('column', 'and', firstColumn, operator, secondColumn);
 	}
 
-	orWhereColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): QueryBuilder {
+	orWhereColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): QueryBuilder {
 		return this.baseWhere('column', 'or', firstColumn, operator, secondColumn);
 	}
 
@@ -666,35 +694,35 @@ export default class QueryBuilder {
 		return this.baseHaving('not null', 'or', column);
 	}
 
-	havingBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	havingBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('between', 'and', column, values);
 	}
 
-	orHavingBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	orHavingBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('between', 'and', column, values);
 	}
 
-	havingNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	havingNotBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('not between', 'and', column, values);
 	}
 
-	orHavingNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): QueryBuilder {
+	orHavingNotBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('not between', 'and', column, values);
 	}
 
-	havingIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	havingIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('in', 'and', column, values);
 	}
 
-	orHavingIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	orHavingIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('in', 'or', column, values);
 	}
 
-	havingNotIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	havingNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('not in', 'and', column, values);
 	}
 
-	orHavingNotIn(column: TColumn | QueryBuilder, values: TValue[]): QueryBuilder {
+	orHavingNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): QueryBuilder {
 		return this.baseHaving('not in', 'or', column, values);
 	}
 
@@ -714,19 +742,11 @@ export default class QueryBuilder {
 		return this.baseHaving('not like', 'or', column, value);
 	}
 
-	havingColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): QueryBuilder {
+	havingColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): QueryBuilder {
 		return this.baseHaving('column', 'and', firstColumn, operator, secondColumn);
 	}
 
-	orHavingColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): QueryBuilder {
+	orHavingColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): QueryBuilder {
 		return this.baseHaving('column', 'or', firstColumn, operator, secondColumn);
 	}
 

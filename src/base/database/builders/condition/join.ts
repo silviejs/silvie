@@ -94,35 +94,38 @@ export default class JoinConditionBuilder implements IConditionBuilder {
 		return this.baseOn('not null', 'or', column);
 	}
 
-	onBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): JoinConditionBuilder {
+	onBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): JoinConditionBuilder {
 		return this.baseOn('between', 'and', column, values);
 	}
 
-	orOnBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): JoinConditionBuilder {
+	orOnBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): JoinConditionBuilder {
 		return this.baseOn('between', 'and', column, values);
 	}
 
-	onNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): JoinConditionBuilder {
+	onNotBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): JoinConditionBuilder {
 		return this.baseOn('not between', 'and', column, values);
 	}
 
-	orOnNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): JoinConditionBuilder {
+	orOnNotBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): JoinConditionBuilder {
 		return this.baseOn('not between', 'and', column, values);
 	}
 
-	onIn(column: TColumn | QueryBuilder, values: TValue[]): JoinConditionBuilder {
+	onIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): JoinConditionBuilder {
 		return this.baseOn('in', 'and', column, values);
 	}
 
-	orOnIn(column: TColumn | QueryBuilder, values: TValue[]): JoinConditionBuilder {
+	orOnIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): JoinConditionBuilder {
 		return this.baseOn('in', 'or', column, values);
 	}
 
-	onNotIn(column: TColumn | QueryBuilder, values: TValue[]): JoinConditionBuilder {
+	onNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): JoinConditionBuilder {
 		return this.baseOn('not in', 'and', column, values);
 	}
 
-	orOnNotIn(column: TColumn | QueryBuilder, values: TValue[]): JoinConditionBuilder {
+	orOnNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): JoinConditionBuilder {
 		return this.baseOn('not in', 'or', column, values);
 	}
 
@@ -142,19 +145,11 @@ export default class JoinConditionBuilder implements IConditionBuilder {
 		return this.baseOn('not like', 'or', column, value);
 	}
 
-	onColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): JoinConditionBuilder {
+	onColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): JoinConditionBuilder {
 		return this.baseOn('column', 'and', firstColumn, operator, secondColumn);
 	}
 
-	orOnColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): JoinConditionBuilder {
+	orOnColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): JoinConditionBuilder {
 		return this.baseOn('column', 'or', firstColumn, operator, secondColumn);
 	}
 

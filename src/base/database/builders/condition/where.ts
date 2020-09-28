@@ -94,35 +94,44 @@ export default class WhereConditionBuilder implements IConditionBuilder {
 		return this.baseWhere('not null', 'or', column);
 	}
 
-	whereBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): WhereConditionBuilder {
+	whereBetween(column: TColumn | QueryBuilder, values: [TBaseValue, TBaseValue] | QueryBuilder): WhereConditionBuilder {
 		return this.baseWhere('between', 'and', column, values);
 	}
 
-	orWhereBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): WhereConditionBuilder {
+	orWhereBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): WhereConditionBuilder {
 		return this.baseWhere('between', 'and', column, values);
 	}
 
-	whereNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): WhereConditionBuilder {
+	whereNotBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): WhereConditionBuilder {
 		return this.baseWhere('not between', 'and', column, values);
 	}
 
-	orWhereNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): WhereConditionBuilder {
+	orWhereNotBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): WhereConditionBuilder {
 		return this.baseWhere('not between', 'and', column, values);
 	}
 
-	whereIn(column: TColumn | QueryBuilder, values: TValue[]): WhereConditionBuilder {
+	whereIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): WhereConditionBuilder {
 		return this.baseWhere('in', 'and', column, values);
 	}
 
-	orWhereIn(column: TColumn | QueryBuilder, values: TValue[]): WhereConditionBuilder {
+	orWhereIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): WhereConditionBuilder {
 		return this.baseWhere('in', 'or', column, values);
 	}
 
-	whereNotIn(column: TColumn | QueryBuilder, values: TValue[]): WhereConditionBuilder {
+	whereNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): WhereConditionBuilder {
 		return this.baseWhere('not in', 'and', column, values);
 	}
 
-	orWhereNotIn(column: TColumn | QueryBuilder, values: TValue[]): WhereConditionBuilder {
+	orWhereNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): WhereConditionBuilder {
 		return this.baseWhere('not in', 'or', column, values);
 	}
 
@@ -142,19 +151,11 @@ export default class WhereConditionBuilder implements IConditionBuilder {
 		return this.baseWhere('not like', 'or', column, value);
 	}
 
-	whereColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): WhereConditionBuilder {
+	whereColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): WhereConditionBuilder {
 		return this.baseWhere('column', 'and', firstColumn, operator, secondColumn);
 	}
 
-	orWhereColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): WhereConditionBuilder {
+	orWhereColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): WhereConditionBuilder {
 		return this.baseWhere('column', 'or', firstColumn, operator, secondColumn);
 	}
 

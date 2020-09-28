@@ -34,3 +34,15 @@ HTTPServer.init();
 GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
 HTTPServer.start();
+
+// new QueryBuilder('examples')
+// 	.where('id', 3)
+// 	.unionAll(new QueryBuilder('samples').where('id', '>', 3))
+// 	.get()
+// 	.then((result) => console.log(result));
+
+new QueryBuilder('examples')
+	.selectRaw('examples.id AS id, examples.name AS firstname, st.name AS lastname')
+	.join(new QueryBuilder('samples').where('id', '>', 3), 'examples.id', 'st.id', 'st')
+	.get()
+	.then((result) => console.log(result));

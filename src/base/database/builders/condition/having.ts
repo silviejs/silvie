@@ -94,35 +94,47 @@ export default class HavingConditionBuilder implements IConditionBuilder {
 		return this.baseHaving('not null', 'or', column);
 	}
 
-	havingBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): HavingConditionBuilder {
+	havingBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): HavingConditionBuilder {
 		return this.baseHaving('between', 'and', column, values);
 	}
 
-	orHavingBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): HavingConditionBuilder {
+	orHavingBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): HavingConditionBuilder {
 		return this.baseHaving('between', 'and', column, values);
 	}
 
-	havingNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): HavingConditionBuilder {
+	havingNotBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): HavingConditionBuilder {
 		return this.baseHaving('not between', 'and', column, values);
 	}
 
-	orHavingNotBetween(column: TColumn | QueryBuilder, values: [TValue, TValue] | QueryBuilder): HavingConditionBuilder {
+	orHavingNotBetween(
+		column: TColumn | QueryBuilder,
+		values: [TBaseValue, TBaseValue] | QueryBuilder
+	): HavingConditionBuilder {
 		return this.baseHaving('not between', 'and', column, values);
 	}
 
-	havingIn(column: TColumn | QueryBuilder, values: TValue[]): HavingConditionBuilder {
+	havingIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): HavingConditionBuilder {
 		return this.baseHaving('in', 'and', column, values);
 	}
 
-	orHavingIn(column: TColumn | QueryBuilder, values: TValue[]): HavingConditionBuilder {
+	orHavingIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): HavingConditionBuilder {
 		return this.baseHaving('in', 'or', column, values);
 	}
 
-	havingNotIn(column: TColumn | QueryBuilder, values: TValue[]): HavingConditionBuilder {
+	havingNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): HavingConditionBuilder {
 		return this.baseHaving('not in', 'and', column, values);
 	}
 
-	orHavingNotIn(column: TColumn | QueryBuilder, values: TValue[]): HavingConditionBuilder {
+	orHavingNotIn(column: TColumn | QueryBuilder, values: TBaseValue[] | QueryBuilder): HavingConditionBuilder {
 		return this.baseHaving('not in', 'or', column, values);
 	}
 
@@ -142,19 +154,11 @@ export default class HavingConditionBuilder implements IConditionBuilder {
 		return this.baseHaving('not like', 'or', column, value);
 	}
 
-	havingColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): HavingConditionBuilder {
+	havingColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): HavingConditionBuilder {
 		return this.baseHaving('column', 'and', firstColumn, operator, secondColumn);
 	}
 
-	orHavingColumn(
-		firstColumn: TColumn | QueryBuilder,
-		operator: TOperator | TColumn | QueryBuilder,
-		secondColumn?: TColumn | QueryBuilder
-	): HavingConditionBuilder {
+	orHavingColumn(firstColumn: TColumn, operator: TOperator | TColumn, secondColumn?: TColumn): HavingConditionBuilder {
 		return this.baseHaving('column', 'or', firstColumn, operator, secondColumn);
 	}
 
