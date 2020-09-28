@@ -543,10 +543,10 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 	private static compileInsert(qb: QueryBuilder): [string, TBaseValue[]] {
 		const params = [];
-		let query = `INSERT INTO ${this.prepareTable(qb.options.table)}`;
+		let query = `INSERT${qb.options.ignoreDuplicates ? ' IGNORE' : ''} INTO ${this.prepareTable(qb.options.table)}`;
 
 		const fieldNames = Object.keys(qb.options.insert[0]);
-		query += `(${fieldNames.map(this.prepareColumn).join(', ')}) VALUES `;
+		query += `(${fieldNames.map((fieldName) => this.prepareColumn(fieldName)).join(', ')}) VALUES `;
 
 		const values = qb.options.insert.map((dataset) => {
 			fieldNames.forEach((fieldName) => {
@@ -563,13 +563,6 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 	insert(queryBuilder: QueryBuilder): Promise<any> {
 		return this.execute(...MySQLDriver.compileInsert(queryBuilder));
-	}
-
-	insertOrIgnore(queryBuilder: QueryBuilder): Promise<any> {
-		const query = '';
-		const params = [];
-
-		return this.execute(query, params);
 	}
 
 	update(queryBuilder: QueryBuilder): Promise<any> {

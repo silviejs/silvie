@@ -21,6 +21,7 @@ export default class QueryBuilder {
 
 		select: ISelect[];
 		insert: any[];
+		ignoreDuplicates?: boolean;
 
 		where: ICondition[];
 		having: ICondition[];
@@ -73,8 +74,9 @@ export default class QueryBuilder {
 		return Database.exists(this);
 	}
 
-	insert(data: any[]): Promise<any> {
+	insert(data: any[], ignore?: boolean): Promise<any> {
 		this.options.insert = data;
+		this.options.ignoreDuplicates = ignore;
 
 		return Database.insert(this);
 	}

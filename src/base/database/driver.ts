@@ -7,7 +7,6 @@ export default interface IDatabaseDriver {
 	exists(queryBuilder: QueryBuilder): Promise<boolean>;
 
 	insert(queryBuilder: QueryBuilder): Promise<any>;
-	insertOrIgnore(queryBuilder: QueryBuilder): Promise<any>;
 
 	update(queryBuilder: QueryBuilder): Promise<any>;
 	bulkUpdate(queryBuilder: QueryBuilder): Promise<any>;
