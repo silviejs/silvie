@@ -13,11 +13,15 @@ import WhereConditionBuilder from 'base/database/builders/condition/where';
 import HavingConditionBuilder from 'base/database/builders/condition/having';
 import JoinConditionBuilder from 'base/database/builders/condition/join';
 
+import Database from 'base/database';
+
 export default class QueryBuilder {
 	options: {
 		table: TTable;
 
 		select: ISelect[];
+		insert: any[];
+
 		where: ICondition[];
 		having: ICondition[];
 		order: IOrder[];
@@ -40,6 +44,8 @@ export default class QueryBuilder {
 			table: tableName,
 
 			select: [],
+			insert: [],
+
 			where: [],
 			having: [],
 			order: [],
@@ -48,6 +54,22 @@ export default class QueryBuilder {
 			join: [],
 		};
 	}
+
+	get(): Promise<any> {}
+
+	insert(data: any[]): Promise<any> {
+		this.options.insert = data;
+
+		return Database.insert(this);
+	}
+
+	update(data: any): Promise<any> {}
+
+	bulkUpdate(data: any[]): Promise<any> {}
+
+	delete(): Promise<any> {}
+
+	softDelete(): Promise<any> {}
 
 	sharedLock() {
 		this.options.lock = 'shared';

@@ -3,6 +3,7 @@ import IDatabaseDriver from 'base/database/driver';
 import drivers from 'base/database/drivers';
 import config from 'config/database';
 import { TBaseValue } from 'base/database/builders/condition';
+import QueryBuilder from 'base/database/builders/query';
 
 export class Database {
 	/**
@@ -53,6 +54,10 @@ export class Database {
 				...(config[type] ?? {}),
 			});
 		}
+	}
+
+	insert(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.insert(queryBuilder);
 	}
 
 	raw(query: string, params?: TBaseValue[]): Promise<any> {

@@ -78,6 +78,10 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return MySQLTypes[typeName];
 	}
 
+	private static prepareTable(tableName: string): string {
+		return `\`${tableName.replace(/['"`]/, '')}\``;
+	}
+
 	private static prepareColumn(columnName: string): string {
 		return columnName
 			.replace(/['"`]/, '')
@@ -100,10 +104,19 @@ export default class MySQLDriver implements IDatabaseDriver {
 		parts.push(`\`${column.name}\``);
 
 		const type = this.resolveType(column.type);
-		parts.push(type);
+		if (column.size) {
+			parts.push(`${type}(${column.size})`);
+		} else {
+			parts.push(type);
+		}
 
 		if (type.endsWith('INT') && column.options.unsigned) parts.push('UNSIGNED');
-		if (column.options.defaultValue) parts.push(`DEFAULT ${this.prepareValue(column.options.defaultValue)}`);
+
+		if (column.options.defaultValue) {
+			parts.push(`DEFAULT ${this.prepareValue(column.options.defaultValue)}`);
+		} else if (column.options.useCurrent) {
+			parts.push(`DEFAULT CURRENT_TIMESTAMP`);
+		}
 
 		if (column.options.nullable) parts.push('NULL');
 		else parts.push('NOT NULL');
@@ -186,9 +199,28 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return this.execute(query, params);
 	}
 
-	insert(queryBuilder: QueryBuilder): Promise<any> {
-		const query = '';
+	private static compileInsert(qb: QueryBuilder): [string, any[]] {
 		const params = [];
+		let query = `INSERT INTO ${this.prepareTable(qb.options.table)}`;
+
+		const fieldNames = Object.keys(qb.options.insert[0]);
+		query += `(${fieldNames.map(this.prepareColumn).join(',')}) VALUES `;
+
+		const values = qb.options.insert.map((dataset) => {
+			fieldNames.forEach((fieldName) => {
+				params.push(dataset[fieldName]);
+			});
+
+			return `(${new Array(fieldNames.length).fill('?').join(',')})`;
+		});
+
+		query += `${values.join(',')};`;
+
+		return [query, params];
+	}
+
+	insert(queryBuilder: QueryBuilder): Promise<any> {
+		const [query, params] = MySQLDriver.compileInsert(queryBuilder);
 
 		return this.execute(query, params);
 	}
