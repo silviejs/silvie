@@ -69,6 +69,10 @@ export default class QueryBuilder {
 		return results[0] || null;
 	}
 
+	exists(): Promise<boolean> {
+		return Database.exists(this);
+	}
+
 	insert(data: any[]): Promise<any> {
 		this.options.insert = data;
 

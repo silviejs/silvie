@@ -533,11 +533,12 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return this.execute(...MySQLDriver.compileSelect(queryBuilder));
 	}
 
-	exists(queryBuilder: QueryBuilder): Promise<any> {
-		const query = '';
-		const params = [];
+	async exists(queryBuilder: QueryBuilder): Promise<boolean> {
+		const [query, params] = MySQLDriver.compileSelect(queryBuilder);
 
-		return this.execute(query, params);
+		const [result] = await this.execute(`SELECT EXISTS(${query}) AS \`exists\``, params);
+
+		return !!result.exists;
 	}
 
 	private static compileInsert(qb: QueryBuilder): [string, TBaseValue[]] {

@@ -4,7 +4,7 @@ import { TBaseValue } from 'base/database/builders/condition';
 
 export default interface IDatabaseDriver {
 	select(queryBuilder: QueryBuilder): Promise<any>;
-	exists(queryBuilder: QueryBuilder): Promise<any>;
+	exists(queryBuilder: QueryBuilder): Promise<boolean>;
 
 	insert(queryBuilder: QueryBuilder): Promise<any>;
 	insertOrIgnore(queryBuilder: QueryBuilder): Promise<any>;

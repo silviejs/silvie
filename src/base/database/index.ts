@@ -60,6 +60,10 @@ export class Database {
 		return this.driver.select(queryBuilder);
 	}
 
+	exists(queryBuilder: QueryBuilder): Promise<boolean> {
+		return this.driver.exists(queryBuilder);
+	}
+
 	insert(queryBuilder: QueryBuilder): Promise<any> {
 		return this.driver.insert(queryBuilder);
 	}
