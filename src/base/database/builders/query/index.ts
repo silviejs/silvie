@@ -8,7 +8,7 @@ import {
 	ICondition,
 } from 'base/database/builders/condition';
 
-import { IOrder, IGroup, IUnion, IJoin, ISelect } from 'base/database/builders/query/types';
+import { IOrder, IGroup, IUnion, IJoin, ISelect, IAliasTable } from 'base/database/builders/query/types';
 import WhereConditionBuilder from 'base/database/builders/condition/where';
 import HavingConditionBuilder from 'base/database/builders/condition/having';
 import JoinConditionBuilder from 'base/database/builders/condition/join';
@@ -18,6 +18,7 @@ import Database from 'base/database';
 export default class QueryBuilder {
 	options: {
 		table: TTable;
+		aliasTable?: IAliasTable;
 
 		select: ISelect[];
 		selectInto?: string;
@@ -167,6 +168,15 @@ export default class QueryBuilder {
 				type: 'column' as 'column' | 'query' | 'raw',
 			}))
 		);
+
+		return this;
+	}
+
+	fromAliasTable(queryBuilder: QueryBuilder, alias?: string) {
+		this.options.aliasTable = {
+			queryBuilder,
+			alias,
+		};
 
 		return this;
 	}

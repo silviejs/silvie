@@ -513,19 +513,23 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const [unionQuery, unionParams] = this.compileUnion(qb);
 		const [joinQuery, joinParams] = this.compileJoin(qb);
 
-		const params = [
-			...fieldsParams,
-			...whereParams,
-			...groupParams,
-			...orderParams,
-			...limitParams,
-			...unionParams,
-			...joinParams,
-		];
+		const params = fieldsParams;
 
 		let query = `SELECT ${fieldsQuery} `;
-		if (qb.options.selectInto) query += `INTO ${qb.options.selectInto} `;
-		query += `FROM ${this.prepareTable(qb.options.table)} `;
+		if (qb.options.selectInto) {
+			query += `INTO ${qb.options.selectInto} `;
+		}
+
+		if (qb.options.aliasTable) {
+			const [q, p] = this.compileSelect(qb.options.aliasTable.queryBuilder);
+
+			params.push(...p);
+			query += `FROM (${q}) ${qb.options.aliasTable.alias ? `${this.prepareTable(qb.options.aliasTable.alias)} ` : ''}`;
+		} else {
+			query += `FROM ${this.prepareTable(qb.options.table)} `;
+		}
+
+		params.push(...joinParams, ...whereParams, ...groupParams, ...orderParams, ...limitParams, ...unionParams);
 		query += [joinQuery, whereQuery, groupQuery, orderQuery, limitQuery, unionQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];

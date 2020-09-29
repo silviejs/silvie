@@ -11,6 +11,11 @@ export interface IOrder {
 	params?: TBaseValue[];
 }
 
+export interface IAliasTable {
+	queryBuilder: QueryBuilder;
+	alias?: string;
+}
+
 export interface IGroup {
 	column?: TColumn;
 	type: 'column' | 'raw';
