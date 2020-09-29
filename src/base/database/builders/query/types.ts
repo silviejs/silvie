@@ -1,6 +1,7 @@
 import { TBaseValue, TTable, TColumn, TOperator, ICondition } from 'base/database/builders/condition';
 import QueryBuilder from 'base/database/builders/query';
-import JoinConditionBuilder from 'base/database/builders/condition/join';
+
+export type TAggregateType = 'count' | 'average' | 'summation' | 'minimum' | 'maximum' | 'concat';
 
 export interface IOrder {
 	column?: TColumn;
@@ -48,5 +49,7 @@ export interface ISelect {
 	alias?: string;
 	query?: string;
 	params?: TBaseValue[];
-	type?: 'column' | 'query' | 'raw';
+	type?: 'column' | 'query' | 'raw' | 'aggregate';
+	aggregation?: TAggregateType;
+	meta?: any;
 }

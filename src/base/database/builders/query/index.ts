@@ -8,7 +8,15 @@ import {
 	ICondition,
 } from 'base/database/builders/condition';
 
-import { IOrder, IGroup, IUnion, IJoin, ISelect, IAliasTable } from 'base/database/builders/query/types';
+import {
+	IOrder,
+	IGroup,
+	IUnion,
+	IJoin,
+	ISelect,
+	IAliasTable,
+	TAggregateType,
+} from 'base/database/builders/query/types';
 import WhereConditionBuilder from 'base/database/builders/condition/where';
 import HavingConditionBuilder from 'base/database/builders/condition/having';
 import JoinConditionBuilder from 'base/database/builders/condition/join';
@@ -80,6 +88,30 @@ export default class QueryBuilder {
 		this.options.limit = limitBeforeQuery;
 
 		return results[0] || null;
+	}
+
+	count(): Promise<number> {
+		return Database.proxy('count', this);
+	}
+
+	average(column: TColumn): Promise<number> {
+		return Database.proxy('average', this, column);
+	}
+
+	sum(column: TColumn): Promise<number> {
+		return Database.proxy('sum', this, column);
+	}
+
+	min(column: TColumn): Promise<any> {
+		return Database.proxy('min', this, column);
+	}
+
+	max(column: TColumn): Promise<any> {
+		return Database.proxy('max', this, column);
+	}
+
+	concat(columns: TColumn[], separator = ', '): Promise<string> {
+		return Database.proxy('concat', this, columns, separator);
 	}
 
 	exists(): Promise<boolean> {
@@ -287,28 +319,40 @@ export default class QueryBuilder {
 		return this.limit(count);
 	}
 
-	count(): Promise<number> {
-		return Database.proxy('count', this);
+	private baseAggregate(type: TAggregateType, column: TColumn, alias: string, meta?: any) {
+		this.options.select.push({
+			type: 'aggregate',
+			aggregation: type,
+			column,
+			alias,
+			meta,
+		});
+
+		return this;
 	}
 
-	average(column: TColumn): Promise<number> {
-		return Database.proxy('average', this, column);
+	selectCount(alias: string): QueryBuilder {
+		return this.baseAggregate('count', '*', alias);
 	}
 
-	sum(column: TColumn): Promise<number> {
-		return Database.proxy('sum', this, column);
+	selectAverage(column: TColumn, alias: string): QueryBuilder {
+		return this.baseAggregate('average', column, alias);
 	}
 
-	min(column: TColumn): Promise<any> {
-		return Database.proxy('min', this, column);
+	selectSum(column: TColumn, alias: string): QueryBuilder {
+		return this.baseAggregate('summation', column, alias);
 	}
 
-	max(column: TColumn): Promise<any> {
-		return Database.proxy('max', this, column);
+	selectMin(column: TColumn, alias: string): QueryBuilder {
+		return this.baseAggregate('minimum', column, alias);
 	}
 
-	concat(columns: TColumn[], separator = ', '): Promise<string> {
-		return Database.proxy('concat', this, columns, separator);
+	selectMax(column: TColumn, alias: string): QueryBuilder {
+		return this.baseAggregate('maximum', column, alias);
+	}
+
+	selectConcat(columns: TColumn[], separator = ', ', alias: string): QueryBuilder {
+		return this.baseAggregate('concat', null, alias, { columns, separator });
 	}
 
 	groupBy(...columns: TColumn[]) {

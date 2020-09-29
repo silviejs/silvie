@@ -93,7 +93,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 			columnParts.splice(0, -1, cleanTableName);
 		}
 
-		return columnParts.map((part) => `\`${part}\``).join('.');
+		return columnParts.map((part) => (part !== '*' ? `\`${part}\`` : '*')).join('.');
 	}
 
 	private static compileColumn(column: Column): [string, TBaseValue[]] {
@@ -322,6 +322,36 @@ export default class MySQLDriver implements IDatabaseDriver {
 				if (field.type === 'raw') {
 					params.push(...field.params);
 					return field.query;
+				}
+
+				if (field.type === 'aggregate') {
+					if (field.aggregation === 'count') {
+						return `COUNT(*)${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
+					}
+
+					if (field.aggregation === 'average') {
+						return `AVG(${this.col(field.column)})${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
+					}
+
+					if (field.aggregation === 'summation') {
+						return `SUM(${this.col(field.column)})${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
+					}
+
+					if (field.aggregation === 'minimum') {
+						return `MIN(${this.col(field.column)})${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
+					}
+
+					if (field.aggregation === 'maximum') {
+						return `MAX(${this.col(field.column)})${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
+					}
+
+					if (field.aggregation === 'concat') {
+						params.push(field.meta.separator);
+
+						return `GROUP_CONCAT(${field.meta.columns
+							.map((column) => this.col(column, qb.options.table))
+							.join(', ')} SEPARATOR ?)${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
+					}
 				}
 
 				throw new Error(`Invalid select field`);
