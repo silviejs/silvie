@@ -3,7 +3,6 @@ import IDatabaseDriver from 'base/database/driver';
 import drivers from 'base/database/drivers';
 import config from 'config/database';
 import { TBaseValue } from 'base/database/builders/condition';
-import QueryBuilder from 'base/database/builders/query';
 
 export class Database {
 	/**
@@ -56,36 +55,8 @@ export class Database {
 		}
 	}
 
-	select(queryBuilder: QueryBuilder): Promise<any> {
-		return this.driver.select(queryBuilder);
-	}
-
-	exists(queryBuilder: QueryBuilder): Promise<boolean> {
-		return this.driver.exists(queryBuilder);
-	}
-
-	insert(queryBuilder: QueryBuilder): Promise<any> {
-		return this.driver.insert(queryBuilder);
-	}
-
-	update(queryBuilder: QueryBuilder): Promise<any> {
-		return this.driver.update(queryBuilder);
-	}
-
-	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
-		return this.driver.bulkUpdate(queryBuilder);
-	}
-
-	delete(queryBuilder: QueryBuilder): Promise<any> {
-		return this.driver.delete(queryBuilder);
-	}
-
-	softDelete(queryBuilder: QueryBuilder): Promise<any> {
-		return this.driver.softDelete(queryBuilder);
-	}
-
-	undelete(queryBuilder: QueryBuilder): Promise<any> {
-		return this.driver.undelete(queryBuilder);
+	proxy(action: string, ...params): Promise<any> {
+		return this.driver[action](...params);
 	}
 
 	raw(query: string, params?: TBaseValue[]): Promise<any> {

@@ -1,10 +1,17 @@
 import Table from 'base/database/table';
 import QueryBuilder from 'base/database/builders/query';
-import { TBaseValue } from 'base/database/builders/condition';
+import { TBaseValue, TColumn } from 'base/database/builders/condition';
 
 export default interface IDatabaseDriver {
 	select(queryBuilder: QueryBuilder): Promise<any>;
 	exists(queryBuilder: QueryBuilder): Promise<boolean>;
+
+	count(queryBuilder: QueryBuilder): Promise<number>;
+	average(queryBuilder: QueryBuilder, column: TColumn): Promise<number>;
+	sum(queryBuilder: QueryBuilder, column: TColumn): Promise<number>;
+	min(queryBuilder: QueryBuilder, column: TColumn): Promise<any>;
+	max(queryBuilder: QueryBuilder, column: TColumn): Promise<any>;
+	concat(queryBuilder: QueryBuilder, columns: TColumn[], separator?: string): Promise<string | string[]>;
 
 	insert(queryBuilder: QueryBuilder): Promise<any>;
 

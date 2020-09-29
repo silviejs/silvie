@@ -3,7 +3,7 @@ import IDatabaseDriver from 'base/database/driver';
 import Table from 'base/database/table';
 import Column from 'base/database/column';
 import QueryBuilder from 'base/database/builders/query';
-import { ICondition, TBaseValue } from 'base/database/builders/condition';
+import { ICondition, TBaseValue, TColumn } from 'base/database/builders/condition';
 
 interface MySQLOptions {
 	host: string;
@@ -234,7 +234,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 					return clause;
 				}
 
-				let lhs = '';
+				let lhs;
 				if (condition.leftHandSide instanceof QueryBuilder) {
 					const [q, p] = this.compileSelect(condition.leftHandSide);
 					params.push(...p);
@@ -243,7 +243,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 					lhs = this.col(condition.leftHandSide as string, tableName);
 				}
 
-				let rhs: any = '';
+				let rhs: any;
 				if (condition.rightHandSide instanceof QueryBuilder) {
 					const [q, p] = this.compileSelect(condition.rightHandSide);
 					params.push(...p);
@@ -349,7 +349,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 					cross: 'CROSS JOIN',
 				}[join.type];
 
-				let table = '';
+				let table;
 				if (join.queryBuilder) {
 					const [q, p] = this.compileSelect(join.queryBuilder);
 					params.push(...p);
@@ -359,7 +359,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 					table = `${this.tbl(join.table)}${join.alias ? ` ${this.tbl(join.alias)}` : ''}`;
 				}
 
-				let conditions = '';
+				let conditions;
 				if (join.conditions) {
 					const [q, p] = this.compileConditions(join.conditions, qb.options.table);
 					params.push(...p);
@@ -538,6 +538,88 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 	select(queryBuilder: QueryBuilder): Promise<any> {
 		return this.execute(...MySQLDriver.compileSelect(queryBuilder));
+	}
+
+	async count(queryBuilder: QueryBuilder): Promise<number> {
+		const qb = queryBuilder.clone().selectRaw(`COUNT(*) AS ${MySQLDriver.col('mysql_driver_count')}`);
+
+		if (qb.options.group.length > 0) {
+			return qb.pluck('mysql_driver_count');
+		}
+
+		return (await qb.first()).mysql_driver_count;
+	}
+
+	async average(queryBuilder: QueryBuilder, column: TColumn): Promise<number> {
+		const qb = queryBuilder
+			.clone()
+			.selectRaw(
+				`AVG(${MySQLDriver.col(column, queryBuilder.options.table)}) AS ${MySQLDriver.col('mysql_driver_average')}`
+			);
+
+		if (qb.options.group.length > 0) {
+			return qb.pluck('mysql_driver_average');
+		}
+
+		return (await qb.first()).mysql_driver_average;
+	}
+
+	async sum(queryBuilder: QueryBuilder, column: TColumn): Promise<number> {
+		const qb = queryBuilder
+			.clone()
+			.selectRaw(
+				`SUM(${MySQLDriver.col(column, queryBuilder.options.table)}) AS ${MySQLDriver.col('mysql_driver_summation')}`
+			);
+
+		if (qb.options.group.length > 0) {
+			return qb.pluck('mysql_driver_summation');
+		}
+
+		return (await qb.first()).mysql_driver_summation;
+	}
+
+	async min(queryBuilder: QueryBuilder, column: TColumn): Promise<any> {
+		const qb = queryBuilder
+			.clone()
+			.selectRaw(
+				`MIN(${MySQLDriver.col(column, queryBuilder.options.table)}) AS ${MySQLDriver.col('mysql_driver_minimum')}`
+			);
+
+		if (qb.options.group.length > 0) {
+			return qb.pluck('mysql_driver_minimum');
+		}
+
+		return (await qb.first()).mysql_driver_minimum;
+	}
+
+	async max(queryBuilder: QueryBuilder, column: TColumn): Promise<any> {
+		const qb = queryBuilder
+			.clone()
+			.selectRaw(
+				`MAX(${MySQLDriver.col(column, queryBuilder.options.table)}) AS ${MySQLDriver.col('mysql_driver_maximum')}`
+			);
+
+		if (qb.options.group.length > 0) {
+			return qb.pluck('mysql_driver_maximum');
+		}
+
+		return (await qb.first()).mysql_driver_maximum;
+	}
+
+	async concat(queryBuilder: QueryBuilder, columns: TColumn[], separator = ', '): Promise<string | string[]> {
+		const params = columns.map((column) => MySQLDriver.col(column, queryBuilder.options.table));
+
+		const qb = queryBuilder
+			.clone()
+			.selectRaw(
+				`GROUP_CONCAT(${params.join(', ')} SEPARATOR '${separator}') AS ${MySQLDriver.col('mysql_driver_concat')}`
+			);
+
+		if (qb.options.group.length > 0) {
+			return qb.pluck('mysql_driver_concat');
+		}
+
+		return (await qb.first()).mysql_driver_concat;
 	}
 
 	async exists(queryBuilder: QueryBuilder): Promise<boolean> {

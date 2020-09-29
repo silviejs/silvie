@@ -17,7 +17,7 @@ import Database from 'base/database';
 
 export default class QueryBuilder {
 	options: {
-		table: TTable;
+		table?: TTable;
 		aliasTable?: IAliasTable;
 
 		select: ISelect[];
@@ -46,10 +46,8 @@ export default class QueryBuilder {
 		lock?: 'shared' | 'update';
 	};
 
-	constructor(tableName: string) {
+	constructor(tableName?: string) {
 		this.options = {
-			table: tableName,
-
 			select: [],
 			where: [],
 			having: [],
@@ -58,28 +56,38 @@ export default class QueryBuilder {
 			union: [],
 			join: [],
 		};
+
+		if (tableName) {
+			this.options.table = tableName;
+		}
+	}
+
+	clone(): QueryBuilder {
+		const qb = new QueryBuilder();
+		qb.options = this.options;
+		return qb;
 	}
 
 	get(): Promise<any> {
-		return Database.select(this);
+		return Database.proxy('select', this);
 	}
 
 	async first(): Promise<any> {
 		const limitBeforeQuery = this.options.limit;
 
 		this.options.limit = 1;
-		const results = await Database.select(this);
+		const results = await Database.proxy('select', this);
 		this.options.limit = limitBeforeQuery;
 
 		return results[0] || null;
 	}
 
 	exists(): Promise<boolean> {
-		return Database.exists(this);
+		return Database.proxy('exists', this);
 	}
 
 	async doesntExist(): Promise<boolean> {
-		return !(await Database.exists(this));
+		return !(await this.exists());
 	}
 
 	async pluck(keyColumn: TColumn, valueColumn: TColumn = null, override = true): Promise<any> {
@@ -107,7 +115,7 @@ export default class QueryBuilder {
 		this.options.insert = data;
 		this.options.ignoreDuplicates = ignore;
 
-		return Database.insert(this).then((results) => {
+		return Database.proxy('insert', this).then((results) => {
 			delete this.options.insert;
 			delete this.options.ignoreDuplicates;
 
@@ -119,7 +127,7 @@ export default class QueryBuilder {
 		this.options.update = data;
 		this.options.silentUpdate = silent;
 
-		return Database.update(this).then((results) => {
+		return Database.proxy('update', this).then((results) => {
 			delete this.options.update;
 			delete this.options.silentUpdate;
 
@@ -132,7 +140,7 @@ export default class QueryBuilder {
 		this.options.bulkUpdateKeys = keys;
 		this.options.silentUpdate = silent;
 
-		return Database.bulkUpdate(this).then((results) => {
+		return Database.proxy('bulkUpdate', this).then((results) => {
 			delete this.options.bulkUpdateData;
 			delete this.options.bulkUpdateKeys;
 			delete this.options.silentUpdate;
@@ -146,15 +154,15 @@ export default class QueryBuilder {
 			return this.softDelete();
 		}
 
-		return Database.delete(this);
+		return Database.proxy('delete', this);
 	}
 
 	softDelete(): Promise<any> {
-		return Database.softDelete(this);
+		return Database.proxy('softDelete', this);
 	}
 
 	undelete(): Promise<any> {
-		return Database.undelete(this);
+		return Database.proxy('undelete', this);
 	}
 
 	sharedLock() {
@@ -277,6 +285,30 @@ export default class QueryBuilder {
 
 	take(count: number) {
 		return this.limit(count);
+	}
+
+	count(): Promise<number> {
+		return Database.proxy('count', this);
+	}
+
+	average(column: TColumn): Promise<number> {
+		return Database.proxy('average', this, column);
+	}
+
+	sum(column: TColumn): Promise<number> {
+		return Database.proxy('sum', this, column);
+	}
+
+	min(column: TColumn): Promise<any> {
+		return Database.proxy('min', this, column);
+	}
+
+	max(column: TColumn): Promise<any> {
+		return Database.proxy('max', this, column);
+	}
+
+	concat(columns: TColumn[], separator = ', '): Promise<string> {
+		return Database.proxy('concat', this, columns, separator);
 	}
 
 	groupBy(...columns: TColumn[]) {
