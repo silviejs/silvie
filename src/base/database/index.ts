@@ -72,6 +72,10 @@ export class Database {
 		return this.driver.update(queryBuilder);
 	}
 
+	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.bulkUpdate(queryBuilder);
+	}
+
 	delete(queryBuilder: QueryBuilder): Promise<any> {
 		return this.driver.delete(queryBuilder);
 	}

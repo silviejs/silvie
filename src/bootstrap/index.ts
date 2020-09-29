@@ -36,6 +36,21 @@ GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 HTTPServer.start();
 
 new QueryBuilder('examples')
-	.where('id', '=', 2)
-	.get()
+	.bulkUpdate(
+		[
+			{
+				id: 1,
+				name: 'Ardeshir Shirzadian',
+			},
+			{
+				id: 3,
+				name: 'Hossein Maktoobian',
+			},
+			{
+				id: 5,
+				name: 'Mina Lachinani',
+			},
+		],
+		['id']
+	)
 	.then((result) => console.log(result));

@@ -23,11 +23,13 @@ export default class QueryBuilder {
 		select: ISelect[];
 		selectInto?: string;
 
-		insert: any[];
+		insert?: any[];
 		ignoreDuplicates?: boolean;
 
-		update: any[];
-		silentUpdate: boolean;
+		update?: any[];
+		bulkUpdateData?: any[];
+		bulkUpdateKeys?: any[];
+		silentUpdate?: boolean;
 
 		where: ICondition[];
 		having: ICondition[];
@@ -49,10 +51,6 @@ export default class QueryBuilder {
 			table: tableName,
 
 			select: [],
-			insert: [],
-			update: [],
-			silentUpdate: false,
-
 			where: [],
 			having: [],
 			order: [],
@@ -109,17 +107,39 @@ export default class QueryBuilder {
 		this.options.insert = data;
 		this.options.ignoreDuplicates = ignore;
 
-		return Database.insert(this);
+		return Database.insert(this).then((results) => {
+			delete this.options.insert;
+			delete this.options.ignoreDuplicates;
+
+			return results;
+		});
 	}
 
 	update(data: any, silent = false): Promise<any> {
 		this.options.update = data;
 		this.options.silentUpdate = silent;
 
-		return Database.update(this);
+		return Database.update(this).then((results) => {
+			delete this.options.update;
+			delete this.options.silentUpdate;
+
+			return results;
+		});
 	}
 
-	bulkUpdate(data: any[]): Promise<any> {}
+	bulkUpdate(data: any[], keys: string[] = [], silent = false): Promise<any> {
+		this.options.bulkUpdateData = data;
+		this.options.bulkUpdateKeys = keys;
+		this.options.silentUpdate = silent;
+
+		return Database.bulkUpdate(this).then((results) => {
+			delete this.options.bulkUpdateData;
+			delete this.options.bulkUpdateKeys;
+			delete this.options.silentUpdate;
+
+			return results;
+		});
+	}
 
 	delete(soft = false): Promise<any> {
 		if (soft) {

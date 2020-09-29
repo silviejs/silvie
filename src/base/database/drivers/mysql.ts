@@ -78,11 +78,11 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return MySQLTypes[typeName];
 	}
 
-	private static prepareTable(tableName: string): string {
+	private static tbl(tableName: string): string {
 		return `\`${tableName.replace(/['"`]/, '')}\``;
 	}
 
-	private static prepareColumn(columnName: string, tableName?: string): string {
+	private static col(columnName: string, tableName?: string): string {
 		const cleanColumnName = columnName.replace(/['"`]/, '');
 
 		const columnParts = cleanColumnName.split('.');
@@ -100,7 +100,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const queryParts = [];
 		const params = [];
 
-		queryParts.push(this.prepareColumn(column.name));
+		queryParts.push(this.col(column.name));
 
 		const type = this.resolveType(column.type);
 		if (column.size) {
@@ -154,32 +154,32 @@ export default class MySQLDriver implements IDatabaseDriver {
 			.join(', ');
 
 		if (primaries.length > 0) {
-			query += `, PRIMARY KEY (${primaries.map((column) => this.prepareColumn(column.name)).join(', ')})`;
+			query += `, PRIMARY KEY (${primaries.map((column) => this.col(column.name)).join(', ')})`;
 		}
 
 		if (uniques.length > 0) {
-			query += `, UNIQUE (${uniques.map((column) => this.prepareColumn(column.name)).join(', ')})`;
+			query += `, UNIQUE (${uniques.map((column) => this.col(column.name)).join(', ')})`;
 		}
 
 		if (indices.length > 0) {
-			query += `, ${indices.map((column) => `INDEX (${this.prepareColumn(column.name)})`).join(', ')}`;
+			query += `, ${indices.map((column) => `INDEX (${this.col(column.name)})`).join(', ')}`;
 		}
 
 		if (fullTextIndices.length > 0) {
-			query += `, ${fullTextIndices.map((column) => `FULLTEXT (${this.prepareColumn(column.name)})`).join(', ')}`;
+			query += `, ${fullTextIndices.map((column) => `FULLTEXT (${this.col(column.name)})`).join(', ')}`;
 		}
 
 		if (spatialIndices.length > 0) {
-			query += `, ${spatialIndices.map((column) => `SPATIAL (${this.prepareColumn(column.name)})`).join(', ')}`;
+			query += `, ${spatialIndices.map((column) => `SPATIAL (${this.col(column.name)})`).join(', ')}`;
 		}
 
 		if (table.relations.length > 0) {
 			query += `, ${table.relations
 				.map(
 					(relation) =>
-						`FOREIGN KEY (${this.prepareColumn(relation.foreignKey)}) REFERENCES ${this.prepareColumn(
-							relation.table
-						)}(${this.prepareColumn(relation.primaryKey)})`
+						`FOREIGN KEY (${this.col(relation.foreignKey)}) REFERENCES ${this.col(relation.table)}(${this.col(
+							relation.primaryKey
+						)})`
 				)
 				.join(', ')}`;
 		}
@@ -194,15 +194,15 @@ export default class MySQLDriver implements IDatabaseDriver {
 	}
 
 	truncateTable(tableName: string): Promise<any> {
-		return this.execute(`TRUNCATE TABLE ${MySQLDriver.prepareTable(tableName)};`);
+		return this.execute(`TRUNCATE TABLE ${MySQLDriver.tbl(tableName)};`);
 	}
 
 	dropTableIfExists(tableName: string): Promise<any> {
-		return this.execute(`DROP TABLE IF EXISTS ${MySQLDriver.prepareTable(tableName)};`);
+		return this.execute(`DROP TABLE IF EXISTS ${MySQLDriver.tbl(tableName)};`);
 	}
 
 	dropTable(tableName: string): Promise<any> {
-		return this.execute(`DROP TABLE ${MySQLDriver.prepareTable(tableName)};`);
+		return this.execute(`DROP TABLE ${MySQLDriver.tbl(tableName)};`);
 	}
 
 	private static compileConditions(conditions: ICondition[], tableName?: string): [string, TBaseValue[]] {
@@ -226,9 +226,10 @@ export default class MySQLDriver implements IDatabaseDriver {
 				}
 
 				if (condition.type === 'column') {
-					clause += `${this.prepareColumn(condition.leftHandSide as string, tableName)} ${
-						condition.operator
-					} ${this.prepareColumn(condition.rightHandSide as string, tableName)}`;
+					clause += `${this.col(condition.leftHandSide as string, tableName)} ${condition.operator} ${this.col(
+						condition.rightHandSide as string,
+						tableName
+					)}`;
 
 					return clause;
 				}
@@ -239,7 +240,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 					params.push(...p);
 					lhs = `(${q})`;
 				} else {
-					lhs = this.prepareColumn(condition.leftHandSide as string, tableName);
+					lhs = this.col(condition.leftHandSide as string, tableName);
 				}
 
 				let rhs: any = '';
@@ -308,14 +309,14 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const query = fields
 			.map((field) => {
 				if (field.type === 'column') {
-					return this.prepareColumn(field.column, qb.options.table);
+					return this.col(field.column, qb.options.table);
 				}
 
 				if (field.type === 'query') {
 					const [q, p] = this.compileSelect(field.queryBuilder);
 
 					params.push(...p);
-					return `(${q})${field.alias ? ` AS ${this.prepareTable(field.alias)}` : ''}`;
+					return `(${q})${field.alias ? ` AS ${this.tbl(field.alias)}` : ''}`;
 				}
 
 				if (field.type === 'raw') {
@@ -353,9 +354,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 					const [q, p] = this.compileSelect(join.queryBuilder);
 					params.push(...p);
 
-					table = `(${q}) ${this.prepareTable(join.alias)}`;
+					table = `(${q}) ${this.tbl(join.alias)}`;
 				} else {
-					table = `${this.prepareTable(join.table)}${join.alias ? ` ${this.prepareTable(join.alias)}` : ''}`;
+					table = `${this.tbl(join.table)}${join.alias ? ` ${this.tbl(join.alias)}` : ''}`;
 				}
 
 				let conditions = '';
@@ -365,7 +366,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 					conditions = q;
 				} else {
-					conditions = `${this.prepareColumn(join.column1, qb.options.table)} ${join.operator} ${this.prepareColumn(
+					conditions = `${this.col(join.column1, qb.options.table)} ${join.operator} ${this.col(
 						join.column2,
 						qb.options.table
 					)}`;
@@ -418,7 +419,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const query = `ORDER BY ${orders
 			.map((order) => {
 				if (order.type === 'column') {
-					return `${this.prepareColumn(order.column, qb.options.table)} ${order.direction || 'ASC'}`;
+					return `${this.col(order.column, qb.options.table)} ${order.direction || 'ASC'}`;
 				}
 
 				if (order.type === 'query') {
@@ -452,7 +453,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		let query = `GROUP BY ${groups
 			.map((group) => {
 				if (group.type === 'column') {
-					return this.prepareColumn(group.column, qb.options.table);
+					return this.col(group.column, qb.options.table);
 				}
 
 				if (group.type === 'raw') {
@@ -524,9 +525,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 			const [q, p] = this.compileSelect(qb.options.aliasTable.queryBuilder);
 
 			params.push(...p);
-			query += `FROM (${q}) ${qb.options.aliasTable.alias ? `${this.prepareTable(qb.options.aliasTable.alias)} ` : ''}`;
+			query += `FROM (${q}) ${qb.options.aliasTable.alias ? `${this.tbl(qb.options.aliasTable.alias)} ` : ''}`;
 		} else {
-			query += `FROM ${this.prepareTable(qb.options.table)} `;
+			query += `FROM ${this.tbl(qb.options.table)} `;
 		}
 
 		params.push(...joinParams, ...whereParams, ...groupParams, ...orderParams, ...limitParams, ...unionParams);
@@ -542,17 +543,17 @@ export default class MySQLDriver implements IDatabaseDriver {
 	async exists(queryBuilder: QueryBuilder): Promise<boolean> {
 		const [query, params] = MySQLDriver.compileSelect(queryBuilder);
 
-		const [result] = await this.execute(`SELECT EXISTS(${query}) AS ${MySQLDriver.prepareColumn('exists')}`, params);
+		const [result] = await this.execute(`SELECT EXISTS(${query}) AS ${MySQLDriver.col('exists')}`, params);
 
 		return !!result.exists;
 	}
 
 	private static compileInsert(qb: QueryBuilder): [string, TBaseValue[]] {
 		const params = [];
-		let query = `INSERT${qb.options.ignoreDuplicates ? ' IGNORE' : ''} INTO ${this.prepareTable(qb.options.table)}`;
+		let query = `INSERT${qb.options.ignoreDuplicates ? ' IGNORE' : ''} INTO ${this.tbl(qb.options.table)}`;
 
 		const fieldNames = Object.keys(qb.options.insert[0]);
-		query += `(${fieldNames.map((fieldName) => this.prepareColumn(fieldName)).join(', ')}) VALUES `;
+		query += `(${fieldNames.map((fieldName) => this.col(fieldName)).join(', ')}) VALUES `;
 
 		const values = qb.options.insert.map((dataset) => {
 			fieldNames.forEach((fieldName) => {
@@ -577,7 +578,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const params = [];
 		let query = Object.keys(updateData)
 			.map((key) => {
-				const column = this.prepareColumn(key);
+				const column = this.col(key);
 				const value = updateData[key];
 
 				if (value === null) {
@@ -590,7 +591,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 			.join(', ');
 
 		if (!qb.options.silentUpdate) {
-			query += `, ${this.prepareColumn('updated_at')} = NOW()`;
+			query += `, ${this.col('updated_at')} = NOW()`;
 		}
 
 		return [query, params];
@@ -613,11 +614,53 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return this.execute(...MySQLDriver.compileUpdate(queryBuilder));
 	}
 
-	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
-		const query = '';
-		const params = [];
+	private static compileBulkUpdate(qb: QueryBuilder): [string, TBaseValue[]] {
+		const data = qb.options.bulkUpdateData || [];
+		const keys = qb.options.bulkUpdateKeys || [];
 
-		return this.execute(query, params);
+		if (data.length === 0) {
+			return ['', []];
+		}
+
+		const dataKeys = Object.keys(data[0]);
+		const updateKeys = dataKeys.filter((key) => !keys.includes(key));
+
+		if (dataKeys.length === 0) {
+			throw new Error('There are no fields to update');
+		}
+		if (updateKeys.length === 0 && qb.options.silentUpdate) {
+			throw new Error('Bulk update dataset is empty');
+		}
+
+		if (keys.filter((key) => dataKeys.includes(key)).length !== keys.length)
+			throw new Error('Bulk update keys are not present in the dataset');
+
+		const params = [];
+		const selects = data.map((row, index) => {
+			const values = dataKeys.map((key) => row[key]);
+			params.push(...values);
+
+			if (index === 0) {
+				return `SELECT ${dataKeys.map((key) => `? AS ${updateKeys.includes(key) ? 'new_' : ''}${key}`).join(', ')}`;
+			}
+
+			return `SELECT ${new Array(values.length).fill('?').join(', ')}`;
+		});
+
+		let query = `UPDATE ${this.tbl(qb.options.table)} ${this.tbl('bt')} `;
+		query += `JOIN (${selects.join(' UNION ALL ')}) ${this.tbl('vt')} `;
+		query += `ON ${keys.map((key) => `${this.col(key, 'bt')} = ${this.col(key, 'vt')}`).join(' AND ')} `;
+		query += `SET ${updateKeys.map((key) => `${this.col(key)} = ${this.col(`new_${key}`)}`).join(', ')}`;
+
+		if (!qb.options.silentUpdate) {
+			query += `${updateKeys.length > 0 ? ', ' : ''}${this.col('updated_at')} = NOW()`;
+		}
+
+		return [query, params];
+	}
+
+	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
+		return this.execute(...MySQLDriver.compileBulkUpdate(queryBuilder));
 	}
 
 	private static compileDelete(qb: QueryBuilder): [string, TBaseValue[]] {
@@ -627,7 +670,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 		const params = [...whereParams, ...orderParams, ...limitParams];
 
-		let query = `DELETE FROM ${this.prepareTable(qb.options.table)} `;
+		let query = `DELETE FROM ${this.tbl(qb.options.table)} `;
 		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
@@ -644,9 +687,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 		const params = [...whereParams, ...orderParams, ...limitParams];
 
-		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET ${this.prepareColumn(
-			'deleted_at'
-		)} = CURRENT_TIMESTAMP `;
+		let query = `UPDATE ${this.tbl(qb.options.table)} SET ${this.col('deleted_at')} = CURRENT_TIMESTAMP `;
 		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
@@ -663,7 +704,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 		const params = [...whereParams, ...orderParams, ...limitParams];
 
-		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET ${this.prepareColumn('deleted_at')} = NULL `;
+		let query = `UPDATE ${this.tbl(qb.options.table)} SET ${this.col('deleted_at')} = NULL `;
 		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
