@@ -68,6 +68,10 @@ export class Database {
 		return this.driver.insert(queryBuilder);
 	}
 
+	update(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.update(queryBuilder);
+	}
+
 	delete(queryBuilder: QueryBuilder): Promise<any> {
 		return this.driver.delete(queryBuilder);
 	}

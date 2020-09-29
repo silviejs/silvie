@@ -20,8 +20,13 @@ export default class QueryBuilder {
 		table: TTable;
 
 		select: ISelect[];
+		selectInto?: string;
+
 		insert: any[];
 		ignoreDuplicates?: boolean;
+
+		update: any[];
+		silentUpdate: boolean;
 
 		where: ICondition[];
 		having: ICondition[];
@@ -29,8 +34,6 @@ export default class QueryBuilder {
 		group: IGroup[];
 		union: IUnion[];
 		join: IJoin[];
-
-		selectInto?: string;
 
 		randomOrder?: boolean;
 		randomSeed?: string;
@@ -46,6 +49,8 @@ export default class QueryBuilder {
 
 			select: [],
 			insert: [],
+			update: [],
+			silentUpdate: false,
 
 			where: [],
 			having: [],
@@ -74,6 +79,31 @@ export default class QueryBuilder {
 		return Database.exists(this);
 	}
 
+	async doesntExist(): Promise<boolean> {
+		return !(await Database.exists(this));
+	}
+
+	async pluck(keyColumn: TColumn, valueColumn: TColumn = null, override = true): Promise<any> {
+		const results = await this.get();
+
+		if (!valueColumn) {
+			return results.map((row) => row[keyColumn]);
+		}
+
+		return results.reduce((group, row) => {
+			const key = row[keyColumn];
+			const value = row[valueColumn];
+
+			if (group[key] !== undefined && !override) {
+				throw new Error(`Pluck found a duplicate key '${keyColumn}': ${key}'`);
+			}
+
+			group[key] = value;
+
+			return group;
+		}, {});
+	}
+
 	insert(data: any[], ignore?: boolean): Promise<any> {
 		this.options.insert = data;
 		this.options.ignoreDuplicates = ignore;
@@ -81,11 +111,20 @@ export default class QueryBuilder {
 		return Database.insert(this);
 	}
 
-	update(data: any): Promise<any> {}
+	update(data: any, silent = false): Promise<any> {
+		this.options.update = data;
+		this.options.silentUpdate = silent;
+
+		return Database.update(this);
+	}
 
 	bulkUpdate(data: any[]): Promise<any> {}
 
-	delete(): Promise<any> {
+	delete(soft = false): Promise<any> {
+		if (soft) {
+			return this.softDelete();
+		}
+
 		return Database.delete(this);
 	}
 

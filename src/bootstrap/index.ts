@@ -36,6 +36,6 @@ GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 HTTPServer.start();
 
 new QueryBuilder('examples')
-	.where('id', '=', 4)
-	.delete()
+	.where('id', '=', 2)
+	.get()
 	.then((result) => console.log(result));

@@ -100,7 +100,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const queryParts = [];
 		const params = [];
 
-		queryParts.push(`\`${column.name}\``);
+		queryParts.push(this.prepareColumn(column.name));
 
 		const type = this.resolveType(column.type);
 		if (column.size) {
@@ -154,30 +154,32 @@ export default class MySQLDriver implements IDatabaseDriver {
 			.join(', ');
 
 		if (primaries.length > 0) {
-			query += `, PRIMARY KEY (${primaries.map((column) => `\`${column.name}\``).join(', ')})`;
+			query += `, PRIMARY KEY (${primaries.map((column) => this.prepareColumn(column.name)).join(', ')})`;
 		}
 
 		if (uniques.length > 0) {
-			query += `, UNIQUE (${uniques.map((column) => `\`${column.name}\``).join(', ')})`;
+			query += `, UNIQUE (${uniques.map((column) => this.prepareColumn(column.name)).join(', ')})`;
 		}
 
 		if (indices.length > 0) {
-			query += `, ${indices.map((column) => `INDEX (\`${column.name}\`)`).join(', ')}`;
+			query += `, ${indices.map((column) => `INDEX (${this.prepareColumn(column.name)})`).join(', ')}`;
 		}
 
 		if (fullTextIndices.length > 0) {
-			query += `, ${fullTextIndices.map((column) => `FULLTEXT (\`${column.name}\`)`).join(', ')}`;
+			query += `, ${fullTextIndices.map((column) => `FULLTEXT (${this.prepareColumn(column.name)})`).join(', ')}`;
 		}
 
 		if (spatialIndices.length > 0) {
-			query += `, ${spatialIndices.map((column) => `SPATIAL (\`${column.name}\`)`).join(', ')}`;
+			query += `, ${spatialIndices.map((column) => `SPATIAL (${this.prepareColumn(column.name)})`).join(', ')}`;
 		}
 
 		if (table.relations.length > 0) {
 			query += `, ${table.relations
 				.map(
 					(relation) =>
-						`FOREIGN KEY (\`${relation.foreignKey}\`) REFERENCES ${relation.table}(\`${relation.primaryKey}\`)`
+						`FOREIGN KEY (${this.prepareColumn(relation.foreignKey)}) REFERENCES ${this.prepareColumn(
+							relation.table
+						)}(${this.prepareColumn(relation.primaryKey)})`
 				)
 				.join(', ')}`;
 		}
@@ -192,15 +194,15 @@ export default class MySQLDriver implements IDatabaseDriver {
 	}
 
 	truncateTable(tableName: string): Promise<any> {
-		return this.execute(`TRUNCATE TABLE \`${tableName}\`;`);
+		return this.execute(`TRUNCATE TABLE ${MySQLDriver.prepareTable(tableName)};`);
 	}
 
 	dropTableIfExists(tableName: string): Promise<any> {
-		return this.execute(`DROP TABLE IF EXISTS \`${tableName}\`;`);
+		return this.execute(`DROP TABLE IF EXISTS ${MySQLDriver.prepareTable(tableName)};`);
 	}
 
 	dropTable(tableName: string): Promise<any> {
-		return this.execute(`DROP TABLE \`${tableName}\`;`);
+		return this.execute(`DROP TABLE ${MySQLDriver.prepareTable(tableName)};`);
 	}
 
 	private static compileConditions(conditions: ICondition[], tableName?: string): [string, TBaseValue[]] {
@@ -313,7 +315,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 					const [q, p] = this.compileSelect(field.queryBuilder);
 
 					params.push(...p);
-					return `(${q})${field.alias ? ` AS \`${field.alias}\`` : ''}`;
+					return `(${q})${field.alias ? ` AS ${this.prepareTable(field.alias)}` : ''}`;
 				}
 
 				if (field.type === 'raw') {
@@ -351,9 +353,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 					const [q, p] = this.compileSelect(join.queryBuilder);
 					params.push(...p);
 
-					table = `(${q}) \`${join.alias}\``;
+					table = `(${q}) ${this.prepareTable(join.alias)}`;
 				} else {
-					table = `${this.prepareTable(join.table)}${join.alias ? ` \`${join.alias}\`` : ''}`;
+					table = `${this.prepareTable(join.table)}${join.alias ? ` ${this.prepareTable(join.alias)}` : ''}`;
 				}
 
 				let conditions = '';
@@ -536,7 +538,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 	async exists(queryBuilder: QueryBuilder): Promise<boolean> {
 		const [query, params] = MySQLDriver.compileSelect(queryBuilder);
 
-		const [result] = await this.execute(`SELECT EXISTS(${query}) AS \`exists\``, params);
+		const [result] = await this.execute(`SELECT EXISTS(${query}) AS ${MySQLDriver.prepareColumn('exists')}`, params);
 
 		return !!result.exists;
 	}
@@ -565,11 +567,46 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return this.execute(...MySQLDriver.compileInsert(queryBuilder));
 	}
 
-	update(queryBuilder: QueryBuilder): Promise<any> {
-		const query = '';
-		const params = [];
+	private static compileUpdateFields(qb: QueryBuilder): [string, TBaseValue[]] {
+		const updateData = qb.options.update;
 
-		return this.execute(query, params);
+		const params = [];
+		let query = Object.keys(updateData)
+			.map((key) => {
+				const column = this.prepareColumn(key);
+				const value = updateData[key];
+
+				if (value === null) {
+					return `${column} = NULL`;
+				}
+
+				params.push(value);
+				return `${column} = ?`;
+			})
+			.join(', ');
+
+		if (!qb.options.silentUpdate) {
+			query += `, ${this.prepareColumn('updated_at')} = NOW()`;
+		}
+
+		return [query, params];
+	}
+
+	private static compileUpdate(qb: QueryBuilder): [string, TBaseValue[]] {
+		const [fieldsQuery, fieldsParams] = this.compileUpdateFields(qb);
+		const [whereQuery, whereParams] = this.compileWhere(qb);
+		const [orderQuery, orderParams] = this.compileOrder(qb);
+		const [offsetQuery, offsetParams] = this.compileLimit(qb);
+
+		const params = [...fieldsParams, ...whereParams, ...orderParams, ...offsetParams];
+		let query = `UPDATE ${qb.options.table} SET `;
+		query += [fieldsQuery, whereQuery, orderQuery, offsetQuery].join(' ');
+
+		return [query, params];
+	}
+
+	update(queryBuilder: QueryBuilder): Promise<any> {
+		return this.execute(...MySQLDriver.compileUpdate(queryBuilder));
 	}
 
 	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
@@ -603,7 +640,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 		const params = [...whereParams, ...orderParams, ...limitParams];
 
-		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET \`deleted_at\` = CURRENT_TIMESTAMP `;
+		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET ${this.prepareColumn(
+			'deleted_at'
+		)} = CURRENT_TIMESTAMP `;
 		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
@@ -620,7 +659,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 		const params = [...whereParams, ...orderParams, ...limitParams];
 
-		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET \`deleted_at\` = NULL `;
+		let query = `UPDATE ${this.prepareTable(qb.options.table)} SET ${this.prepareColumn('deleted_at')} = NULL `;
 		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
