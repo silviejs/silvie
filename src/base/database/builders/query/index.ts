@@ -70,58 +70,52 @@ export default class QueryBuilder {
 		}
 	}
 
+	/**
+	 * Create a new copy of the current query builder
+	 */
 	clone(): QueryBuilder {
 		const qb = new QueryBuilder();
 		qb.options = this.options;
 		return qb;
 	}
 
+	/**
+	 * Return all matching rows of this query
+	 */
 	get(): Promise<any> {
 		return Database.proxy('select', this);
 	}
 
+	/**
+	 * Return the first matching row of this query
+	 */
 	async first(): Promise<any> {
-		const limitBeforeQuery = this.options.limit;
+		const qb = this.clone();
+		qb.options.limit = 1;
 
-		this.options.limit = 1;
-		const results = await Database.proxy('select', this);
-		this.options.limit = limitBeforeQuery;
-
-		return results[0] || null;
+		return (await Database.proxy('select', qb))[0] || null;
 	}
 
-	count(): Promise<number> {
-		return Database.proxy('count', this);
-	}
-
-	average(column: TColumn): Promise<number> {
-		return Database.proxy('average', this, column);
-	}
-
-	sum(column: TColumn): Promise<number> {
-		return Database.proxy('sum', this, column);
-	}
-
-	min(column: TColumn): Promise<any> {
-		return Database.proxy('min', this, column);
-	}
-
-	max(column: TColumn): Promise<any> {
-		return Database.proxy('max', this, column);
-	}
-
-	concat(columns: TColumn[], separator = ', '): Promise<string> {
-		return Database.proxy('concat', this, columns, separator);
-	}
-
+	/**
+	 * Query database to see if there are any records matching this query
+	 */
 	exists(): Promise<boolean> {
 		return Database.proxy('exists', this);
 	}
 
+	/**
+	 * Query database to see if there are no records matching this query
+	 */
 	async doesntExist(): Promise<boolean> {
 		return !(await this.exists());
 	}
 
+	/**
+	 * Query the database and return with an array of single field or a hashmap
+	 * @param keyColumn The column name to use for the keys
+	 * @param valueColumn If provided, it will be used to determine key, value pairs
+	 * @param override Override the duplicate keys in a hashmap
+	 */
 	async pluck(keyColumn: TColumn, valueColumn: TColumn = null, override = true): Promise<any> {
 		const results = await this.get();
 
@@ -143,6 +137,59 @@ export default class QueryBuilder {
 		}, {});
 	}
 
+	/**
+	 * Return the count of records matching this query
+	 */
+	count(): Promise<number> {
+		return Database.proxy('count', this);
+	}
+
+	/**
+	 * Calculate the average of the specified column
+	 * @param column
+	 */
+	average(column: TColumn): Promise<number> {
+		return Database.proxy('average', this, column);
+	}
+
+	/**
+	 * Calculate the summation of the specified column
+	 * @param column
+	 */
+	sum(column: TColumn): Promise<number> {
+		return Database.proxy('sum', this, column);
+	}
+
+	/**
+	 * Find the minimum value of the specified column
+	 * @param column
+	 */
+	min(column: TColumn): Promise<any> {
+		return Database.proxy('min', this, column);
+	}
+
+	/**
+	 * Find the maximum value of the specified column
+	 * @param column
+	 */
+	max(column: TColumn): Promise<any> {
+		return Database.proxy('max', this, column);
+	}
+
+	/**
+	 * Concatenates the specified columns and return a single string
+	 * @param columns Column names to concatenate in each row
+	 * @param separator Separator used to concatenate the rows
+	 */
+	concat(columns: TColumn[], separator = ', '): Promise<string | string[]> {
+		return Database.proxy('concat', this, columns, separator);
+	}
+
+	/**
+	 * Insert the provided data into the table
+	 * @param data Inserting data
+	 * @param ignore Weather to ignore duplicate keys or not
+	 */
 	insert(data: any[], ignore?: boolean): Promise<any> {
 		this.options.insert = data;
 		this.options.ignoreDuplicates = ignore;
@@ -155,6 +202,11 @@ export default class QueryBuilder {
 		});
 	}
 
+	/**
+	 * Updates the table with the provided data
+	 * @param data Updating data
+	 * @param silent Weather to keep the update time field or not
+	 */
 	update(data: any, silent = false): Promise<any> {
 		this.options.update = data;
 		this.options.silentUpdate = silent;
@@ -167,6 +219,12 @@ export default class QueryBuilder {
 		});
 	}
 
+	/**
+	 * Update multiple records in the table
+	 * @param data Updating data
+	 * @param keys Keys used to find the matching row
+	 * @param silent Weather to keep the update time or not
+	 */
 	bulkUpdate(data: any[], keys: string[] = [], silent = false): Promise<any> {
 		this.options.bulkUpdateData = data;
 		this.options.bulkUpdateKeys = keys;
@@ -181,6 +239,10 @@ export default class QueryBuilder {
 		});
 	}
 
+	/**
+	 * Delete the rows matching this query
+	 * @param soft Weather to use soft deletes or not
+	 */
 	delete(soft = false): Promise<any> {
 		if (soft) {
 			return this.softDelete();
@@ -189,38 +251,75 @@ export default class QueryBuilder {
 		return Database.proxy('delete', this);
 	}
 
+	/**
+	 * Soft delete the rows matching this query
+	 */
 	softDelete(): Promise<any> {
 		return Database.proxy('softDelete', this);
 	}
 
+	/**
+	 * Undelete the soft deleted rows matching this query
+	 */
 	undelete(): Promise<any> {
 		return Database.proxy('undelete', this);
 	}
 
+	/**
+	 * Set a shared lock on this query
+	 */
 	sharedLock() {
 		this.options.lock = 'shared';
 
 		return this;
 	}
 
+	/**
+	 * Set a lock for update on this query
+	 */
 	lockForUpdate() {
 		this.options.lock = 'update';
 
 		return this;
 	}
 
+	/**
+	 * Remove the previously set locks
+	 */
 	clearLock() {
 		this.options.lock = null;
 
 		return this;
 	}
 
+	/**
+	 * Set the result of this query into a variable
+	 * @param variableName
+	 */
 	into(variableName: string) {
 		this.options.selectInto = variableName;
 
 		return this;
 	}
 
+	/**
+	 * Select the current query fields from another query builder
+	 * @param queryBuilder Query builder to select from
+	 * @param alias Alias name of the resulting table
+	 */
+	fromAliasTable(queryBuilder: QueryBuilder, alias?: string) {
+		this.options.aliasTable = {
+			queryBuilder,
+			alias,
+		};
+
+		return this;
+	}
+
+	/**
+	 * Select a set of columns from the table
+	 * @param columns
+	 */
 	select(...columns: TColumn[]) {
 		this.options.select.push(
 			...columns.map((column) => ({
@@ -232,15 +331,11 @@ export default class QueryBuilder {
 		return this;
 	}
 
-	fromAliasTable(queryBuilder: QueryBuilder, alias?: string) {
-		this.options.aliasTable = {
-			queryBuilder,
-			alias,
-		};
-
-		return this;
-	}
-
+	/**
+	 * Select a query builder as a sub selection
+	 * @param queryBuilder Query builder to use in selection
+	 * @param alias Alias name for the sub selection
+	 */
 	selectSub(queryBuilder: QueryBuilder, alias: string) {
 		this.options.select.push({
 			queryBuilder,
@@ -251,6 +346,11 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Add a raw query as a selection
+	 * @param query Query string
+	 * @param params Binding parameters
+	 */
 	selectRaw(query: string, params?: TBaseValue[]) {
 		this.options.select.push({
 			query,
@@ -261,6 +361,11 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Order the results by a column
+	 * @param column
+	 * @param direction
+	 */
 	orderBy(column: TColumn | QueryBuilder, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
 		const order: IOrder = { direction: direction || 'ASC', type: 'column' };
 
@@ -276,12 +381,22 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Add a raw query to the order
+	 * @param query
+	 * @param params
+	 */
 	orderByRaw(query: string, params?: TBaseValue[]) {
 		this.options.order.push({ query, params, type: 'raw' });
 
 		return this;
 	}
 
+	/**
+	 * Clear previously set orders or set a fresh order
+	 * @param column
+	 * @param direction
+	 */
 	reorder(column?: TColumn, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
 		this.options.order = [];
 
@@ -292,6 +407,10 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Randomize the result order
+	 * @param seed Seed to use in the random function
+	 */
 	shuffle(seed?: string) {
 		this.options.randomOrder = true;
 		this.options.randomSeed = seed || '';
@@ -299,22 +418,38 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Skip the first n rows
+	 * @param count
+	 */
 	offset(count: number) {
 		this.options.offset = count;
 
 		return this;
 	}
 
+	/**
+	 * Skip the first n rows
+	 * @param count
+	 */
 	skip(count: number) {
 		return this.offset(count);
 	}
 
+	/**
+	 * Take the next m rows
+	 * @param count
+	 */
 	limit(count: number) {
 		this.options.limit = count;
 
 		return this;
 	}
 
+	/**
+	 * Take the next m rows
+	 * @param count
+	 */
 	take(count: number) {
 		return this.limit(count);
 	}
@@ -331,30 +466,64 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Select the count of matching rows in the field set
+	 * @param alias
+	 */
 	selectCount(alias: string): QueryBuilder {
 		return this.baseAggregate('count', '*', alias);
 	}
 
+	/**
+	 * Select the average of specified column in the field set
+	 * @param column Column to get average
+	 * @param alias Alias name for the new field
+	 */
 	selectAverage(column: TColumn, alias: string): QueryBuilder {
 		return this.baseAggregate('average', column, alias);
 	}
 
+	/**
+	 * Select the average of specified column in the field set
+	 * @param column Column to get summation
+	 * @param alias Alias name for the new field
+	 */
 	selectSum(column: TColumn, alias: string): QueryBuilder {
 		return this.baseAggregate('summation', column, alias);
 	}
 
+	/**
+	 * Select the minimum value of specified column in the field set
+	 * @param column Column to get summation
+	 * @param alias Alias name for the new field
+	 */
 	selectMin(column: TColumn, alias: string): QueryBuilder {
 		return this.baseAggregate('minimum', column, alias);
 	}
 
+	/**
+	 * Select the maximum value of specified column in the field set
+	 * @param column Column to get summation
+	 * @param alias Alias name for the new field
+	 */
 	selectMax(column: TColumn, alias: string): QueryBuilder {
 		return this.baseAggregate('maximum', column, alias);
 	}
 
+	/**
+	 * Select the concatenation of the specified columns in the field set
+	 * @param columns Column names to concatenate
+	 * @param separator Separator used to concatenate
+	 * @param alias Alias name for the new field
+	 */
 	selectConcat(columns: TColumn[], separator = ', ', alias: string): QueryBuilder {
 		return this.baseAggregate('concat', null, alias, { columns, separator });
 	}
 
+	/**
+	 * Group the results by the specified columns
+	 * @param columns
+	 */
 	groupBy(...columns: TColumn[]) {
 		this.options.group.push(
 			...columns.map((column) => ({
@@ -366,6 +535,11 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Group the results by the specified raw query
+	 * @param query
+	 * @param params
+	 */
 	groupByRaw(query: string, params?: TBaseValue[]) {
 		this.options.group.push({
 			query,
@@ -376,49 +550,39 @@ export default class QueryBuilder {
 		return this;
 	}
 
-	union(queryBuilder: QueryBuilder) {
+	/**
+	 * Union the selection with a query builder instance
+	 * @param queryBuilder
+	 * @param all
+	 */
+	union(queryBuilder: QueryBuilder, all = false) {
 		this.options.union.push({
 			queryBuilder,
-			all: false,
+			all,
 			type: 'query',
 		});
 
 		return this;
 	}
 
-	unionRaw(query: string, params?: TBaseValue[]) {
+	/**
+	 * Union the selection with a raw query
+	 * @param query
+	 * @param params
+	 * @param all
+	 */
+	unionRaw(query: string, params?: TBaseValue[], all = false) {
 		this.options.union.push({
 			query,
 			params,
-			all: false,
+			all,
 			type: 'raw',
 		});
 
 		return this;
 	}
 
-	unionAll(queryBuilder: QueryBuilder) {
-		this.options.union.push({
-			queryBuilder,
-			all: true,
-			type: 'query',
-		});
-
-		return this;
-	}
-
-	unionAllRaw(query: string, params?: TBaseValue[]) {
-		this.options.union.push({
-			query,
-			params,
-			all: true,
-			type: 'raw',
-		});
-
-		return this;
-	}
-
-	baseJoin(
+	private baseJoin(
 		type: 'inner' | 'left' | 'right' | 'cross' | 'outer',
 		table: TTable | QueryBuilder,
 		column1: TColumn | ((conditionBuilder: JoinConditionBuilder) => void),
@@ -485,6 +649,14 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	/**
+	 * Inner join the current query with another table or query builder
+	 * @param table Joining table or QueryBuilder instance
+	 * @param column1 Condition's first column or condition builder callback function
+	 * @param operator Custom operator or condition's second column
+	 * @param column2 Condition's second column or alias name
+	 * @param alias Alias name for the joining table
+	 */
 	join(
 		table: TTable | QueryBuilder,
 		column1: TColumn | ((conditionBuilder: JoinConditionBuilder) => void),
@@ -495,6 +667,14 @@ export default class QueryBuilder {
 		return this.baseJoin('inner', table, column1, operator, column2, alias);
 	}
 
+	/**
+	 * Left join the current query with another table or query builder
+	 * @param table Joining table or QueryBuilder instance
+	 * @param column1 Condition's first column or condition builder callback function
+	 * @param operator Custom operator or condition's second column
+	 * @param column2 Condition's second column or alias name
+	 * @param alias Alias name for the joining table
+	 */
 	leftJoin(
 		table: TTable | QueryBuilder,
 		column1: TColumn | ((conditionBuilder: JoinConditionBuilder) => void),
@@ -505,6 +685,14 @@ export default class QueryBuilder {
 		return this.baseJoin('left', table, column1, operator, column2, alias);
 	}
 
+	/**
+	 * Right join the current query with another table or query builder
+	 * @param table Joining table or QueryBuilder instance
+	 * @param column1 Condition's first column or condition builder callback function
+	 * @param operator Custom operator or condition's second column
+	 * @param column2 Condition's second column or alias name
+	 * @param alias Alias name for the joining table
+	 */
 	rightJoin(
 		table: TTable | QueryBuilder,
 		column1: TColumn | ((conditionBuilder: JoinConditionBuilder) => void),
@@ -515,6 +703,14 @@ export default class QueryBuilder {
 		return this.baseJoin('right', table, column1, operator, column2, alias);
 	}
 
+	/**
+	 * Cross join the current query with another table or query builder
+	 * @param table Joining table or QueryBuilder instance
+	 * @param column1 Condition's first column or condition builder callback function
+	 * @param operator Custom operator or condition's second column
+	 * @param column2 Condition's second column or alias name
+	 * @param alias Alias name for the joining table
+	 */
 	crossJoin(
 		table: TTable | QueryBuilder,
 		column1: TColumn | ((conditionBuilder: JoinConditionBuilder) => void),
@@ -525,6 +721,14 @@ export default class QueryBuilder {
 		return this.baseJoin('cross', table, column1, operator, column2, alias);
 	}
 
+	/**
+	 * Outer join the current query with another table or query builder
+	 * @param table Joining table or QueryBuilder instance
+	 * @param column1 Condition's first column or condition builder callback function
+	 * @param operator Custom operator or condition's second column
+	 * @param column2 Condition's second column or alias name
+	 * @param alias Alias name for the joining table
+	 */
 	outerJoin(
 		table: TTable | QueryBuilder,
 		column1: TColumn | ((conditionBuilder: JoinConditionBuilder) => void),

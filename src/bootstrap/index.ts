@@ -34,10 +34,3 @@ HTTPServer.init();
 GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
 HTTPServer.start();
-
-new QueryBuilder('examples')
-	.select('id')
-	.selectSum('id', 'Hello')
-	.groupBy('updated_at')
-	.get()
-	.then((result) => console.log('concat:', result));
