@@ -24,7 +24,8 @@ export declare type TConditionType =
 	| 'time'
 	| 'raw';
 
-export interface ICondition {
+interface ICondition {
+	// eslint-disable-next-line no-use-before-define
 	leftHandSide?: TColumn | QueryBuilder | ((conditionBuilder: IConditionBuilder) => void);
 	operator?: TOperator;
 	rightHandSide?: TColumn | TValue | QueryBuilder;
