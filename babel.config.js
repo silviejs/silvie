@@ -27,6 +27,7 @@ module.exports = (api) => {
 						database: './src/database',
 						graphql: './src/graphql',
 						middlewares: './src/middlewares',
+						models: './src/models',
 					},
 				},
 			],

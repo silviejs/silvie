@@ -71,6 +71,16 @@ export default class QueryBuilder {
 	}
 
 	/**
+	 * Extend the query builder options with a custom options object
+	 * @param opts
+	 */
+	extend(opts: any): QueryBuilder {
+		Object.assign(this.options, opts);
+
+		return this;
+	}
+
+	/**
 	 * Create a new copy of the current query builder
 	 */
 	clone(): QueryBuilder {
