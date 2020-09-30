@@ -1,6 +1,6 @@
 export default {
 	Example: {
-		exponential(self, params, { loaders }) {
+		exponential(self: any, params: any, { loaders }: any): number {
 			return loaders.example.load(self.id);
 		},
 	},

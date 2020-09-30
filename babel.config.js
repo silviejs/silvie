@@ -18,11 +18,13 @@ module.exports = (api) => {
 				{
 					root: ['./'],
 					alias: {
+						cli: './cli',
 						src: './src',
 						base: './src/base',
 						bootstrap: './src/bootstrap',
 						config: './src/config',
 						controllers: './src/controllers',
+						database: './src/database',
 						graphql: './src/graphql',
 						middlewares: './src/middlewares',
 					},

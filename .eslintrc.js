@@ -21,10 +21,12 @@ module.exports = {
 		'import/resolver': {
 			alias: {
 				map: [
+					['cli', './cli'],
 					['src', './src'],
 					['base', './src/base'],
 					['bootstrap', './src/bootstrap'],
 					['controllers', './src/controllers'],
+					['database', './src/database'],
 					['graphql', './src/graphql'],
 					['middlewares', './src/middlewares'],
 				],
@@ -48,6 +50,7 @@ module.exports = {
 				'class-methods-use-this': 'off',
 				'@typescript-eslint/no-namespace': 'off',
 				'@typescript-eslint/no-explicit-any': 'off',
+				'@typescript-eslint/explicit-module-boundary-types': 'off',
 			},
 		},
 	],

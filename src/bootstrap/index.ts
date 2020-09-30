@@ -2,6 +2,8 @@ import * as dotenv from 'dotenv';
 import minimist from 'minimist';
 import path from 'path';
 
+import Database from 'base/database';
+
 import HTTPServer from 'base/http/server';
 import 'middlewares';
 import 'controllers';
@@ -12,6 +14,7 @@ import * as resolvers from 'graphql/resolvers';
 import * as dataLoaders from 'graphql/dataloaders';
 
 import 'base/extensions';
+import QueryBuilder from 'base/database/builders/query';
 
 // Detect project root path
 process.rootPath = path.resolve(__dirname, process.relativeRootPath || '../');
@@ -23,6 +26,8 @@ dotenv.config({
 
 // Parse command line arguments
 process.args = minimist(process.argv.slice(2));
+
+Database.init();
 
 HTTPServer.init();
 

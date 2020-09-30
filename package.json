@@ -8,6 +8,7 @@
     "build": "rm -rf build/* && cp -r src/assets build/assets && cp -r .env build/.env && NODE_ENV=production babel src -d build -x \".js,.ts\"",
     "bundle": "NODE_ENV=production webpack --env.clean",
     "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
+    "cli": "babel-node -x \".js,.ts\" cli/index.ts",
     "test": ""
   },
   "repository": {
@@ -32,6 +33,7 @@
     "lodash": "^4.17.20",
     "minimist": "^1.2.5",
     "multer": "^1.4.2",
+    "mysql": "^2.18.1",
     "redis": "^3.0.2",
     "session-file-store": "^1.4.0",
     "spdy": "^4.0.2",
