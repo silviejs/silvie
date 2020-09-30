@@ -322,6 +322,10 @@ export default class QueryBuilder {
 			throw new Error(`Soft deletes are not enabled for this query builder`);
 		}
 
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
 		return Database.proxy('softDelete', this);
 	}
 
@@ -333,6 +337,10 @@ export default class QueryBuilder {
 			throw new Error(`Soft deletes are not enabled for this query builder`);
 		}
 
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
 		return Database.proxy('restore', this);
 	}
 
@@ -342,6 +350,10 @@ export default class QueryBuilder {
 	withTrashed() {
 		if (!this.options.useSoftDeletes) {
 			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
 		}
 
 		this.options.withTrashed = true;
@@ -358,6 +370,10 @@ export default class QueryBuilder {
 			throw new Error(`Soft deletes are not enabled for this query builder`);
 		}
 
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
 		this.options.withTrashed = false;
 		this.options.onlyTrashed = true;
 
@@ -370,6 +386,10 @@ export default class QueryBuilder {
 	withoutTrashed() {
 		if (!this.options.useSoftDeletes) {
 			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
 		}
 
 		this.options.withTrashed = false;

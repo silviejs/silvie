@@ -531,7 +531,17 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [`Limit ?`, [limit]];
 	}
 
-	private static compileSelect(qb: QueryBuilder): [string, TBaseValue[]] {
+	private static compileSelect(queryBuilder: QueryBuilder): [string, TBaseValue[]] {
+		const qb = queryBuilder.clone();
+
+		if (qb.options.useSoftDeletes && qb.options.softDeleteTimestamp) {
+			if (qb.options.onlyTrashed) {
+				qb.whereNotNull(qb.options.softDeleteTimestamp);
+			} else if (!qb.options.withTrashed) {
+				qb.whereNull(qb.options.softDeleteTimestamp);
+			}
+		}
+
 		const [fieldsQuery, fieldsParams] = this.compileSelectFields(qb);
 		const [whereQuery, whereParams] = this.compileWhere(qb);
 		const [groupQuery, groupParams] = this.compileGroup(qb);
@@ -683,8 +693,8 @@ export default class MySQLDriver implements IDatabaseDriver {
 			})
 			.join(', ');
 
-		if (!qb.options.silentUpdate) {
-			query += `, ${this.col('updated_at')} = NOW()`;
+		if (qb.options.useTimestamps && qb.options.updateTimestamp && !qb.options.silentUpdate) {
+			query += `, ${this.col(qb.options.updateTimestamp)} = NOW()`;
 		}
 
 		return [query, params];
@@ -746,8 +756,8 @@ export default class MySQLDriver implements IDatabaseDriver {
 		query += `ON ${keys.map((key) => `${this.col(key, 'bt')} = ${this.col(key, 'vt')}`).join(' AND ')} `;
 		query += `SET ${updateKeys.map((key) => `${this.col(key)} = ${this.col(`new_${key}`)}`).join(', ')}`;
 
-		if (!qb.options.silentUpdate) {
-			query += `${updateKeys.length > 0 ? ', ' : ''}${this.col('updated_at')} = NOW()`;
+		if (qb.options.useTimestamps && !qb.options.silentUpdate) {
+			query += `${updateKeys.length > 0 ? ', ' : ''}${this.col(qb.options.updateTimestamp)} = NOW()`;
 		}
 
 		return [query, params];
@@ -777,37 +787,61 @@ export default class MySQLDriver implements IDatabaseDriver {
 	}
 
 	private static compileSoftDelete(qb: QueryBuilder): [string, TBaseValue[]] {
+		if (!qb.options.useSoftDeletes || !qb.options.softDeleteTimestamp) {
+			return ['', []];
+		}
+
 		const [whereQuery, whereParams] = this.compileWhere(qb);
 		const [orderQuery, orderParams] = this.compileOrder(qb);
 		const [limitQuery, limitParams] = this.compileLimit(qb);
 
 		const params = [...whereParams, ...orderParams, ...limitParams];
 
-		let query = `UPDATE ${this.tbl(qb.options.table)} SET ${this.col('deleted_at')} = CURRENT_TIMESTAMP `;
+		let query = `UPDATE ${this.tbl(qb.options.table)} SET ${this.col(qb.options.softDeleteTimestamp)} = NOW() `;
 		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
 	}
 
 	async softDelete(queryBuilder: QueryBuilder): Promise<IModificationResult> {
+		if (!queryBuilder.options.useSoftDeletes) {
+			throw new Error('Soft deletes are not enabled for this query builder');
+		}
+
+		if (!queryBuilder.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
 		const result = await this.execute(...MySQLDriver.compileSoftDelete(queryBuilder));
 		return [result.affectedRows, result.changedRows];
 	}
 
 	private static compileUndelete(qb: QueryBuilder): [string, TBaseValue[]] {
+		if (!qb.options.useSoftDeletes || !qb.options.softDeleteTimestamp) {
+			return ['', []];
+		}
+
 		const [whereQuery, whereParams] = this.compileWhere(qb);
 		const [orderQuery, orderParams] = this.compileOrder(qb);
 		const [limitQuery, limitParams] = this.compileLimit(qb);
 
 		const params = [...whereParams, ...orderParams, ...limitParams];
 
-		let query = `UPDATE ${this.tbl(qb.options.table)} SET ${this.col('deleted_at')} = NULL `;
+		let query = `UPDATE ${this.tbl(qb.options.table)} SET ${this.col(qb.options.softDeleteTimestamp)} = NULL `;
 		query += [whereQuery, orderQuery, limitQuery].filter((q) => q !== '').join(' ');
 
 		return [query, params];
 	}
 
 	async restore(queryBuilder: QueryBuilder): Promise<IModificationResult> {
+		if (!queryBuilder.options.useSoftDeletes) {
+			throw new Error('Soft deletes are not enabled for this query builder');
+		}
+
+		if (!queryBuilder.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
 		const result = await this.execute(...MySQLDriver.compileUndelete(queryBuilder));
 		return [result.affectedRows, result.changedRows];
 	}

@@ -37,7 +37,7 @@ GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 HTTPServer.start();
 
 Example.baseQueryBuilder
-	.shuffle()
+	.onlyTrashed()
 	.get()
 	.then(async (res) => {
 		console.log('res', res);
