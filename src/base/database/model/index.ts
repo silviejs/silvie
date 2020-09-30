@@ -18,6 +18,15 @@ class Model {
 
 	protected static softDeleteTimestamp = 'deleted_at';
 
+	// eslint-disable-next-line camelcase
+	declare updated_at: string;
+
+	// eslint-disable-next-line camelcase
+	declare created_at: string;
+
+	// eslint-disable-next-line camelcase
+	declare deleted_at?: string;
+
 	/**
 	 * Create a new instance of this model from a initial data object
 	 * @param initialData
@@ -239,7 +248,7 @@ class Model {
 	/**
 	 * Create a base query builder configured to reach the current instance matching record
 	 */
-	get baseQueryBuilder(): QueryBuilder {
+	private get baseQueryBuilder(): QueryBuilder {
 		const BaseClass = this.constructor as typeof Model;
 		return BaseClass.primaryKeyCondition(BaseClass.baseQueryBuilder, this);
 	}
@@ -301,7 +310,9 @@ class Model {
 	/**
 	 * Save the changes of current instance in the database
 	 */
-	save(): void {}
+	save(): Promise<number> {
+		return this.update(this);
+	}
 }
 
 // TODO: implement proxy methods of query builder

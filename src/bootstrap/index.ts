@@ -36,9 +36,10 @@ GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
 HTTPServer.start();
 
-Example.baseQueryBuilder
-	.onlyTrashed()
-	.get()
-	.then(async (res) => {
-		console.log('res', res);
+Example.find(1).then((res: Example) => {
+	res.name = 'Hello';
+	console.log(res);
+	res.save().then((result) => {
+		console.log(result);
 	});
+});

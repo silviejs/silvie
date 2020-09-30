@@ -887,6 +887,7 @@ export default class QueryBuilder {
 			if (rhs === undefined) {
 				if (operator === undefined) {
 					if (!type.endsWith('null')) {
+						console.log(type, relation, lhs, operator, rhs);
 						throw new Error(`Invalid usage of ${type} where`);
 					}
 				} else {
