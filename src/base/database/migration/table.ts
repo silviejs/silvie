@@ -1,4 +1,4 @@
-import Column from 'base/database/column';
+import Column from 'base/database/migration/column';
 
 export interface IRelation {
 	foreignKey: string;

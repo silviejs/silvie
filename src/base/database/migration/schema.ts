@@ -1,5 +1,5 @@
 import Database from 'base/database';
-import Table from 'base/database/table';
+import Table from 'base/database/migration/table';
 
 export default class Schema {
 	static async create(tableName: string, tableCallback: (table: Table) => void): Promise<any> {

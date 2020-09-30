@@ -1,7 +1,7 @@
 import { TBaseValue, TTable, TColumn, TOperator, ICondition } from 'base/database/builders/condition';
 import QueryBuilder from 'base/database/builders/query';
 
-export type TAggregateType = 'count' | 'average' | 'summation' | 'minimum' | 'maximum' | 'concat';
+export type TAggregateType = 'count' | 'average' | 'summation' | 'minimum' | 'maximum';
 
 export interface IOrder {
 	column?: TColumn;

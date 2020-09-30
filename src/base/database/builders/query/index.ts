@@ -52,6 +52,15 @@ export default class QueryBuilder {
 		limit?: number;
 
 		lock?: 'shared' | 'update';
+
+		useTimestamps: boolean;
+		createTimestamp: string;
+		updateTimestamp: string;
+
+		useSoftDeletes: boolean;
+		softDeleteTimestamp: string;
+		withTrashed: boolean;
+		onlyTrashed: boolean;
 	};
 
 	constructor(tableName?: string) {
@@ -63,6 +72,15 @@ export default class QueryBuilder {
 			group: [],
 			union: [],
 			join: [],
+
+			useTimestamps: true,
+			createTimestamp: 'created_at',
+			updateTimestamp: 'updated_at',
+
+			useSoftDeletes: false,
+			softDeleteTimestamp: 'deleted_at',
+			withTrashed: false,
+			onlyTrashed: false,
 		};
 
 		if (tableName) {
@@ -159,6 +177,10 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	average(column: TColumn): Promise<number> {
+		if (!column) {
+			throw new Error("Column is not specified for 'average' method");
+		}
+
 		return Database.proxy('average', this, column);
 	}
 
@@ -167,6 +189,10 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	sum(column: TColumn): Promise<number> {
+		if (!column) {
+			throw new Error("Column is not specified for 'sum' method");
+		}
+
 		return Database.proxy('sum', this, column);
 	}
 
@@ -175,6 +201,10 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	min(column: TColumn): Promise<any> {
+		if (!column) {
+			throw new Error("Column is not specified for 'min' method");
+		}
+
 		return Database.proxy('min', this, column);
 	}
 
@@ -183,16 +213,11 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	max(column: TColumn): Promise<any> {
-		return Database.proxy('max', this, column);
-	}
+		if (!column) {
+			throw new Error("Column is not specified for 'max' method");
+		}
 
-	/**
-	 * Concatenates the specified columns and return a single string
-	 * @param columns Column names to concatenate in each row
-	 * @param separator Separator used to concatenate the rows
-	 */
-	concat(columns: TColumn[], separator = ', '): Promise<string | string[]> {
-		return Database.proxy('concat', this, columns, separator);
+		return Database.proxy('max', this, column);
 	}
 
 	/**
@@ -201,6 +226,10 @@ export default class QueryBuilder {
 	 * @param ignore Weather to ignore duplicate keys or not
 	 */
 	insert(data: any[], ignore?: boolean): Promise<any> {
+		if (data.length === 0) {
+			throw new Error('You should provide one or more objects to insert');
+		}
+
 		this.options.insert = data;
 		this.options.ignoreDuplicates = ignore;
 
@@ -218,6 +247,14 @@ export default class QueryBuilder {
 	 * @param silent Weather to keep the update time field or not
 	 */
 	update(data: any, silent = false): Promise<any> {
+		if (!data) {
+			throw new Error('You should provide an object to the update method');
+		}
+
+		if (Object.keys(data).length === 0) {
+			throw new Error('An empty object cannot be used in update method');
+		}
+
 		this.options.update = data;
 		this.options.silentUpdate = silent;
 
@@ -236,6 +273,13 @@ export default class QueryBuilder {
 	 * @param silent Weather to keep the update time or not
 	 */
 	bulkUpdate(data: any[], keys: string[] = [], silent = false): Promise<any> {
+		if (data.length === 0) {
+			throw new Error('You should provide one or more data to bulk update');
+		}
+		if (keys.length === 0) {
+			throw new Error('You should provide one or more keys to bulk update');
+		}
+
 		this.options.bulkUpdateData = data;
 		this.options.bulkUpdateKeys = keys;
 		this.options.silentUpdate = silent;
@@ -253,8 +297,8 @@ export default class QueryBuilder {
 	 * Delete the rows matching this query
 	 * @param soft Weather to use soft deletes or not
 	 */
-	delete(soft = false): Promise<any> {
-		if (soft) {
+	delete(soft?: boolean): Promise<any> {
+		if ((this.options.useSoftDeletes && soft === undefined) || soft) {
 			return this.softDelete();
 		}
 
@@ -262,17 +306,76 @@ export default class QueryBuilder {
 	}
 
 	/**
+	 * Enabled soft deletes for the current query builder instance
+	 */
+	useSoftDeletes(): QueryBuilder {
+		this.options.useSoftDeletes = true;
+
+		return this;
+	}
+
+	/**
 	 * Soft delete the rows matching this query
 	 */
 	softDelete(): Promise<any> {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
 		return Database.proxy('softDelete', this);
 	}
 
 	/**
 	 * Undelete the soft deleted rows matching this query
 	 */
-	undelete(): Promise<any> {
-		return Database.proxy('undelete', this);
+	restore(): Promise<any> {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		return Database.proxy('restore', this);
+	}
+
+	/**
+	 * Include soft deleted records in the result
+	 */
+	withTrashed() {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		this.options.withTrashed = true;
+		this.options.onlyTrashed = false;
+
+		return this;
+	}
+
+	/**
+	 * Filter results to soft deleted records
+	 */
+	onlyTrashed() {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		this.options.withTrashed = false;
+		this.options.onlyTrashed = true;
+
+		return this;
+	}
+
+	/**
+	 * Exclude soft deleted records from the result
+	 */
+	withoutTrashed() {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		this.options.withTrashed = false;
+		this.options.onlyTrashed = false;
+
+		return this;
 	}
 
 	/**
@@ -518,16 +621,6 @@ export default class QueryBuilder {
 	 */
 	selectMax(column: TColumn, alias: string): QueryBuilder {
 		return this.baseAggregate('maximum', column, alias);
-	}
-
-	/**
-	 * Select the concatenation of the specified columns in the field set
-	 * @param columns Column names to concatenate
-	 * @param separator Separator used to concatenate
-	 * @param alias Alias name for the new field
-	 */
-	selectConcat(columns: TColumn[], separator = ', ', alias: string): QueryBuilder {
-		return this.baseAggregate('concat', null, alias, { columns, separator });
 	}
 
 	/**

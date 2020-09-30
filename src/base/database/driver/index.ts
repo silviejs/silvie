@@ -1,6 +1,9 @@
-import Table from 'base/database/table';
+import Table from 'base/database/migration/table';
 import QueryBuilder from 'base/database/builders/query';
 import { TBaseValue, TColumn } from 'base/database/builders/condition';
+
+export type IModificationResult = [number, number];
+export type IInsertionResult = [any, number];
 
 export default interface IDatabaseDriver {
 	select(queryBuilder: QueryBuilder): Promise<any>;
@@ -11,16 +14,15 @@ export default interface IDatabaseDriver {
 	sum(queryBuilder: QueryBuilder, column: TColumn): Promise<number>;
 	min(queryBuilder: QueryBuilder, column: TColumn): Promise<any>;
 	max(queryBuilder: QueryBuilder, column: TColumn): Promise<any>;
-	concat(queryBuilder: QueryBuilder, columns: TColumn[], separator?: string): Promise<string | string[]>;
 
-	insert(queryBuilder: QueryBuilder): Promise<any>;
+	insert(queryBuilder: QueryBuilder): Promise<IInsertionResult>;
 
-	update(queryBuilder: QueryBuilder): Promise<any>;
-	bulkUpdate(queryBuilder: QueryBuilder): Promise<any>;
+	update(queryBuilder: QueryBuilder): Promise<IModificationResult>;
+	bulkUpdate(queryBuilder: QueryBuilder): Promise<IModificationResult>;
 
-	delete(queryBuilder: QueryBuilder): Promise<any>;
-	softDelete(queryBuilder: QueryBuilder): Promise<any>;
-	undelete(queryBuilder: QueryBuilder): Promise<any>;
+	delete(queryBuilder: QueryBuilder): Promise<IModificationResult>;
+	softDelete(queryBuilder: QueryBuilder): Promise<IModificationResult>;
+	restore(queryBuilder: QueryBuilder): Promise<IModificationResult>;
 
 	createTable(table: Table): Promise<any>;
 	truncateTable(tableName: string): Promise<any>;

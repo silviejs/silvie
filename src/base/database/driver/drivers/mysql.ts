@@ -1,7 +1,7 @@
 import mysql from 'mysql';
-import IDatabaseDriver from 'base/database/driver';
-import Table from 'base/database/table';
-import Column from 'base/database/column';
+import IDatabaseDriver, { IInsertionResult, IModificationResult } from 'base/database/driver';
+import Table from 'base/database/migration/table';
+import Column from 'base/database/migration/column';
 import QueryBuilder from 'base/database/builders/query';
 import { ICondition, TBaseValue, TColumn } from 'base/database/builders/condition';
 
@@ -344,14 +344,6 @@ export default class MySQLDriver implements IDatabaseDriver {
 					if (field.aggregation === 'maximum') {
 						return `MAX(${this.col(field.column)})${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
 					}
-
-					if (field.aggregation === 'concat') {
-						params.push(field.meta.separator);
-
-						return `GROUP_CONCAT(${field.meta.columns
-							.map((column) => this.col(column, qb.options.table))
-							.join(', ')} SEPARATOR ?)${field.alias ? ` AS ${this.col(field.alias)}` : ''}`;
-					}
 				}
 
 				throw new Error(`Invalid select field`);
@@ -440,6 +432,10 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 	private static compileOrder(qb: QueryBuilder): [string, TBaseValue[]] {
 		const orders = qb.options.order;
+
+		if (qb.options.randomOrder) {
+			return ['ORDER BY RAND(?)', [qb.options.randomSeed || Math.floor(Math.random() * 100000)]];
+		}
 
 		if (orders.length === 0) {
 			return ['', []];
@@ -636,22 +632,6 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return (await qb.first()).mysql_driver_maximum;
 	}
 
-	async concat(queryBuilder: QueryBuilder, columns: TColumn[], separator = ', '): Promise<string | string[]> {
-		const params = columns.map((column) => MySQLDriver.col(column, queryBuilder.options.table));
-
-		const qb = queryBuilder
-			.clone()
-			.selectRaw(
-				`GROUP_CONCAT(${params.join(', ')} SEPARATOR '${separator}') AS ${MySQLDriver.col('mysql_driver_concat')}`
-			);
-
-		if (qb.options.group.length > 0) {
-			return qb.pluck('mysql_driver_concat');
-		}
-
-		return (await qb.first()).mysql_driver_concat;
-	}
-
 	async exists(queryBuilder: QueryBuilder): Promise<boolean> {
 		const [query, params] = MySQLDriver.compileSelect(queryBuilder);
 
@@ -680,8 +660,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [query, params];
 	}
 
-	insert(queryBuilder: QueryBuilder): Promise<any> {
-		return this.execute(...MySQLDriver.compileInsert(queryBuilder));
+	async insert(queryBuilder: QueryBuilder): Promise<IInsertionResult> {
+		const result = await this.execute(...MySQLDriver.compileInsert(queryBuilder));
+		return [result.insertId, result.affectedRows];
 	}
 
 	private static compileUpdateFields(qb: QueryBuilder): [string, TBaseValue[]] {
@@ -722,8 +703,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [query, params];
 	}
 
-	update(queryBuilder: QueryBuilder): Promise<any> {
-		return this.execute(...MySQLDriver.compileUpdate(queryBuilder));
+	async update(queryBuilder: QueryBuilder): Promise<IModificationResult> {
+		const result = await this.execute(...MySQLDriver.compileUpdate(queryBuilder));
+		return [result.affectedRows, result.changedRows];
 	}
 
 	private static compileBulkUpdate(qb: QueryBuilder): [string, TBaseValue[]] {
@@ -771,8 +753,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [query, params];
 	}
 
-	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
-		return this.execute(...MySQLDriver.compileBulkUpdate(queryBuilder));
+	async bulkUpdate(queryBuilder: QueryBuilder): Promise<IModificationResult> {
+		const result = await this.execute(...MySQLDriver.compileBulkUpdate(queryBuilder));
+		return [result.affectedRows, result.changedRows];
 	}
 
 	private static compileDelete(qb: QueryBuilder): [string, TBaseValue[]] {
@@ -788,8 +771,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [query, params];
 	}
 
-	delete(queryBuilder: QueryBuilder): Promise<any> {
-		return this.execute(...MySQLDriver.compileDelete(queryBuilder));
+	async delete(queryBuilder: QueryBuilder): Promise<IModificationResult> {
+		const result = await this.execute(...MySQLDriver.compileDelete(queryBuilder));
+		return [result.affectedRows, result.changedRows];
 	}
 
 	private static compileSoftDelete(qb: QueryBuilder): [string, TBaseValue[]] {
@@ -805,8 +789,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [query, params];
 	}
 
-	softDelete(queryBuilder: QueryBuilder): Promise<any> {
-		return this.execute(...MySQLDriver.compileSoftDelete(queryBuilder));
+	async softDelete(queryBuilder: QueryBuilder): Promise<IModificationResult> {
+		const result = await this.execute(...MySQLDriver.compileSoftDelete(queryBuilder));
+		return [result.affectedRows, result.changedRows];
 	}
 
 	private static compileUndelete(qb: QueryBuilder): [string, TBaseValue[]] {
@@ -822,8 +807,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [query, params];
 	}
 
-	undelete(queryBuilder: QueryBuilder): Promise<any> {
-		return this.execute(...MySQLDriver.compileUndelete(queryBuilder));
+	async restore(queryBuilder: QueryBuilder): Promise<IModificationResult> {
+		const result = await this.execute(...MySQLDriver.compileUndelete(queryBuilder));
+		return [result.affectedRows, result.changedRows];
 	}
 
 	execute(query: string, params: TBaseValue[] = []): Promise<any> {

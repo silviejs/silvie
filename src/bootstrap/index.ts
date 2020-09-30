@@ -36,7 +36,9 @@ GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
 HTTPServer.start();
 
-// Example.all().then((res) => console.log(res));
-// Example.create({
-// 	name: 'Hamidreza Rahmani',
-// }).then((res) => console.log(res));
+Example.baseQueryBuilder
+	.shuffle()
+	.get()
+	.then(async (res) => {
+		console.log('res', res);
+	});
