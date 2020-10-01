@@ -30,6 +30,7 @@ export default class QueryBuilder {
 
 		select: ISelect[];
 		selectInto?: string;
+		processData: (data: any[]) => any[];
 
 		insert?: any[];
 		ignoreDuplicates?: boolean;
@@ -52,6 +53,15 @@ export default class QueryBuilder {
 		limit?: number;
 
 		lock?: 'shared' | 'update';
+
+		useTimestamps: boolean;
+		createTimestamp: string;
+		updateTimestamp: string;
+
+		useSoftDeletes: boolean;
+		softDeleteTimestamp: string;
+		withTrashed: boolean;
+		onlyTrashed: boolean;
 	};
 
 	constructor(tableName?: string) {
@@ -63,11 +73,32 @@ export default class QueryBuilder {
 			group: [],
 			union: [],
 			join: [],
+
+			processData: (data) => data,
+
+			useTimestamps: true,
+			createTimestamp: 'created_at',
+			updateTimestamp: 'updated_at',
+
+			useSoftDeletes: false,
+			softDeleteTimestamp: 'deleted_at',
+			withTrashed: false,
+			onlyTrashed: false,
 		};
 
 		if (tableName) {
 			this.options.table = tableName;
 		}
+	}
+
+	/**
+	 * Extend the query builder options with a custom options object
+	 * @param opts
+	 */
+	extend(opts: any): QueryBuilder {
+		Object.assign(this.options, opts);
+
+		return this;
 	}
 
 	/**
@@ -82,8 +113,8 @@ export default class QueryBuilder {
 	/**
 	 * Return all matching rows of this query
 	 */
-	get(): Promise<any> {
-		return Database.proxy('select', this);
+	async get(): Promise<any> {
+		return this.options.processData(await Database.proxy('select', this));
 	}
 
 	/**
@@ -93,7 +124,7 @@ export default class QueryBuilder {
 		const qb = this.clone();
 		qb.options.limit = 1;
 
-		return (await Database.proxy('select', qb))[0] || null;
+		return this.options.processData(await Database.proxy('select', qb))[0] || null;
 	}
 
 	/**
@@ -149,6 +180,10 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	average(column: TColumn): Promise<number> {
+		if (!column) {
+			throw new Error("Column is not specified for 'average' method");
+		}
+
 		return Database.proxy('average', this, column);
 	}
 
@@ -157,6 +192,10 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	sum(column: TColumn): Promise<number> {
+		if (!column) {
+			throw new Error("Column is not specified for 'sum' method");
+		}
+
 		return Database.proxy('sum', this, column);
 	}
 
@@ -165,6 +204,10 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	min(column: TColumn): Promise<any> {
+		if (!column) {
+			throw new Error("Column is not specified for 'min' method");
+		}
+
 		return Database.proxy('min', this, column);
 	}
 
@@ -173,16 +216,11 @@ export default class QueryBuilder {
 	 * @param column
 	 */
 	max(column: TColumn): Promise<any> {
-		return Database.proxy('max', this, column);
-	}
+		if (!column) {
+			throw new Error("Column is not specified for 'max' method");
+		}
 
-	/**
-	 * Concatenates the specified columns and return a single string
-	 * @param columns Column names to concatenate in each row
-	 * @param separator Separator used to concatenate the rows
-	 */
-	concat(columns: TColumn[], separator = ', '): Promise<string | string[]> {
-		return Database.proxy('concat', this, columns, separator);
+		return Database.proxy('max', this, column);
 	}
 
 	/**
@@ -191,6 +229,10 @@ export default class QueryBuilder {
 	 * @param ignore Weather to ignore duplicate keys or not
 	 */
 	insert(data: any[], ignore?: boolean): Promise<any> {
+		if (data.length === 0) {
+			throw new Error('You should provide one or more objects to insert');
+		}
+
 		this.options.insert = data;
 		this.options.ignoreDuplicates = ignore;
 
@@ -208,6 +250,14 @@ export default class QueryBuilder {
 	 * @param silent Weather to keep the update time field or not
 	 */
 	update(data: any, silent = false): Promise<any> {
+		if (!data) {
+			throw new Error('You should provide an object to the update method');
+		}
+
+		if (Object.keys(data).length === 0) {
+			throw new Error('An empty object cannot be used in update method');
+		}
+
 		this.options.update = data;
 		this.options.silentUpdate = silent;
 
@@ -226,6 +276,13 @@ export default class QueryBuilder {
 	 * @param silent Weather to keep the update time or not
 	 */
 	bulkUpdate(data: any[], keys: string[] = [], silent = false): Promise<any> {
+		if (data.length === 0) {
+			throw new Error('You should provide one or more data to bulk update');
+		}
+		if (keys.length === 0) {
+			throw new Error('You should provide one or more keys to bulk update');
+		}
+
 		this.options.bulkUpdateData = data;
 		this.options.bulkUpdateKeys = keys;
 		this.options.silentUpdate = silent;
@@ -243,8 +300,8 @@ export default class QueryBuilder {
 	 * Delete the rows matching this query
 	 * @param soft Weather to use soft deletes or not
 	 */
-	delete(soft = false): Promise<any> {
-		if (soft) {
+	delete(soft?: boolean): Promise<any> {
+		if ((this.options.useSoftDeletes && soft === undefined) || soft) {
 			return this.softDelete();
 		}
 
@@ -252,23 +309,102 @@ export default class QueryBuilder {
 	}
 
 	/**
+	 * Enabled soft deletes for the current query builder instance
+	 */
+	useSoftDeletes(): QueryBuilder {
+		this.options.useSoftDeletes = true;
+
+		return this;
+	}
+
+	/**
 	 * Soft delete the rows matching this query
 	 */
 	softDelete(): Promise<any> {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
 		return Database.proxy('softDelete', this);
 	}
 
 	/**
 	 * Undelete the soft deleted rows matching this query
 	 */
-	undelete(): Promise<any> {
-		return Database.proxy('undelete', this);
+	restore(): Promise<any> {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
+		return Database.proxy('restore', this);
+	}
+
+	/**
+	 * Include soft deleted records in the result
+	 */
+	withTrashed() {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
+		this.options.withTrashed = true;
+		this.options.onlyTrashed = false;
+
+		return this;
+	}
+
+	/**
+	 * Filter results to soft deleted records
+	 */
+	onlyTrashed() {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
+		this.options.withTrashed = false;
+		this.options.onlyTrashed = true;
+
+		return this;
+	}
+
+	/**
+	 * Exclude soft deleted records from the result
+	 */
+	withoutTrashed() {
+		if (!this.options.useSoftDeletes) {
+			throw new Error(`Soft deletes are not enabled for this query builder`);
+		}
+
+		if (!this.options.softDeleteTimestamp) {
+			throw new Error('Soft delete timestamp is not specified in this query builder');
+		}
+
+		this.options.withTrashed = false;
+		this.options.onlyTrashed = false;
+
+		return this;
 	}
 
 	/**
 	 * Set a shared lock on this query
 	 */
-	sharedLock() {
+	sharedLock(): QueryBuilder {
 		this.options.lock = 'shared';
 
 		return this;
@@ -277,7 +413,7 @@ export default class QueryBuilder {
 	/**
 	 * Set a lock for update on this query
 	 */
-	lockForUpdate() {
+	lockForUpdate(): QueryBuilder {
 		this.options.lock = 'update';
 
 		return this;
@@ -286,7 +422,7 @@ export default class QueryBuilder {
 	/**
 	 * Remove the previously set locks
 	 */
-	clearLock() {
+	clearLock(): QueryBuilder {
 		this.options.lock = null;
 
 		return this;
@@ -296,7 +432,7 @@ export default class QueryBuilder {
 	 * Set the result of this query into a variable
 	 * @param variableName
 	 */
-	into(variableName: string) {
+	into(variableName: string): QueryBuilder {
 		this.options.selectInto = variableName;
 
 		return this;
@@ -307,7 +443,7 @@ export default class QueryBuilder {
 	 * @param queryBuilder Query builder to select from
 	 * @param alias Alias name of the resulting table
 	 */
-	fromAliasTable(queryBuilder: QueryBuilder, alias?: string) {
+	fromAliasTable(queryBuilder: QueryBuilder, alias?: string): QueryBuilder {
 		this.options.aliasTable = {
 			queryBuilder,
 			alias,
@@ -320,7 +456,7 @@ export default class QueryBuilder {
 	 * Select a set of columns from the table
 	 * @param columns
 	 */
-	select(...columns: TColumn[]) {
+	select(...columns: TColumn[]): QueryBuilder {
 		this.options.select.push(
 			...columns.map((column) => ({
 				column,
@@ -336,7 +472,7 @@ export default class QueryBuilder {
 	 * @param queryBuilder Query builder to use in selection
 	 * @param alias Alias name for the sub selection
 	 */
-	selectSub(queryBuilder: QueryBuilder, alias: string) {
+	selectSub(queryBuilder: QueryBuilder, alias: string): QueryBuilder {
 		this.options.select.push({
 			queryBuilder,
 			alias,
@@ -351,7 +487,7 @@ export default class QueryBuilder {
 	 * @param query Query string
 	 * @param params Binding parameters
 	 */
-	selectRaw(query: string, params?: TBaseValue[]) {
+	selectRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		this.options.select.push({
 			query,
 			params: params || [],
@@ -366,7 +502,7 @@ export default class QueryBuilder {
 	 * @param column
 	 * @param direction
 	 */
-	orderBy(column: TColumn | QueryBuilder, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
+	orderBy(column: TColumn | QueryBuilder, direction?: 'asc' | 'desc' | 'ASC' | 'DESC'): QueryBuilder {
 		const order: IOrder = { direction: direction || 'ASC', type: 'column' };
 
 		if (column instanceof QueryBuilder) {
@@ -386,7 +522,7 @@ export default class QueryBuilder {
 	 * @param query
 	 * @param params
 	 */
-	orderByRaw(query: string, params?: TBaseValue[]) {
+	orderByRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		this.options.order.push({ query, params, type: 'raw' });
 
 		return this;
@@ -397,7 +533,7 @@ export default class QueryBuilder {
 	 * @param column
 	 * @param direction
 	 */
-	reorder(column?: TColumn, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
+	reorder(column?: TColumn, direction?: 'asc' | 'desc' | 'ASC' | 'DESC'): QueryBuilder {
 		this.options.order = [];
 
 		if (column) {
@@ -411,7 +547,7 @@ export default class QueryBuilder {
 	 * Randomize the result order
 	 * @param seed Seed to use in the random function
 	 */
-	shuffle(seed?: string) {
+	shuffle(seed?: string): QueryBuilder {
 		this.options.randomOrder = true;
 		this.options.randomSeed = seed || '';
 
@@ -422,7 +558,7 @@ export default class QueryBuilder {
 	 * Skip the first n rows
 	 * @param count
 	 */
-	offset(count: number) {
+	offset(count: number): QueryBuilder {
 		this.options.offset = count;
 
 		return this;
@@ -432,7 +568,7 @@ export default class QueryBuilder {
 	 * Skip the first n rows
 	 * @param count
 	 */
-	skip(count: number) {
+	skip(count: number): QueryBuilder {
 		return this.offset(count);
 	}
 
@@ -440,7 +576,7 @@ export default class QueryBuilder {
 	 * Take the next m rows
 	 * @param count
 	 */
-	limit(count: number) {
+	limit(count: number): QueryBuilder {
 		this.options.limit = count;
 
 		return this;
@@ -450,11 +586,11 @@ export default class QueryBuilder {
 	 * Take the next m rows
 	 * @param count
 	 */
-	take(count: number) {
+	take(count: number): QueryBuilder {
 		return this.limit(count);
 	}
 
-	private baseAggregate(type: TAggregateType, column: TColumn, alias: string, meta?: any) {
+	private baseAggregate(type: TAggregateType, column: TColumn, alias: string, meta?: any): QueryBuilder {
 		this.options.select.push({
 			type: 'aggregate',
 			aggregation: type,
@@ -511,20 +647,10 @@ export default class QueryBuilder {
 	}
 
 	/**
-	 * Select the concatenation of the specified columns in the field set
-	 * @param columns Column names to concatenate
-	 * @param separator Separator used to concatenate
-	 * @param alias Alias name for the new field
-	 */
-	selectConcat(columns: TColumn[], separator = ', ', alias: string): QueryBuilder {
-		return this.baseAggregate('concat', null, alias, { columns, separator });
-	}
-
-	/**
 	 * Group the results by the specified columns
 	 * @param columns
 	 */
-	groupBy(...columns: TColumn[]) {
+	groupBy(...columns: TColumn[]): QueryBuilder {
 		this.options.group.push(
 			...columns.map((column) => ({
 				column,
@@ -540,7 +666,7 @@ export default class QueryBuilder {
 	 * @param query
 	 * @param params
 	 */
-	groupByRaw(query: string, params?: TBaseValue[]) {
+	groupByRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		this.options.group.push({
 			query,
 			params,
@@ -555,7 +681,7 @@ export default class QueryBuilder {
 	 * @param queryBuilder
 	 * @param all
 	 */
-	union(queryBuilder: QueryBuilder, all = false) {
+	union(queryBuilder: QueryBuilder, all = false): QueryBuilder {
 		this.options.union.push({
 			queryBuilder,
 			all,
@@ -571,7 +697,7 @@ export default class QueryBuilder {
 	 * @param params
 	 * @param all
 	 */
-	unionRaw(query: string, params?: TBaseValue[], all = false) {
+	unionRaw(query: string, params?: TBaseValue[], all = false): QueryBuilder {
 		this.options.union.push({
 			query,
 			params,
@@ -589,7 +715,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		const join: IJoin = {
 			type,
 		};
@@ -663,7 +789,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('inner', table, column1, operator, column2, alias);
 	}
 
@@ -681,7 +807,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('left', table, column1, operator, column2, alias);
 	}
 
@@ -699,7 +825,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('right', table, column1, operator, column2, alias);
 	}
 
@@ -717,7 +843,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('cross', table, column1, operator, column2, alias);
 	}
 
@@ -735,7 +861,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('outer', table, column1, operator, column2, alias);
 	}
 

@@ -4,6 +4,12 @@ module.exports = (api) => {
 	return {
 		presets: [['@babel/preset-env', { modules: 'cjs' }], '@babel/preset-typescript'],
 		plugins: [
+			[
+				'@babel/plugin-transform-typescript',
+				{
+					allowDeclareFields: true,
+				},
+			],
 			'@babel/plugin-proposal-optional-chaining',
 			['@babel/plugin-proposal-decorators', { legacy: true }],
 			'@babel/plugin-proposal-export-default-from',
@@ -27,6 +33,7 @@ module.exports = (api) => {
 						database: './src/database',
 						graphql: './src/graphql',
 						middlewares: './src/middlewares',
+						models: './src/models',
 					},
 				},
 			],

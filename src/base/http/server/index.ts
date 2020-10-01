@@ -119,7 +119,10 @@ class HTTPServer {
 				const FileStore = fileStore(session);
 
 				store = new FileStore({
-					path: path.resolve(process.rootPath, config.session.driverOptions.file.path),
+					path: path.resolve(
+						process.rootPath,
+						(process.env.NODE_ENV === 'development' ? `../` : '') + config.session.driverOptions.file.path
+					),
 					extension: config.session.driverOptions.file.extension,
 					ttl: config.session.driverOptions.file.ttl,
 				});

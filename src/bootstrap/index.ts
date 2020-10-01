@@ -14,7 +14,6 @@ import * as resolvers from 'graphql/resolvers';
 import * as dataLoaders from 'graphql/dataloaders';
 
 import 'base/extensions';
-import QueryBuilder from 'base/database/builders/query';
 
 // Detect project root path
 process.rootPath = path.resolve(__dirname, process.relativeRootPath || '../');

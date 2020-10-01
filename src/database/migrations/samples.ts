@@ -1,5 +1,5 @@
-import IMigration from 'base/database/migration';
-import Schema from 'base/database/schema';
+import IMigration from 'base/database/migration/migration';
+import Schema from 'base/database/migration/schema';
 
 module.exports = class SamplesTableMigration implements IMigration {
 	async up() {

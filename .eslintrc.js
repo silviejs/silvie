@@ -29,6 +29,7 @@ module.exports = {
 					['database', './src/database'],
 					['graphql', './src/graphql'],
 					['middlewares', './src/middlewares'],
+					['models', './src/models'],
 				],
 				extensions: ['.js', '.ts', '.gql', '.json'],
 			},

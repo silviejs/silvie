@@ -1,6 +1,6 @@
-import Table from 'base/database/table';
+import Table from 'base/database/migration/table';
 import IDatabaseDriver from 'base/database/driver';
-import drivers from 'base/database/drivers';
+import drivers from 'base/database/driver/drivers';
 import config from 'config/database';
 import { TBaseValue } from 'base/database/builders/condition';
 
