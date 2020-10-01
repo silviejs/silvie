@@ -1,11 +1,11 @@
 {
-  "name": "api",
+  "name": "silvie",
   "version": "1.0.0",
-  "description": "Karnameh Website API",
+  "description": "Silvie Back-end Framework",
   "main": "./src/bootstrap/index.ts",
   "scripts": {
     "dev": "BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
-    "build": "rm -rf build/* && cp -r src/assets build/assets && cp -r .env build/.env && NODE_ENV=production babel src -d build -x \".js,.ts\"",
+    "build": "if [ -d build ]; then rm -rf build/*; else mkdir build; fi && cp -r src/assets build/assets && cp -r .env build/.env && NODE_ENV=production babel src -d build -x \".js,.ts\"",
     "bundle": "NODE_ENV=production webpack --env.clean",
     "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
     "cli": "babel-node -x \".js,.ts\" cli/index.ts",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@gitman.rasayesh.com:4452/karnameh/api.git"
+    "url": "ssh://git@github.com:hmak-me/silvie.git"
   },
   "author": "Hossein Maktoobian",
   "license": "ISC",
