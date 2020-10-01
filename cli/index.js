@@ -9,6 +9,9 @@ if (rootPath !== processPath) {
 	process.exit();
 }
 
+process.rootPath = rootPath;
+process.path = processPath;
+
 // Using @babel/register to transpile the rest of the code
 require('@babel/register')({
 	extensions: ['.ts', '.js'],

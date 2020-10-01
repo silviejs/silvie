@@ -13,7 +13,7 @@ if (command) {
 	if (command in commands) {
 		commands[command](args);
 	} else {
-		console.log(`There is no '${command}' command`);
+		console.log(`There is no command named '${command}'`);
 	}
 } else {
 	console.log('This is not how you use Silvie CLI');

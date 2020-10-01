@@ -1,7 +1,7 @@
 import migrations from 'database/migrations';
 import Database from 'base/database';
 
-export default async (args: { _: string[]; rollback: boolean; refresh: boolean }): Promise<any> => {
+export default async (args: { _: string[]; rollback: boolean; refresh: boolean }) => {
 	const filename = args._[1];
 
 	Database.init();

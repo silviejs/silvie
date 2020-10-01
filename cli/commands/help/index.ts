@@ -1,3 +1,3 @@
-export default async (): Promise<any> => {
+export default () => {
 	console.log('SILVIE HELP');
 };
