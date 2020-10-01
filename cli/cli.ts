@@ -9,8 +9,13 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const [command] = args._;
 
-if (command in commands) {
-	commands[command](args);
+if (command) {
+	if (command in commands) {
+		commands[command](args);
+	} else {
+		console.log(`There is no '${command}' command`);
+	}
 } else {
-	console.log(`There is no '${command}' command`);
+	console.log('This is not how you use Silvie CLI');
+	console.log('Run "silvie help" for more info');
 }
