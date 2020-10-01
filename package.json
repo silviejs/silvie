@@ -4,7 +4,6 @@
   "description": "Silvie Back-end Framework",
   "main": "./src/bootstrap/index.ts",
   "scripts": {
-    "dev": "BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x \".ts,.js\"",
     "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
     "test": ""
   },
