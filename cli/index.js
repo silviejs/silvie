@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+process.env.BABEL_DISABLE_CACHE = '1';
+
 const path = require('path');
 
 // Check to see if it is running in the project root
