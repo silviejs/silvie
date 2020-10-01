@@ -2,8 +2,8 @@
 node_modules
 
 # Build
-build
-bundle
+/build
+/bundle
 
 # Env Files
 .env
