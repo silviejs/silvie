@@ -30,6 +30,7 @@ export default class QueryBuilder {
 
 		select: ISelect[];
 		selectInto?: string;
+		processData: (data: any[]) => any[];
 
 		insert?: any[];
 		ignoreDuplicates?: boolean;
@@ -73,6 +74,8 @@ export default class QueryBuilder {
 			union: [],
 			join: [],
 
+			processData: (data) => data,
+
 			useTimestamps: true,
 			createTimestamp: 'created_at',
 			updateTimestamp: 'updated_at',
@@ -110,8 +113,8 @@ export default class QueryBuilder {
 	/**
 	 * Return all matching rows of this query
 	 */
-	get(): Promise<any> {
-		return Database.proxy('select', this);
+	async get(): Promise<any> {
+		return this.options.processData(await Database.proxy('select', this));
 	}
 
 	/**
@@ -121,7 +124,7 @@ export default class QueryBuilder {
 		const qb = this.clone();
 		qb.options.limit = 1;
 
-		return (await Database.proxy('select', qb))[0] || null;
+		return this.options.processData(await Database.proxy('select', qb))[0] || null;
 	}
 
 	/**
@@ -401,7 +404,7 @@ export default class QueryBuilder {
 	/**
 	 * Set a shared lock on this query
 	 */
-	sharedLock() {
+	sharedLock(): QueryBuilder {
 		this.options.lock = 'shared';
 
 		return this;
@@ -410,7 +413,7 @@ export default class QueryBuilder {
 	/**
 	 * Set a lock for update on this query
 	 */
-	lockForUpdate() {
+	lockForUpdate(): QueryBuilder {
 		this.options.lock = 'update';
 
 		return this;
@@ -419,7 +422,7 @@ export default class QueryBuilder {
 	/**
 	 * Remove the previously set locks
 	 */
-	clearLock() {
+	clearLock(): QueryBuilder {
 		this.options.lock = null;
 
 		return this;
@@ -429,7 +432,7 @@ export default class QueryBuilder {
 	 * Set the result of this query into a variable
 	 * @param variableName
 	 */
-	into(variableName: string) {
+	into(variableName: string): QueryBuilder {
 		this.options.selectInto = variableName;
 
 		return this;
@@ -440,7 +443,7 @@ export default class QueryBuilder {
 	 * @param queryBuilder Query builder to select from
 	 * @param alias Alias name of the resulting table
 	 */
-	fromAliasTable(queryBuilder: QueryBuilder, alias?: string) {
+	fromAliasTable(queryBuilder: QueryBuilder, alias?: string): QueryBuilder {
 		this.options.aliasTable = {
 			queryBuilder,
 			alias,
@@ -453,7 +456,7 @@ export default class QueryBuilder {
 	 * Select a set of columns from the table
 	 * @param columns
 	 */
-	select(...columns: TColumn[]) {
+	select(...columns: TColumn[]): QueryBuilder {
 		this.options.select.push(
 			...columns.map((column) => ({
 				column,
@@ -469,7 +472,7 @@ export default class QueryBuilder {
 	 * @param queryBuilder Query builder to use in selection
 	 * @param alias Alias name for the sub selection
 	 */
-	selectSub(queryBuilder: QueryBuilder, alias: string) {
+	selectSub(queryBuilder: QueryBuilder, alias: string): QueryBuilder {
 		this.options.select.push({
 			queryBuilder,
 			alias,
@@ -484,7 +487,7 @@ export default class QueryBuilder {
 	 * @param query Query string
 	 * @param params Binding parameters
 	 */
-	selectRaw(query: string, params?: TBaseValue[]) {
+	selectRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		this.options.select.push({
 			query,
 			params: params || [],
@@ -499,7 +502,7 @@ export default class QueryBuilder {
 	 * @param column
 	 * @param direction
 	 */
-	orderBy(column: TColumn | QueryBuilder, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
+	orderBy(column: TColumn | QueryBuilder, direction?: 'asc' | 'desc' | 'ASC' | 'DESC'): QueryBuilder {
 		const order: IOrder = { direction: direction || 'ASC', type: 'column' };
 
 		if (column instanceof QueryBuilder) {
@@ -519,7 +522,7 @@ export default class QueryBuilder {
 	 * @param query
 	 * @param params
 	 */
-	orderByRaw(query: string, params?: TBaseValue[]) {
+	orderByRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		this.options.order.push({ query, params, type: 'raw' });
 
 		return this;
@@ -530,7 +533,7 @@ export default class QueryBuilder {
 	 * @param column
 	 * @param direction
 	 */
-	reorder(column?: TColumn, direction?: 'asc' | 'desc' | 'ASC' | 'DESC') {
+	reorder(column?: TColumn, direction?: 'asc' | 'desc' | 'ASC' | 'DESC'): QueryBuilder {
 		this.options.order = [];
 
 		if (column) {
@@ -544,7 +547,7 @@ export default class QueryBuilder {
 	 * Randomize the result order
 	 * @param seed Seed to use in the random function
 	 */
-	shuffle(seed?: string) {
+	shuffle(seed?: string): QueryBuilder {
 		this.options.randomOrder = true;
 		this.options.randomSeed = seed || '';
 
@@ -555,7 +558,7 @@ export default class QueryBuilder {
 	 * Skip the first n rows
 	 * @param count
 	 */
-	offset(count: number) {
+	offset(count: number): QueryBuilder {
 		this.options.offset = count;
 
 		return this;
@@ -565,7 +568,7 @@ export default class QueryBuilder {
 	 * Skip the first n rows
 	 * @param count
 	 */
-	skip(count: number) {
+	skip(count: number): QueryBuilder {
 		return this.offset(count);
 	}
 
@@ -573,7 +576,7 @@ export default class QueryBuilder {
 	 * Take the next m rows
 	 * @param count
 	 */
-	limit(count: number) {
+	limit(count: number): QueryBuilder {
 		this.options.limit = count;
 
 		return this;
@@ -583,11 +586,11 @@ export default class QueryBuilder {
 	 * Take the next m rows
 	 * @param count
 	 */
-	take(count: number) {
+	take(count: number): QueryBuilder {
 		return this.limit(count);
 	}
 
-	private baseAggregate(type: TAggregateType, column: TColumn, alias: string, meta?: any) {
+	private baseAggregate(type: TAggregateType, column: TColumn, alias: string, meta?: any): QueryBuilder {
 		this.options.select.push({
 			type: 'aggregate',
 			aggregation: type,
@@ -647,7 +650,7 @@ export default class QueryBuilder {
 	 * Group the results by the specified columns
 	 * @param columns
 	 */
-	groupBy(...columns: TColumn[]) {
+	groupBy(...columns: TColumn[]): QueryBuilder {
 		this.options.group.push(
 			...columns.map((column) => ({
 				column,
@@ -663,7 +666,7 @@ export default class QueryBuilder {
 	 * @param query
 	 * @param params
 	 */
-	groupByRaw(query: string, params?: TBaseValue[]) {
+	groupByRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		this.options.group.push({
 			query,
 			params,
@@ -678,7 +681,7 @@ export default class QueryBuilder {
 	 * @param queryBuilder
 	 * @param all
 	 */
-	union(queryBuilder: QueryBuilder, all = false) {
+	union(queryBuilder: QueryBuilder, all = false): QueryBuilder {
 		this.options.union.push({
 			queryBuilder,
 			all,
@@ -694,7 +697,7 @@ export default class QueryBuilder {
 	 * @param params
 	 * @param all
 	 */
-	unionRaw(query: string, params?: TBaseValue[], all = false) {
+	unionRaw(query: string, params?: TBaseValue[], all = false): QueryBuilder {
 		this.options.union.push({
 			query,
 			params,
@@ -712,7 +715,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		const join: IJoin = {
 			type,
 		};
@@ -786,7 +789,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('inner', table, column1, operator, column2, alias);
 	}
 
@@ -804,7 +807,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('left', table, column1, operator, column2, alias);
 	}
 
@@ -822,7 +825,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('right', table, column1, operator, column2, alias);
 	}
 
@@ -840,7 +843,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('cross', table, column1, operator, column2, alias);
 	}
 
@@ -858,7 +861,7 @@ export default class QueryBuilder {
 		operator?: TOperator | TColumn,
 		column2?: TColumn,
 		alias?: string
-	) {
+	): QueryBuilder {
 		return this.baseJoin('outer', table, column1, operator, column2, alias);
 	}
 

@@ -15,8 +15,6 @@ import * as dataLoaders from 'graphql/dataloaders';
 
 import 'base/extensions';
 
-import Example from 'models/example';
-
 // Detect project root path
 process.rootPath = path.resolve(__dirname, process.relativeRootPath || '../');
 
@@ -35,11 +33,3 @@ HTTPServer.init();
 GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
 HTTPServer.start();
-
-Example.find(1).then((res: Example) => {
-	res.name = 'Hello';
-	console.log(res);
-	res.save().then((result) => {
-		console.log(result);
-	});
-});
