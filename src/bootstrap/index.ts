@@ -2,6 +2,8 @@ import * as dotenv from 'dotenv';
 import minimist from 'minimist';
 import path from 'path';
 
+import Database from 'base/database';
+
 import HTTPServer from 'base/http/server';
 import 'middlewares';
 import 'controllers';
@@ -23,6 +25,8 @@ dotenv.config({
 
 // Parse command line arguments
 process.args = minimist(process.argv.slice(2));
+
+Database.init();
 
 HTTPServer.init();
 

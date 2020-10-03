@@ -16,6 +16,7 @@ import redisStore from 'connect-redis';
 import fileStore from 'session-file-store';
 
 import config from 'config/http';
+import log from 'base/utils/log';
 
 class HTTPServer {
 	app: any;
@@ -119,7 +120,10 @@ class HTTPServer {
 				const FileStore = fileStore(session);
 
 				store = new FileStore({
-					path: path.resolve(process.rootPath, config.session.driverOptions.file.path),
+					path: path.resolve(
+						process.rootPath,
+						(process.env.NODE_ENV === 'development' ? `../` : '') + config.session.driverOptions.file.path
+					),
 					extension: config.session.driverOptions.file.extension,
 					ttl: config.session.driverOptions.file.ttl,
 				});
@@ -129,9 +133,9 @@ class HTTPServer {
 
 				store = new RedisStore({
 					client: redisClient,
-					host: config.session.driverOptions.redis.host ?? process.env.REDIS_HOST,
-					port: config.session.driverOptions.redis.port ?? process.env.REDIS_PORT,
-					password: config.session.driverOptions.redis.password ?? process.env.REDIS_PASSWORD,
+					host: config.session.driverOptions.redis.host || process.env.REDIS_HOST,
+					port: config.session.driverOptions.redis.port || process.env.REDIS_PORT,
+					password: config.session.driverOptions.redis.password || process.env.REDIS_PASSWORD,
 					ttl: config.session.driverOptions.redis.ttl,
 					prefix: config.session.driverOptions.redis.prefix,
 				});
@@ -323,11 +327,11 @@ class HTTPServer {
 		} else {
 			server = http.createServer(this.app);
 		}
-		const port = process.args.port || process.args.P || process.env.APP_PORT || config.port || customPort;
+		const port = process.args.port || process.env.APP_PORT || config.port || customPort;
 		server.listen(port, (error) => {
-			if (error) console.log('An error occurred');
+			if (error) log.error('Server Start Failed', 'An error occurred');
 
-			console.log(`Server is running on http${config.HTTP2 || config.ssl.enabled ? 's' : ''}://localhost:${port}`);
+			log.success('Server Started', `on http${config.HTTP2 || config.ssl.enabled ? 's' : ''}://localhost:${port}`);
 		});
 	}
 }
