@@ -12,12 +12,12 @@ const makers = {
 };
 
 const options = {
-	'-M --make-model': 'Make a model for the entity',
-	'-S --make-seeder': 'Make a seeder for the entity',
-	'-m --make-migration': 'Make a migration for the entity',
-	'-r --make-resolver': 'Make a resolver for the entity',
-	'-s --make-schema': 'Make a schema for the entity',
-	'-d --make-dataloader': 'Make a data loader for the entity',
+	'-M --model': 'Make a model for the entity',
+	'-S --seeder': 'Make a seeder for the entity',
+	'-m --migration': 'Make a migration for the entity',
+	'-r --resolver': 'Make a resolver for the entity',
+	'-s --schema': 'Make a schema for the entity',
+	'-d --dataloader': 'Make a data loader for the entity',
 };
 
 export default () => {
