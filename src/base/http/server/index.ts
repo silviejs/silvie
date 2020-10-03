@@ -326,7 +326,7 @@ class HTTPServer {
 		} else {
 			server = http.createServer(this.app);
 		}
-		const port = process.args.port || process.args.P || process.env.APP_PORT || config.port || customPort;
+		const port = process.args.port || process.env.APP_PORT || config.port || customPort;
 		server.listen(port, (error) => {
 			if (error) console.log('An error occurred');
 

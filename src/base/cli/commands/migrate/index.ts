@@ -1,22 +1,32 @@
 import migrations from 'database/migrations';
 import Database from 'base/database';
+import log from 'base/utils/log';
 
 export default async (args: { _: string[]; rollback: boolean; refresh: boolean }) => {
 	const filename = args._[1];
 
-	Database.init();
-
 	if (filename) {
 		const migration = migrations[filename];
 
-		if (args.rollback) {
-			await migration.prototype.down();
-		} else {
-			if (args.refresh) await migration.prototype.down();
+		if (migration) {
+			Database.init();
 
-			await migration.prototype.up();
+			if (args.rollback) {
+				await migration.prototype.down();
+			} else {
+				if (args.refresh) await migration.prototype.down();
+
+				await migration.prototype.up();
+			}
+
+			Database.closeConnection();
+		} else {
+			log.error('[Silvie] Migration Not Found');
+			log(`There is no migration named '${filename}'`);
 		}
-	} else {
+	} else if (Object.values(migrations).length === 0) {
+		Database.init();
+
 		await Promise.all(
 			Object.values(migrations)
 				.map((migration: any) => {
@@ -38,7 +48,10 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 				})
 				.flat()
 		);
-	}
 
-	Database.closeConnection();
+		Database.closeConnection();
+	} else {
+		log.warning('[Silvie] No Migrations Found');
+		log('You can create new migrations using', log.str`silvie make migration`.underscore().bright());
+	}
 };

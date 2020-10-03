@@ -1,30 +1,42 @@
 import childProcess from 'child_process';
+import log from 'base/utils/log';
 
-export default () => {
-	console.log('Starting a development server...');
+export default (args: { port: string; p: string }) => {
+	log.info('[Silvie Dev]', 'Starting a development server');
 
+	const port = args.port || args.p;
 	const cp = childProcess.exec(
-		`cross-env BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x ".ts,.js"`,
+		`cross-env BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x ".ts,.js" ${
+			port ? `--port ${port}` : ''
+		}`,
 		{ encoding: 'utf8' }
 	);
 
 	cp.stdout.on('data', (data) => {
 		if (data.includes('[nodemon]')) {
 			if (data.includes('[nodemon] app crashed')) {
-				console.log('App Crashed! Waiting for changes...');
+				log.error('[Silvie Dev] App Crashed!', 'Waiting for changes...');
 			}
 
 			if (data.includes('[nodemon] restarting')) {
-				console.log('Changes Detected! Restarting...');
+				log.warning('[Silvie Dev] Changes Detected!', 'Restarting...');
 			}
 
 			return;
 		}
 
-		console.log(data);
+		log(data);
 	});
 
 	cp.stderr.on('data', (data) => {
-		console.log('error', data);
+		if (data.includes('EADDRINUSE')) {
+			const portNumber = /port: (\d+)/.exec(data)[1];
+			log.error('[Silvie Dev] Address in use');
+			log(`Port '${portNumber || 'unknown'}' is already used. Please use a different port number.`);
+
+			return;
+		}
+
+		log.error(data);
 	});
 };

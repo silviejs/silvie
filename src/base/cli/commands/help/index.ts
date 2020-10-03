@@ -1,3 +1,5 @@
+import log from 'base/utils/log';
+
 export default () => {
-	console.log('SILVIE HELP');
+	log('SILVIE HELP');
 };

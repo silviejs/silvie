@@ -2,17 +2,36 @@ import fs from 'fs';
 import path from 'path';
 import { ncp } from 'ncp';
 import childProcess from 'child_process';
+import log from 'base/utils/log';
 
 export default async () => {
 	const rootDir = process.rootPath;
 	const buildDir = path.resolve(rootDir, 'build');
 
+	log.info('[Silvie Builder]', 'Checking Requirements...');
+
+	let hasErrors = false;
+	if (!fs.existsSync(path.resolve(rootDir, 'src/assets'))) {
+		log.error('[Silvie Builder]', 'Assets directory not found')
+		hasErrors = true;
+	}
+	if (!fs.existsSync(path.resolve(rootDir, '.env'))) {
+		log.error('[Silvie Builder]', '.env file not found')
+		hasErrors = true;
+	}
+
+	if (!hasErrors) {
+		log.success('[Silvie Builder]', "Everything's good.")
+	} else {
+		return;
+	}
+
 	if (!fs.existsSync(buildDir)) {
-		console.log('Creating build directory...');
+		log.info('[Silvie Builder]', 'Creating build directory...');
 
 		fs.mkdirSync(buildDir);
 	} else {
-		console.log('Cleaning build directory...');
+		log.info('[Silvie Builder]', 'Cleaning build directory...');
 
 		fs.readdirSync(buildDir).forEach((file) => {
 			const filePath = path.resolve(buildDir, file);
@@ -25,7 +44,7 @@ export default async () => {
 		});
 	}
 
-	console.log('Copying assets directory...');
+	log.info('[Silvie Builder]', 'Copying assets directory...');
 	await new Promise<any>((resolve, reject) => {
 		ncp(path.resolve(rootDir, 'src/assets'), path.resolve(buildDir, 'assets'), (error) => {
 			if (error) {
@@ -36,11 +55,11 @@ export default async () => {
 		});
 	});
 
-	console.log('Copying .env file...');
+	log.info('[Silvie Builder]', 'Copying .env file...');
 	fs.copyFileSync(path.resolve(rootDir, '.env'), path.resolve(buildDir, '.env'));
 
-	console.log('Building your application...');
+	log.info('[Silvie Builder]', 'Building your application...');
 	childProcess.execSync(`cross-env NODE_ENV=production babel src -d build -x ".js,.ts"`, { encoding: 'utf8' });
 
-	console.log('Build finished.');
+	log.success('[Silvie Builder]', 'Successfully finished building.');
 };
