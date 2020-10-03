@@ -1,0 +1,10 @@
+export default {
+	Query: {
+		SINGULAR_NAME(): any {
+			return null;
+		},
+		PLURAL_NAME(): any[] {
+			return [];
+		},
+	},
+};
