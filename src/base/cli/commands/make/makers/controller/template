@@ -1,0 +1,9 @@
+import Controller, { route } from 'base/http/controller';
+import { Response, Request } from 'express';
+
+export default class CLASS_NAME implements Controller {
+	@route('GET', '/ROUTE_URL')
+	index(req: Request, res: Response): void {
+		res.send('ROUTE_RESPONSE');
+	}
+}

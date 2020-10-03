@@ -1,0 +1,15 @@
+import IMigration from 'base/database/migration/migration';
+import Schema from 'base/database/migration/schema';
+
+module.exports = class CLASS_NAME implements IMigration {
+	async up() {
+		await Schema.create('TABLE_NAME', (table) => {
+			table.id();
+			table.timestamps();
+		});
+	}
+
+	async down() {
+		await Schema.dropIfExists('TABLE_NAME');
+	}
+};

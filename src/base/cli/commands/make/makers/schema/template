@@ -1,0 +1,8 @@
+type CLASS_NAME {
+	id: Int!
+}
+
+extend type Query {
+	SINGULAR_NAME(id: Int!): CLASS_NAME
+	PLURAL_NAME: [CLASS_NAME]
+}
