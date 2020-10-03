@@ -16,9 +16,9 @@ export default (args: { _: string[] }) => {
 			const className = pascalCase(/[C|c]ontroller$/.test(name) ? name : `${name}Controller`);
 
 			const content = template
-				.replace('CLASS_NAME', className)
-				.replace('ROUTE_URL', snakeCase(className))
-				.replace('ROUTE_RESPONSE', `${pascalCase(name)} Controller Default Response`);
+				.replace(/CLASS_NAME/g, className)
+				.replace(/ROUTE_URL/g, snakeCase(className))
+				.replace(/ROUTE_RESPONSE/g, `${pascalCase(name)} Controller Default Response`);
 
 			fs.writeFileSync(filepath, content);
 

@@ -15,7 +15,7 @@ export default (args: { _: string[] }) => {
 		if (!fs.existsSync(filepath)) {
 			const className = pascalCase(name);
 
-			const content = template.replace('CLASS_NAME', className);
+			const content = template.replace(/CLASS_NAME/g, className);
 
 			fs.writeFileSync(filepath, content);
 
