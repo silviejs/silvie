@@ -32,7 +32,8 @@ export default (args: { port: string; p: string }) => {
 		if (data.includes('EADDRINUSE')) {
 			const portNumber = /port: (\d+)/.exec(data)[1];
 			log.error('[Silvie Dev] Address in use');
-			log(`Port '${portNumber || 'unknown'}' is already used. Please use a different port number.`);
+			log(`Port '${portNumber || 'unknown'}' is already used.`);
+			log('Please use a different port number.');
 
 			return;
 		}

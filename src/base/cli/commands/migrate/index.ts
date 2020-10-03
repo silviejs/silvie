@@ -24,7 +24,7 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 			log.error('[Silvie] Migration Not Found');
 			log(`There is no migration named '${filename}'`);
 		}
-	} else if (Object.values(migrations).length === 0) {
+	} else if (Object.values(migrations).length > 0) {
 		Database.init();
 
 		await Promise.all(

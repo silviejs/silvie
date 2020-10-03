@@ -1,5 +1,6 @@
 import Database from 'base/database';
 import Table from 'base/database/migration/table';
+import log from 'base/utils/log';
 
 export default class Schema {
 	static async create(tableName: string, tableCallback: (table: Table) => void): Promise<any> {
@@ -10,9 +11,13 @@ export default class Schema {
 
 			await Database.createTable(table);
 
-			console.log(`${tableName} table created`);
-		} catch ($ex) {
-			console.log($ex);
+			log.success('Created', tableName);
+		} catch (ex) {
+			if (ex.code === 'ER_TABLE_EXISTS_ERROR') {
+				log.error('Schema Exists', tableName);
+			} else {
+				log(ex);
+			}
 		}
 	}
 
@@ -20,9 +25,9 @@ export default class Schema {
 		try {
 			await Database.dropTable(tableName);
 
-			console.log(`${tableName} table dropped`);
-		} catch ($ex) {
-			console.log($ex);
+			log.warning('Deleted', `${tableName} table`);
+		} catch (ex) {
+			log(ex);
 		}
 	}
 
@@ -30,9 +35,9 @@ export default class Schema {
 		try {
 			await Database.dropTableIfExists(tableName);
 
-			console.log(`${tableName} table dropped`);
-		} catch ($ex) {
-			console.log($ex);
+			log.warning('Deleted', `${tableName} table`);
+		} catch (ex) {
+			log(ex);
 		}
 	}
 }

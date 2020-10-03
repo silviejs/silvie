@@ -16,6 +16,7 @@ import redisStore from 'connect-redis';
 import fileStore from 'session-file-store';
 
 import config from 'config/http';
+import log from 'base/utils/log';
 
 class HTTPServer {
 	app: any;
@@ -328,9 +329,9 @@ class HTTPServer {
 		}
 		const port = process.args.port || process.env.APP_PORT || config.port || customPort;
 		server.listen(port, (error) => {
-			if (error) console.log('An error occurred');
+			if (error) log.error('Server Start Failed', 'An error occurred');
 
-			console.log(`Server is running on http${config.HTTP2 || config.ssl.enabled ? 's' : ''}://localhost:${port}`);
+			log.success('Server Started', `on http${config.HTTP2 || config.ssl.enabled ? 's' : ''}://localhost:${port}`);
 		});
 	}
 }
