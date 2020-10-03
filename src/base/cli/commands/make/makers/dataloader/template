@@ -1,0 +1,13 @@
+import DataLoader from 'dataloader';
+
+export default (): any => {
+	return new DataLoader(async (keys: number[]) => {
+		const results = keys.map((key: number) => {
+			// Map keys with corresponding data
+
+			return key;
+		});
+
+		return Promise.resolve(results);
+	});
+};
