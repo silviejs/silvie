@@ -1,7 +1,13 @@
 import ISeeder from 'base/database/migration/seeder';
+import Example from 'models/example';
 
 module.exports = class ExamplesTableSeeder implements ISeeder {
 	async seed() {
-		// Seed the table here
+		await Example.create(
+			{
+				name: 'Administrator',
+			},
+			false
+		);
 	}
 };

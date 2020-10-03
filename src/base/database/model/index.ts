@@ -26,13 +26,13 @@ class Model extends ModelQueryBuilder {
 	 * @param shouldReturn Specify to return the created record or not, defaults to true
 	 */
 	static async create(data: any, shouldReturn = true): Promise<Model> {
-		const result = await this.baseQueryBuilder.insert([data]);
+		const [insertId] = await this.baseQueryBuilder.insert([data]);
 
 		if (shouldReturn) {
-			return this.find(result.insertId);
+			return this.find(insertId);
 		}
 
-		return result.insertId;
+		return insertId;
 	}
 
 	/**

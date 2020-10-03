@@ -14,7 +14,7 @@ export default class Schema {
 			log.success('Created', tableName);
 		} catch (ex) {
 			if (ex.code === 'ER_TABLE_EXISTS_ERROR') {
-				log.error('Schema Exists', tableName);
+				log.warning('Already Created', tableName);
 			} else {
 				log(ex);
 			}
