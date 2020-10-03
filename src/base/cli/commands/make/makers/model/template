@@ -1,0 +1,3 @@
+import Model from 'base/database/model';
+
+export default class CLASS_NAME extends Model {}
