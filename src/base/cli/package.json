@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {},
   "bin": {
-    "silvie": "./index.js"
+    "silvie": "index.js"
   },
   "author": "Hossein Maktoobian",
   "license": "MIT",

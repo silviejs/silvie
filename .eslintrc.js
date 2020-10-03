@@ -21,7 +21,6 @@ module.exports = {
 		'import/resolver': {
 			alias: {
 				map: [
-					['cli', './cli'],
 					['src', './src'],
 					['base', './src/base'],
 					['bootstrap', './src/bootstrap'],

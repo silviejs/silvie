@@ -24,7 +24,6 @@ module.exports = (api) => {
 				{
 					root: ['./'],
 					alias: {
-						cli: './cli',
 						src: './src',
 						base: './src/base',
 						bootstrap: './src/bootstrap',

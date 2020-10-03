@@ -9,7 +9,6 @@
 		"experimentalDecorators": true,
 		"baseUrl": ".",
 		"paths": {
-			"cli/*": ["./cli/*"],
 			"src/*": ["./src/*"],
 			"base/*": ["./src/base/*"],
 			"bootstrap/*": ["./src/bootstrap/*"],

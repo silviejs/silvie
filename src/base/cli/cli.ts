@@ -2,7 +2,7 @@ import minimist from 'minimist';
 import dotenv from 'dotenv';
 import path from 'path';
 
-import commands from 'cli/commands';
+import commands from 'base/cli/commands';
 
 const args = minimist(process.argv.slice(2));
 dotenv.config({ path: path.resolve(__dirname, '../.env') });

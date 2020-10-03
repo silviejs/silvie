@@ -1,1 +1,1 @@
-declare module 'cli/commands' {}
+declare module 'base/cli/commands' {}

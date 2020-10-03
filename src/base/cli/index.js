@@ -4,7 +4,7 @@ process.env.BABEL_DISABLE_CACHE = '1';
 const path = require('path');
 
 // Check to see if it is running in the project root
-const rootPath = path.resolve(__dirname, '../');
+const rootPath = path.resolve(__dirname, '../../../');
 const processPath = process.cwd();
 if (rootPath !== processPath) {
 	console.log('Silvie CLI is only accessible from the project root');
