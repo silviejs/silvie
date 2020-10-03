@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "description": "Silvie Back-end Framework",
   "main": "./src/bootstrap/index.ts",
-  "scripts": {
-    "start": "NODE_ENV=production npm run build && node build/bootstrap/index.js",
-    "test": ""
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com:hmak-me/silvie.git"
