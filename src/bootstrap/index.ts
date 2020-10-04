@@ -39,5 +39,3 @@ HTTPServer.init();
 GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
 HTTPServer.start();
-
-Storage.disks.default.put('names.txt', 'Hello John');
