@@ -4,6 +4,7 @@ import path from 'path';
 
 import Database from 'base/database';
 import Auth from 'base/authentication';
+import Storage from 'base/storage';
 
 import HTTPServer from 'base/http/server';
 import 'middlewares';
@@ -28,6 +29,8 @@ dotenv.config({
 process.args = minimist(process.argv.slice(2));
 
 Auth.init();
+
+Storage.init();
 
 Database.init();
 
