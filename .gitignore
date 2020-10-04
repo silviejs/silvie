@@ -23,3 +23,4 @@ yarn-error.log*
 # Temp Dir
 /session
 /tmp
+/storage
