@@ -21,5 +21,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # Temp Dir
-session
-tmp
+/session
+/tmp
