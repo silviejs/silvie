@@ -4,7 +4,7 @@ const nodeExternals = require('webpack-node-externals');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const Dotenv = require('./lib/webpack/plugins/dotenv');
+const DotenvProvider = require('webpack-dotenv-provider');
 
 const isProduction = process.env.NODE_ENV !== 'development';
 
@@ -52,7 +52,7 @@ module.exports = (env) => {
 		},
 
 		plugins: [
-			Dotenv(),
+			DotenvProvider(),
 			new webpack.DefinePlugin({ 'process.relativeRootPath': "'./'" }),
 			new CopyWebpackPlugin({
 				patterns: [{ from: 'src/assets', to: './assets' }],
