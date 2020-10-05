@@ -11,7 +11,13 @@ export default (args: { _: string[] }) => {
 
 	if (name) {
 		const filename = snakeCase(name);
-		const filepath = path.resolve(process.rootPath, `src/graphql/schemas/${filename}.gql`);
+
+		const schemasDir = path.resolve(process.rootPath, 'src/graphql/schemas');
+		if (!fs.existsSync(schemasDir)) {
+			fs.mkdirSync(schemasDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(schemasDir, `${filename}.gql`);
 
 		if (!fs.existsSync(filepath)) {
 			const className = pascalCase(name);

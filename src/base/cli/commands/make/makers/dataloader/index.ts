@@ -10,7 +10,13 @@ export default (args: { _: string[] }) => {
 
 	if (name) {
 		const filename = snakeCase(name);
-		const filepath = path.resolve(process.rootPath, `src/graphql/dataloaders/${filename}.ts`);
+
+		const dataLoadersDir = path.resolve(process.rootPath, 'src/graphql/dataloaders');
+		if (!fs.existsSync(dataLoadersDir)) {
+			fs.mkdirSync(dataLoadersDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(dataLoadersDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
 			fs.writeFileSync(filepath, template);

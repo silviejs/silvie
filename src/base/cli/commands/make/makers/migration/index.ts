@@ -12,7 +12,13 @@ export default (args: { _: string[] }) => {
 	if (name) {
 		const pluralName = pluralize(name);
 		const filename = snakeCase(pluralName);
-		const filepath = path.resolve(process.rootPath, `src/database/migrations/${filename}.ts`);
+
+		const migrationsDir = path.resolve(process.rootPath, 'src/database/migrations');
+		if (!fs.existsSync(migrationsDir)) {
+			fs.mkdirSync(migrationsDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(migrationsDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
 			const className = `${pascalCase(pluralName)}TableMigration`;

@@ -10,7 +10,13 @@ export default (args: { _: string[] }) => {
 
 	if (name) {
 		const filename = snakeCase(name.replace(/[M|m]iddleware$/, ''));
-		const filepath = path.resolve(process.rootPath, `src/middlewares/${filename}.ts`);
+
+		const middlewaresDir = path.resolve(process.rootPath, 'src/middlewares');
+		if (!fs.existsSync(middlewaresDir)) {
+			fs.mkdirSync(middlewaresDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(middlewaresDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
 			const className = pascalCase(/[M|m]iddleware$/.test(name) ? name : `${name}Middleware`);

@@ -10,7 +10,13 @@ export default (args: { _: string[] }) => {
 
 	if (name) {
 		const filename = snakeCase(name.replace(/[C|c]ontroller$/, ''));
-		const filepath = path.resolve(process.rootPath, `src/controllers/${filename}.ts`);
+
+		const controllersDir = path.resolve(process.rootPath, 'src/controllers');
+		if (!fs.existsSync(controllersDir)) {
+			fs.mkdirSync(controllersDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(controllersDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
 			const className = pascalCase(/[C|c]ontroller$/.test(name) ? name : `${name}Controller`);
