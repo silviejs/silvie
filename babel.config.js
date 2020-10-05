@@ -37,7 +37,7 @@ module.exports = (api) => {
 				},
 			],
 			[
-				'./lib/babel/plugins/wildcard-import',
+				'wildcard-import',
 				{ changeExtensions: { enabled: process.env.NODE_ENV === 'production', extensions: { ts: 'js' } } },
 			],
 			'import-graphql-files',
