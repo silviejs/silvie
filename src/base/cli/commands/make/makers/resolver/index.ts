@@ -11,7 +11,13 @@ export default (args: { _: string[] }) => {
 
 	if (name) {
 		const filename = snakeCase(name);
-		const filepath = path.resolve(process.rootPath, `src/graphql/resolvers/${filename}.ts`);
+
+		const resolversDir = path.resolve(process.rootPath, 'src/graphql/resolvers');
+		if (!fs.existsSync(resolversDir)) {
+			fs.mkdirSync(resolversDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(resolversDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
 			const singularName = snakeCase(pluralize(name, 1));

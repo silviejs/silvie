@@ -10,7 +10,13 @@ export default (args: { _: string[] }) => {
 
 	if (name) {
 		const filename = snakeCase(name);
-		const filepath = path.resolve(process.rootPath, `src/models/${filename}.ts`);
+
+		const modelsDir = path.resolve(process.rootPath, 'src/models');
+		if (!fs.existsSync(modelsDir)) {
+			fs.mkdirSync(modelsDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(modelsDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
 			const className = pascalCase(name);

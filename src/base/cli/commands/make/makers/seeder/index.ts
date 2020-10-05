@@ -12,7 +12,13 @@ export default (args: { _: string[] }) => {
 	if (name) {
 		const pluralName = pluralize(name);
 		const filename = snakeCase(pluralName);
-		const filepath = path.resolve(process.rootPath, `src/database/seeders/${filename}.ts`);
+
+		const seedersDir = path.resolve(process.rootPath, 'src/database/seeders');
+		if (!fs.existsSync(seedersDir)) {
+			fs.mkdirSync(seedersDir, { recursive: true });
+		}
+
+		const filepath = path.resolve(seedersDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
 			const className = `${pascalCase(pluralName)}TableSeeder`;
