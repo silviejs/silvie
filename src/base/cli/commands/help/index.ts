@@ -11,6 +11,7 @@ const mainCommands = {
 	migrate: 'Migrate the schemas to the database',
 	seed: 'Seed initial data to the database',
 	start: 'Start the application from build directory',
+	test: 'Run all tests',
 };
 
 export default (args: { _: string[] }) => {
