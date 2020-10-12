@@ -69,12 +69,12 @@ const val = new Validator(
 	{
 		name: 'required|name',
 		age: 'required|numeric|min:1|max:150',
-		'scores.*': 'required|numeric',
+		'scores.*': 'required|numeric|min:0|max:20',
 		heights: 'required|array|min:3',
 		'heights.*': 'required|numeric',
 		friends: 'required|array',
 		'friends.*.name': 'required|name',
 		'friends.*.family': 'required|name',
-		'friends.*.phone': 'required|phone',
+		'friends.*.phone': 'required|phone:fa_IR',
 	}
 );
