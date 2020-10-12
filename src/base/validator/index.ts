@@ -21,7 +21,7 @@ export default class Validator {
 					throw new Error(`Validation rule '${name}' not exists.`);
 				}
 
-				const params = (paramsStr || '').split(',').map((param) => param.trim());
+				const params = paramsStr ? paramsStr.split(',').map((param) => param.trim()) : [];
 
 				parsedRules[key].push({
 					name,
@@ -70,8 +70,29 @@ export default class Validator {
 
 	validate(): void {
 		Object.keys(this.rules).forEach((fieldName) => {
-			const result = Validator.findData(this.data, fieldName.split('.'));
-			console.log(fieldName, result);
+			const rules = this.rules[fieldName];
+			const results = Validator.findData(this.data, fieldName.split('.'));
+
+			for (let resultIndex = 0; resultIndex < results.length; resultIndex++) {
+				const { path, value } = results[resultIndex];
+
+				for (let ruleIndex = 0; ruleIndex < rules.length; ruleIndex++) {
+					const rule = rules[ruleIndex];
+					const validationResult = rule.handler(value, ...rule.params);
+
+					if (validationResult === undefined) {
+						break;
+					}
+
+					if (validationResult === false) {
+						console.log('-', path.join('.'), rule.name, validationResult.toString());
+					}
+
+					if (validationResult === null) {
+						break;
+					}
+				}
+			}
 		});
 	}
 

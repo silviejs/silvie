@@ -49,7 +49,7 @@ const val = new Validator(
 		age: 23,
 		scores: {
 			math: 20,
-			lang: 19,
+			lang: 192,
 			chem: 19.5,
 		},
 		heights: [1, 5, 6, 7, 8],
