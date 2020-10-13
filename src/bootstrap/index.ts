@@ -76,5 +76,10 @@ const val = new Validator(
 		'friends.*.name': 'required|name',
 		'friends.*.family': 'required|name',
 		'friends.*.phone': 'required|phone:fa_IR',
+	},
+	{
+		'name:required': 'name is required',
+		'age:numeric': 'age must be numeric man',
+		'scores.*:max': 'lang score must be below :field :field',
 	}
 );

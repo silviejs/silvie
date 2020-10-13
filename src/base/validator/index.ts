@@ -1,4 +1,5 @@
 import { validationRules } from 'base/validator/rule';
+import validationMessages from 'base/validator/messages';
 
 export type TRuleHandler = (value: any, ...params: any[]) => boolean;
 
@@ -15,7 +16,7 @@ export default class Validator {
 
 	messages: Record<string, string>;
 
-	errors: any;
+	errors: Record<string, any>;
 
 	private static parseRules(rules: Record<string, string>) {
 		const parsedRules = {};
@@ -98,6 +99,8 @@ export default class Validator {
 	}
 
 	validate(): void {
+		this.errors = {};
+
 		Object.keys(this.rules).forEach((fieldName) => {
 			const rules = this.rules[fieldName];
 			const results = Validator.findData(this.data, fieldName.split('.'));
@@ -121,7 +124,26 @@ export default class Validator {
 
 					// If it is not true, Error message
 					if (validationResult !== true) {
-						console.log('-', path.join('.'), rule.name);
+						const exactPath = path.join('.');
+
+						// Find raw error message
+						const rawMessage =
+							this.messages[`${exactPath}:${rule.name}`] ||
+							this.messages[`${fieldName}:${rule.name}`] ||
+							validationMessages[rule.name];
+
+						if (rawMessage) {
+							// Replace placeholders
+							const message = rawMessage
+								.replace(/:path/g, exactPath)
+								.replace(/:field/g, fieldName)
+								.replace(/:params/g, rule.params.join(', '))
+								.replace(/:(\d+)/g, (match, param) => rule.params[param] || '');
+
+							console.log(message);
+						} else {
+							throw new Error(`Could not find a message for '${rule.name}' at '${exactPath}'`);
+						}
 					}
 
 					// If it is null, Break after error
@@ -136,7 +158,8 @@ export default class Validator {
 	constructor(data: Record<string, any>, rules: Record<string, string>, messages?: Record<string, string>) {
 		this.data = data;
 		this.rules = Validator.parseRules(rules);
-		this.messages = messages;
+		this.messages = messages || {};
+		this.errors = {};
 
 		this.validate();
 	}
