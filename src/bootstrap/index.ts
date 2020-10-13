@@ -61,7 +61,7 @@ const val = new Validator(
 			},
 			{
 				name: 'Poorya',
-				family: 'Jaafari',
+				family: 'J2fari',
 				phone: '9366946405',
 			},
 		],
