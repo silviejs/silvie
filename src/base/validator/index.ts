@@ -10,7 +10,7 @@ export type TRule = {
 };
 
 export default class Validator {
-	data: Record<string, any>;
+	data: Record<string, any> | any[];
 
 	rules: Record<string, TRule[]>;
 
@@ -18,8 +18,12 @@ export default class Validator {
 
 	errors: Record<string, any>;
 
-	private static parseRules(rules: Record<string, string>) {
-		const parsedRules = {};
+	hasErrors = false;
+
+	generateNestedErrors = true;
+
+	private static parseRules(rules: Record<string, string>): Record<string, TRule[]> {
+		const parsedRules: Record<string, TRule[]> = {};
 
 		// Iterate over rule keys
 		Object.keys(rules).forEach((key: string) => {
@@ -54,7 +58,7 @@ export default class Validator {
 		return parsedRules;
 	}
 
-	private static findData(data: any, path: string[], traversed: string[] = []) {
+	private static findData(data: any, path: string[], traversed: string[] = []): { path: string[]; value: string }[] {
 		// Iterate over all path parts
 		for (let index = 0; index < path.length; index++) {
 			const part = path[index];
@@ -98,8 +102,24 @@ export default class Validator {
 		return [];
 	}
 
+	private placeErrorMessage(path: string[], messages: string[]): void {
+		let current = this.errors;
+		path.forEach((part, index) => {
+			if (index < path.length - 1) {
+				if (!(part in current)) {
+					current[part] = {};
+				}
+
+				current = current[part];
+			} else {
+				current[part] = messages;
+			}
+		});
+	}
+
 	validate(): void {
 		this.errors = {};
+		this.hasErrors = false;
 
 		Object.keys(this.rules).forEach((fieldName) => {
 			const rules = this.rules[fieldName];
@@ -109,6 +129,8 @@ export default class Validator {
 			for (let resultIndex = 0; resultIndex < results.length; resultIndex++) {
 				// Get exact path and value of that item
 				const { path, value } = results[resultIndex];
+				const messages = [];
+				const exactPath = path.join('.');
 
 				// Iterate over matching rules
 				for (let ruleIndex = 0; ruleIndex < rules.length; ruleIndex++) {
@@ -124,8 +146,6 @@ export default class Validator {
 
 					// If it is not true, Error message
 					if (validationResult !== true) {
-						const exactPath = path.join('.');
-
 						// Find raw error message
 						const rawMessage =
 							this.messages[`${exactPath}:${rule.name}`] ||
@@ -140,7 +160,7 @@ export default class Validator {
 								.replace(/:params/g, rule.params.join(', '))
 								.replace(/:(\d+)/g, (match, param) => rule.params[param] || '');
 
-							console.log(message);
+							messages.push(message);
 						} else {
 							throw new Error(`Could not find a message for '${rule.name}' at '${exactPath}'`);
 						}
@@ -151,15 +171,33 @@ export default class Validator {
 						break;
 					}
 				}
+
+				if (messages.length > 0) {
+					if (!this.hasErrors) {
+						this.hasErrors = true;
+					}
+
+					if (this.generateNestedErrors) {
+						this.placeErrorMessage(path, messages);
+					} else {
+						this.errors[exactPath] = messages;
+					}
+				}
 			}
 		});
 	}
 
-	constructor(data: Record<string, any>, rules: Record<string, string>, messages?: Record<string, string>) {
+	constructor(
+		data: Record<string, any> | any[],
+		rules: Record<string, string>,
+		messages?: Record<string, string>,
+		generateNestedErrors = true
+	) {
 		this.data = data;
 		this.rules = Validator.parseRules(rules);
 		this.messages = messages || {};
 		this.errors = {};
+		this.generateNestedErrors = generateNestedErrors;
 
 		this.validate();
 	}

@@ -18,7 +18,6 @@ import * as dataLoaders from 'graphql/dataloaders';
 import 'base/validator/rules';
 
 import 'base/extensions';
-import Validator from 'base/validator';
 
 // Detect project root path
 process.rootPath = path.resolve(__dirname, process.relativeRootPath || '../');
@@ -42,44 +41,3 @@ HTTPServer.init();
 GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 
 HTTPServer.start();
-
-const val = new Validator(
-	{
-		name: 'Hossein Maktoobian',
-		age: 23,
-		scores: {
-			math: 20,
-			lang: 192,
-			chem: 19.5,
-		},
-		heights: [1, 5, 6, 7, 8],
-		friends: [
-			{
-				name: 'Amin',
-				family: 'Sharparesh',
-				phone: '09124578963',
-			},
-			{
-				name: 'Poorya',
-				family: 'J2fari',
-				phone: '9366946405',
-			},
-		],
-	},
-	{
-		name: 'required|name',
-		age: 'required|numeric|min:1|max:150',
-		'scores.*': 'required|numeric|min:0|max:20',
-		heights: 'required|array|min:3',
-		'heights.*': 'required|numeric',
-		friends: 'required|array',
-		'friends.*.name': 'required|name',
-		'friends.*.family': 'required|name',
-		'friends.*.phone': 'required|phone:fa_IR',
-	},
-	{
-		'name:required': 'name is required',
-		'age:numeric': 'age must be numeric man',
-		'scores.*:max': 'lang score must be below :field :field',
-	}
-);
