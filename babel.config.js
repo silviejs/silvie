@@ -1,5 +1,10 @@
+const path = require('path');
+
 module.exports = (api) => {
 	api.cache(true);
+
+	const silviePath = __dirname;
+	const rootPath = path.resolve(silviePath, '../../');
 
 	return {
 		presets: [['@babel/preset-env', { modules: 'cjs' }], '@babel/preset-typescript'],
@@ -22,17 +27,19 @@ module.exports = (api) => {
 			[
 				'module-resolver',
 				{
-					root: ['./'],
+					extensions: [ '.ts', '.js', '.gql', '.graphql', '.json' ],
+					root: [rootPath],
 					alias: {
-						src: './src',
-						base: './src/base',
-						bootstrap: './src/bootstrap',
-						config: './src/config',
-						controllers: './src/controllers',
-						database: './src/database',
-						graphql: './src/graphql',
-						middlewares: './src/middlewares',
-						models: './src/models',
+						silviePath: silviePath,
+						src: path.resolve(rootPath, './src'),
+						base: path.resolve(rootPath, './src/base'),
+						bootstrap: path.resolve(rootPath, './src/bootstrap'),
+						config: path.resolve(rootPath, './src/config'),
+						controllers: path.resolve(rootPath, './src/controllers'),
+						database: path.resolve(rootPath, './src/database'),
+						graphql: path.resolve(rootPath, './src/graphql'),
+						middlewares: path.resolve(rootPath, './src/middlewares'),
+						models: path.resolve(rootPath, './src/models'),
 					},
 				},
 			],
