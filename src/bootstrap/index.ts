@@ -2,22 +2,22 @@ import * as dotenv from 'dotenv';
 import minimist from 'minimist';
 import path from 'path';
 
-import Database from 'base/database';
-import Auth from 'base/authentication';
-import Storage from 'base/storage';
+import Database from 'base/../database';
+import Auth from 'base/../authentication';
+import Storage from 'base/../storage';
 
-import HTTPServer from 'base/http/server';
-import 'middlewares';
-import 'controllers';
+import HTTPServer from 'base/../http/server';
+import '../../../../Desktop/silvie-test/src/middlewares';
+import '../../../../Desktop/silvie-test/src/controllers';
 
-import GraphQLServer from 'base/graphql/server';
-import * as schemas from 'graphql/schemas';
-import * as resolvers from 'graphql/resolvers';
-import * as dataLoaders from 'graphql/dataloaders';
+import GraphQLServer from 'base/../graphql/server';
+import * as schemas from '../../../../Desktop/silvie-test/src/graphql/schemas';
+import * as resolvers from '../../../../Desktop/silvie-test/src/graphql/resolvers';
+import * as dataLoaders from '../../../../Desktop/silvie-test/src/graphql/dataloaders';
 
-import 'base/validator/rules';
+import 'base/../validator/rules';
 
-import 'base/extensions';
+import 'base/../extensions';
 
 // Detect project root path
 process.rootPath = path.resolve(__dirname, process.relativeRootPath || '../');

@@ -6,7 +6,7 @@ node_modules
 /bundle
 
 # Env Files
-.env
+../../Desktop/silvie-test/.env
 .env.development
 .env.production
 .env.local
