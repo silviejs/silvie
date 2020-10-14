@@ -1,9 +1,8 @@
 {
   "name": "silvie",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Silvie Back-end Framework",
   "main": "./src/bootstrap/index.ts",
-  "scripts": {},
 	"bin": "./src/cli/index.js",
   "repository": {
     "type": "git",
