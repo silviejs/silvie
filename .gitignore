@@ -2,14 +2,7 @@
 node_modules
 
 # Build
-/build
-/bundle
-
-# Env Files
-../../Desktop/silvie-test/.env
-.env.development
-.env.production
-.env.local
+/lib
 
 # Miscellaneous
 .DS_Store
@@ -19,6 +12,3 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Temp Dir
-.silvie

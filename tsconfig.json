@@ -1,15 +1,20 @@
 {
 	"compilerOptions": {
+		"declaration": true,
 		"module": "commonjs",
 		"esModuleInterop": true,
 		"target": "es5",
 		"moduleResolution": "node",
 		"sourceMap": true,
-		"outDir": "build",
+		"outDir": "./lib",
 		"experimentalDecorators": true,
+		"emitDeclarationOnly": true,
 		"baseUrl": ".",
 		"paths": {
-			"silviePath/*": ["./*"]
+			"src/*": ["./src/*"],
+			"proj/*": ["../../*"]
 		}
-	}
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "lib"]
 }
