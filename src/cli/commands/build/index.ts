@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { ncp } from 'ncp';
 import childProcess from 'child_process';
 import log from 'src/utils/log';
 
@@ -44,22 +43,11 @@ export default async () => {
 		});
 	}
 
-	log.info('[Silvie Builder]', 'Copying assets directory...');
-	await new Promise<any>((resolve, reject) => {
-		ncp(path.resolve(rootDir, 'src/assets'), path.resolve(buildDir, 'assets'), (error) => {
-			if (error) {
-				reject(error);
-			}
-
-			resolve();
-		});
-	});
-
 	log.info('[Silvie Builder]', 'Copying .env file...');
 	fs.copyFileSync(path.resolve(rootDir, '.env'), path.resolve(buildDir, '.env'));
 
 	log.info('[Silvie Builder]', 'Building your application...');
-	childProcess.execSync(`cross-env NODE_ENV=production babel src -d build -x ".js,.ts"`, { encoding: 'utf8' });
+	childProcess.execSync(`cross-env NODE_ENV=production babel src -d build -x ".js,.ts" --copy-files --config-file ${path.resolve(process.silviePath, 'src/assets/babel.config.js')}`, { encoding: 'utf8' });
 
 	log.success('[Silvie Builder]', 'Successfully finished building.');
 };
