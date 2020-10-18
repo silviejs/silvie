@@ -1,3 +1,4 @@
+import path from 'path';
 import childProcess from 'child_process';
 import log from 'src/utils/log';
 
@@ -6,9 +7,10 @@ export default (args: { port: string; p: string }) => {
 
 	const port = args.port || args.p;
 	const cp = childProcess.exec(
-		`cross-env BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x ".ts,.js" ${
-			port ? `--port ${port}` : ''
-		}`,
+		`cross-env BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x ".ts,.js" --config-file ${path.resolve(
+			process.silviePath,
+			'babel.config.js'
+		)} ${port ? `--port ${port}` : ''}`,
 		{ encoding: 'utf8' }
 	);
 

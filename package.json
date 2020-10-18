@@ -1,6 +1,6 @@
 {
 	"name": "silvie",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Silvie Back-end Framework",
 	"main": "lib/bootstrap/index.js",
 	"types": "lib/bootstrap/index.d.ts",
@@ -9,7 +9,7 @@
 		"lib/**/*"
 	],
 	"scripts": {
-		"build": "rm -rf lib/* && babel src -d lib -x \".ts,.js\" --copy-files && tsc",
+		"build": "rm -rf lib/* && cross-env NODE_ENV=production babel src -d lib -x \".ts,.js\" --copy-files && tsc",
 		"prepare": "npm run build"
 	},
 	"repository": {

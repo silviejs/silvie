@@ -4,6 +4,7 @@ import log from 'src/utils/log';
 
 import babelRegister from '@babel/register';
 
+process.env.BABEL_DISABLE_CACHE = '1';
 babelRegister({
 	configFile: path.resolve(process.silviePath, 'babel.config.js'),
 	extensions: ['.ts', '.js', '.gql', '.graphql', '.json'],

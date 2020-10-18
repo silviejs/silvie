@@ -1,20 +1,15 @@
-import minimist from 'minimist';
-import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import log from 'src/utils/log';
 
-const args = minimist(process.argv.slice(2));
-dotenv.config({ path: path.resolve(process.rootPath, '.env') });
-
-const [command] = args._;
+const [command] = process.args._;
 
 if (command) {
 	const commandPath = path.resolve(__dirname, `./commands/${command}`);
 
 	if (fs.existsSync(commandPath)) {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require
-		require(commandPath).default(args);
+		require(commandPath).default(process.args);
 	} else {
 		log.warning('[Silvie] Command Not Found');
 		log(`There is no command named '${command}'`);

@@ -26,7 +26,10 @@ module.exports = (api) => {
 					root: ['./'],
 					alias: {
 						src: './src',
-						proj: '/home/hmak/Desktop/silvie-test' || '../../',
+						proj: '/home/hmak/Desktop/silvie-test',
+						middlewares: '/home/hmak/Desktop/silvie-test/src/middlewares',
+						controllers: '/home/hmak/Desktop/silvie-test/src/controllers',
+						graphql: '/home/hmak/Desktop/silvie-test/src/graphql',
 					},
 				},
 			],
