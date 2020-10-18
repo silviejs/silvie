@@ -37,7 +37,12 @@ module.exports = (api) => {
 			],
 			[
 				'wildcard-import',
-				{ changeExtensions: { enabled: process.env.NODE_ENV === 'production', extensions: { ts: 'js' } } },
+				{
+					changeExtensions: {
+						enabled: process.env.NODE_ENV === 'production' && !process.env.IS_WEBPACK,
+						extensions: { ts: 'js' },
+					},
+				},
 			],
 			'import-graphql-files',
 		],

@@ -9,10 +9,12 @@ const DotenvProvider = require('webpack-dotenv-provider');
 const isProduction = process.env.NODE_ENV !== 'development';
 
 module.exports = (env) => {
+	process.env.IS_WEBPACK = true;
+
 	const config = {
 		entry: './src/bootstrap/index.ts',
 		output: {
-			path: path.resolve(__dirname, 'bundle'),
+			path: path.resolve(process.cwd(), 'bundle'),
 			filename: 'index.js',
 		},
 
@@ -37,7 +39,8 @@ module.exports = (env) => {
 					use: {
 						loader: 'babel-loader',
 						options: {
-							plugins: [['./lib/babel/plugins/wildcard-import', {}]],
+							configFile: path.resolve(__dirname, 'babel.config.js'),
+							plugins: [['wildcard-import', {}]],
 						},
 					},
 				},
