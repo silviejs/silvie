@@ -26,7 +26,6 @@ module.exports = (api) => {
 					root: ['./'],
 					alias: {
 						src: './src',
-						proj: '/home/hmak/Desktop/silvie-test', // TODO
 					},
 				},
 			],

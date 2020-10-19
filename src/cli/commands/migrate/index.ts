@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require */
+
 import path from 'path';
 import Database from 'src/database';
 import log from 'src/utils/log';
@@ -11,11 +13,10 @@ babelRegister({
 	ignore: [],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const migrations = require('proj/src/database/migrations/index').default;
-
 export default async (args: { _: string[]; rollback: boolean; refresh: boolean }) => {
 	const filename = args._[1];
+
+	const migrations = require(path.resolve(process.rootPath, 'src/database/migrations/index')).default;
 
 	if (filename) {
 		const migration = migrations[filename];

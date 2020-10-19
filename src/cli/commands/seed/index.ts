@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require */
+
 import path from 'path';
 import Database from 'src/database';
 import log from 'src/utils/log';
@@ -11,11 +13,10 @@ babelRegister({
 	ignore: [],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const seeders = require('proj/src/database/seeders/index').default;
-
 export default async (args: { _: string[]; rollback: boolean; refresh: boolean }) => {
 	const filename = args._[1];
+
+	const seeders = require(path.resolve(process.rootPath, 'src/database/seeders/index')).default;
 
 	if (filename) {
 		const seeder = seeders[filename];
