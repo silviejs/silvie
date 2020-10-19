@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
@@ -11,10 +12,12 @@ const isProduction = process.env.NODE_ENV !== 'development';
 module.exports = (env) => {
 	process.env.IS_WEBPACK = true;
 
+	const rootDir = process.cwd();
+
 	const config = {
 		entry: './src/bootstrap/index.ts',
 		output: {
-			path: path.resolve(process.cwd(), 'bundle'),
+			path: path.resolve(rootDir, 'bundle'),
 			filename: 'index.js',
 		},
 
@@ -25,7 +28,11 @@ module.exports = (env) => {
 			__dirname: false,
 			__filename: false,
 		},
-		externals: [nodeExternals()],
+		externals: [
+			nodeExternals({
+				allowlist: [/^silvie/],
+			}),
+		],
 
 		resolve: {
 			extensions: ['.ts', '.js', '.gql', '.json'],
@@ -36,13 +43,16 @@ module.exports = (env) => {
 				{
 					test: /\.(js|ts)$/,
 					exclude: /node_modules/,
-					use: {
-						loader: 'babel-loader',
-						options: {
-							configFile: path.resolve(__dirname, 'babel.config.js'),
-							plugins: [['wildcard-import', {}]],
+					use: [
+						{
+							loader: 'babel-loader',
+							options: {
+								configFile: path.resolve(__dirname, 'babel.config.js'),
+								plugins: [['wildcard-import', {}]],
+							},
 						},
-					},
+						'webpack-conditional-loader',
+					],
 				},
 				{
 					test: /\.(graphql|gql)$/,
@@ -55,8 +65,18 @@ module.exports = (env) => {
 		},
 
 		plugins: [
-			DotenvProvider(),
-			new webpack.DefinePlugin({ 'process.relativeRootPath': "'./'" }),
+			DotenvProvider({ path: path.resolve(rootDir, '.env') }),
+			new webpack.DefinePlugin({ 'process.relativeRootPath': JSON.stringify('./') }),
+			new webpack.DefinePlugin({
+				'process.autoLoadedConfigs': `{${fs
+					.readdirSync(path.resolve(rootDir, 'src/config'))
+					.map((filename) => {
+						// eslint-disable-next-line global-require,import/no-dynamic-require
+						const content = require(`${path.resolve(rootDir, `src/config/${filename}`)}`);
+						return `${filename.split('.')[0]}: ${JSON.stringify(content)}`;
+					})
+					.join(',')}}`,
+			}),
 			new CopyWebpackPlugin({
 				patterns: [{ from: 'src/assets', to: './assets' }],
 			}),

@@ -74,7 +74,8 @@
 		"validator": "^13.1.17",
 		"webpack": "^4.44.2",
 		"webpack-cli": "^3.3.12",
-		"webpack-dotenv-provider": "0.0.1",
+		"webpack-conditional-loader": "^1.0.12",
+		"webpack-dotenv-provider": "0.0.3",
 		"webpack-node-externals": "^2.5.2"
 	},
 	"devDependencies": {

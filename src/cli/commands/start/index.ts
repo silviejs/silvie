@@ -28,7 +28,10 @@ export default (args: { port: string; p: string }) => {
 
 	log.info('[Silvie]', 'Starting Application...');
 	const port = args.port || args.p;
-	const cp = childProcess.exec(`node build/bootstrap/index.js${port ? ` --port ${port}` : ''}`, { encoding: 'utf8' });
+	const cp = childProcess.exec(
+		`cross-env IS_SILVIE_CLI=0 node build/bootstrap/index.js${port ? ` --port ${port}` : ''}`,
+		{ encoding: 'utf8' }
+	);
 
 	cp.stdout.on('data', (data) => {
 		log(data);

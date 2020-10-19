@@ -122,7 +122,7 @@ class HTTPServer {
 				store = new FileStore({
 					path: path.resolve(
 						process.rootPath,
-						(process.env.NODE_ENV === 'development' ? `../.silvie/` : '') + config.session.driverOptions.file.path
+						(process.env.NODE_ENV === 'development' ? `.silvie/` : '') + config.session.driverOptions.file.path
 					),
 					extension: config.session.driverOptions.file.extension,
 					ttl: config.session.driverOptions.file.ttl,
@@ -173,7 +173,7 @@ class HTTPServer {
 			this.upload = multer({
 				dest: path.resolve(
 					process.rootPath,
-					(process.env.NODE_ENV === 'development' ? `../.silvie/` : '') + config.uploads.tempDirectory
+					(process.env.NODE_ENV === 'development' ? `.silvie/` : '') + config.uploads.tempDirectory
 				),
 				limits: {
 					fieldSize: config.uploads.maxFileSize,

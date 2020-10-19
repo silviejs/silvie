@@ -1,4 +1,4 @@
-import 'src/bootstrap/process';
+import 'src/bootstrap/paths';
 import 'src/bootstrap/configs';
 import 'src/bootstrap/dotenv';
 import 'src/bootstrap/args';

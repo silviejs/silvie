@@ -10,7 +10,7 @@ export default class Storage {
 	static init() {
 		const storagePath = path.resolve(
 			process.rootPath,
-			(process.env.NODE_ENV === 'development' ? `../.silvie/` : '') + config.path
+			(process.env.NODE_ENV === 'development' ? `.silvie/` : '') + config.path
 		);
 
 		if (!fs.existsSync(storagePath)) {

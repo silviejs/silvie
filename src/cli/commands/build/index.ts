@@ -47,7 +47,7 @@ export default async () => {
 	fs.copyFileSync(path.resolve(rootDir, '.env'), path.resolve(buildDir, '.env'));
 
 	log.info('[Silvie Builder]', 'Building your application...');
-	childProcess.execSync(`cross-env NODE_ENV=production babel src -d build -x ".js,.ts" --copy-files --config-file ${path.resolve(process.silviePath, 'src/assets/babel.config.js')}`, { encoding: 'utf8' });
+	childProcess.execSync(`cross-env NODE_ENV=production IS_SILVIE_CLI=0 babel src -d build -x ".js,.ts" --copy-files --config-file ${path.resolve(process.silviePath, 'lib/assets/babel.config.js')}`, { encoding: 'utf8' });
 
 	log.success('[Silvie Builder]', 'Successfully finished building.');
 };

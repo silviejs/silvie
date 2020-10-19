@@ -9,7 +9,7 @@ export default class BlackList {
 	constructor(filename: string) {
 		this.filename = path.resolve(
 			process.rootPath,
-			(process.env.NODE_ENV === 'development' ? `../.silvie/` : '') + filename
+			(process.env.NODE_ENV === 'development' ? `.silvie/` : '') + filename
 		);
 
 		this.blackList = this.readBlacklist();
