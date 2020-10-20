@@ -18,7 +18,6 @@ module.exports = (api) => {
 			'@babel/plugin-proposal-class-properties',
 			'@babel/plugin-transform-named-capturing-groups-regex',
 			'@babel/plugin-proposal-optional-catch-binding',
-			'@babel/plugin-transform-runtime',
 			[
 				'module-resolver',
 				{
