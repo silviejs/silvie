@@ -19,7 +19,7 @@
     "silvie",
     "boilerplate",
     "template",
-    "csa"
+		"create-silvie-app"
   ],
   "author": "Hossein Maktoobian",
   "license": "MIT",
