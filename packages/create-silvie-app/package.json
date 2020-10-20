@@ -1,6 +1,6 @@
 {
   "name": "create-silvie-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Create a Silvie app boilerplate",
   "main": "lib/index.js",
   "scripts": {
@@ -19,7 +19,10 @@
     "silvie",
     "boilerplate",
     "template",
-		"create-silvie-app"
+    "create-silvie-app",
+    "typescript",
+    "javascript",
+    "nodejs"
   ],
   "author": "Hossein Maktoobian",
   "license": "MIT",
