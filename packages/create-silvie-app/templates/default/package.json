@@ -1,0 +1,11 @@
+{
+		"name": "app-name",
+		"version": "1.0.0",
+		"scripts": {
+			"dev": "silvie dev",
+			"start": "silvie start",
+			"build": "silvie build",
+			"bundle": "silvie bundle",
+			"test": "silvie test"
+		}
+}
