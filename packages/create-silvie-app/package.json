@@ -1,0 +1,30 @@
+{
+  "name": "create-silvie-app",
+  "version": "0.0.1",
+  "description": "Create a Silvie app boilerplate",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rimraf ./lib && cross-env NODE_ENV=production babel index.ts -d lib -x \".ts,.js\" --config-file ../../babel.config.js && ncp ./templates ./lib/templates",
+    "prepare": "npm run build"
+  },
+  "bin": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hmak-me/silvie.git"
+  },
+  "keywords": [
+    "silvie",
+    "boilerplate",
+    "template",
+    "csa"
+  ],
+  "author": "Hossein Maktoobian",
+  "license": "MIT",
+  "dependencies": {
+    "ncp": "^2.0.0",
+    "rimraf": "^3.0.2"
+  }
+}
