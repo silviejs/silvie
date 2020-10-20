@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"target": "es5",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"outDir": "build",
+		"experimentalDecorators": true,
+		"baseUrl": ".",
+		"paths": {
+			"src/*": ["./src/*"],
+			"config/*": ["./src/config/*"],
+			"controllers/*": ["./src/controllers/*"],
+			"database/*": ["./src/database/*"],
+			"graphql/*": ["./src/graphql/*"],
+			"middlewares/*": ["./src/middlewares/*"],
+			"models/*": ["./src/models/*"]
+		}
+	}
+}
