@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import LogString, { TColor } from 'src/utils/log/string';
 
 function log(...texts: (any | LogString)[]) {

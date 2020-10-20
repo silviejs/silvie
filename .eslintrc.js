@@ -11,6 +11,7 @@ module.exports = {
 	},
 	plugins: ['@typescript-eslint', 'prettier'],
 	rules: {
+		'no-console': 'off',
 		'no-param-reassign': 'off',
 		'import/extensions': 'off',
 		'import/no-unresolved': 'off',
@@ -46,6 +47,7 @@ module.exports = {
 
 			plugins: ['@typescript-eslint', 'prettier'],
 			rules: {
+				'no-console': 'off',
 				'no-param-reassign': 'off',
 				'import/no-unresolved': 'off',
 				'import/extensions': 'off',
