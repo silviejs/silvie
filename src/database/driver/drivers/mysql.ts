@@ -105,6 +105,8 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const type = this.resolveType(column.type);
 		if (column.size) {
 			queryParts.push(`${type}(${column.size})`);
+		} else if (column.type === 'Enum' || column.type === 'Set') {
+			queryParts.push(`${type}(${column.options.meta.values.map((val) => `"${val}"`).join(', ')})`);
 		} else {
 			queryParts.push(type);
 		}
