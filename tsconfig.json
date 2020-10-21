@@ -6,7 +6,7 @@
 		"target": "es5",
 		"moduleResolution": "node",
 		"sourceMap": true,
-		"outDir": "./lib",
+		"outFile": "./lib/bootstrap/index.d.ts",
 		"experimentalDecorators": true,
 		"emitDeclarationOnly": true,
 		"baseUrl": ".",
