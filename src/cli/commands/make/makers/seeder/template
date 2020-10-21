@@ -1,6 +1,6 @@
 import ISeeder from 'base/database/migration/seeder';
 
-module.exports = class CLASS_NAME implements ISeeder {
+export default class CLASS_NAME implements ISeeder {
 	async seed() {
 		// Seed the table here
 	}
