@@ -11,16 +11,16 @@ export default async () => {
 
 	let hasErrors = false;
 	if (!fs.existsSync(path.resolve(rootDir, 'src/assets'))) {
-		log.error('[Silvie Builder]', 'Assets directory not found')
+		log.error('[Silvie Builder]', 'Assets directory not found');
 		hasErrors = true;
 	}
 	if (!fs.existsSync(path.resolve(rootDir, '.env'))) {
-		log.error('[Silvie Builder]', '.env file not found')
+		log.error('[Silvie Builder]', '.env file not found');
 		hasErrors = true;
 	}
 
 	if (!hasErrors) {
-		log.success('[Silvie Builder]', "Everything's good.")
+		log.success('[Silvie Builder]', "Everything's good.");
 	} else {
 		return;
 	}
@@ -47,7 +47,13 @@ export default async () => {
 	fs.copyFileSync(path.resolve(rootDir, '.env'), path.resolve(buildDir, '.env'));
 
 	log.info('[Silvie Builder]', 'Building your application...');
-	childProcess.execSync(`cross-env NODE_ENV=production IS_SILVIE_CLI=0 babel src -d build -x ".js,.ts" --copy-files --config-file ${path.resolve(process.silviePath, 'lib/assets/babel.config.js')}`, { encoding: 'utf8' });
+	childProcess.execSync(
+		`cross-env NODE_ENV=production IS_SILVIE_CLI=0 babel src -d build -x ".js,.ts" --copy-files --config-file ${path.resolve(
+			process.silviePath,
+			'lib/assets/babel.config.js'
+		)}`,
+		{ encoding: 'utf8' }
+	);
 
 	log.success('[Silvie Builder]', 'Successfully finished building.');
 };
