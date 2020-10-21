@@ -65,10 +65,10 @@ export default {
 	max: ':path is greater than :0',
 
 	required: ':path is required',
-	requiredWith: ':path is required With :0',
-	requiredWithout: ':path is required Without :0',
+	requiredWith: ':path is required with :0',
+	requiredWithout: ':path is required without :0',
 	requiredIf: ':path is required if :0 is :1',
-	requiredUnless: ':path is required unless :0 is :1',
+	requiredUnless: ':path is required if :0 is not :1',
 
 	present: ':path is not present',
 
