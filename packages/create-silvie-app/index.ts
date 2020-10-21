@@ -120,6 +120,13 @@ ncp(path.resolve(__dirname, 'templates/default'), destPath, (error) => {
 		process.exit();
 	}
 
+	try {
+		fs.renameSync(path.resolve(destPath, '.npmignore'), path.resolve(destPath, '.gitignore'));
+	} catch (renameError) {
+		console.error(`Could not create .gitignore file`, renameError);
+		process.exit();
+	}
+
 	console.log('Copied the boilerplate files');
 
 	console.log('Checking project structure...');

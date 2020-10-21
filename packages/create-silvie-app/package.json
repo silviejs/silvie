@@ -1,6 +1,6 @@
 {
   "name": "create-silvie-app",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Create a Silvie app boilerplate",
   "main": "lib/index.js",
   "scripts": {
