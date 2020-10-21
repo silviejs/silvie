@@ -117,60 +117,72 @@ export default class Validator {
 		});
 	}
 
+	private executeRules(fieldName, exactPath, value, rules) {
+		const messages = [];
+
+		// Iterate over matching rules
+		for (let ruleIndex = 0; ruleIndex < rules.length; ruleIndex++) {
+			const rule = rules[ruleIndex];
+
+			// Run the rule handler
+			const validationResult = rule.handler(this, value, ...rule.params);
+
+			// If it is undefined, Break with no errors
+			if (validationResult === undefined) {
+				break;
+			}
+
+			// If it is not true, Error message
+			if (validationResult !== true) {
+				// Find raw error message
+				const rawMessage =
+					this.messages[`${exactPath}:${rule.name}`] ||
+					this.messages[`${fieldName}:${rule.name}`] ||
+					validationMessages[rule.name];
+
+				if (rawMessage) {
+					// Replace placeholders
+					const message = rawMessage
+						.replace(/:path/g, exactPath)
+						.replace(/:field/g, fieldName)
+						.replace(/:params/g, rule.params.join(', '))
+						.replace(/:(\d+)/g, (match, param) => rule.params[param] || '');
+
+					messages.push(message);
+				} else {
+					throw new Error(`Could not find a message for '${rule.name}' at '${exactPath}'`);
+				}
+			}
+
+			// If it is null, Break after error
+			if (validationResult === null) {
+				break;
+			}
+		}
+
+		return messages;
+	}
+
 	validate(): void {
 		this.errors = {};
 		this.hasErrors = false;
 
 		Object.keys(this.rules).forEach((fieldName) => {
 			const rules = this.rules[fieldName];
-			const results = Validator.findData(this.data, fieldName.split('.'));
+			const pathParts = fieldName.split('.');
+			const results = Validator.findData(this.data, pathParts);
+
+			if (results.length === 0) {
+				results.push({ path: pathParts, value: undefined });
+			}
 
 			// Iterate over found data
 			for (let resultIndex = 0; resultIndex < results.length; resultIndex++) {
 				// Get exact path and value of that item
 				const { path, value } = results[resultIndex];
-				const messages = [];
 				const exactPath = path.join('.');
 
-				// Iterate over matching rules
-				for (let ruleIndex = 0; ruleIndex < rules.length; ruleIndex++) {
-					const rule = rules[ruleIndex];
-
-					// Run the rule handler
-					const validationResult = rule.handler(this, value, ...rule.params);
-
-					// If it is undefined, Break with no errors
-					if (validationResult === undefined) {
-						break;
-					}
-
-					// If it is not true, Error message
-					if (validationResult !== true) {
-						// Find raw error message
-						const rawMessage =
-							this.messages[`${exactPath}:${rule.name}`] ||
-							this.messages[`${fieldName}:${rule.name}`] ||
-							validationMessages[rule.name];
-
-						if (rawMessage) {
-							// Replace placeholders
-							const message = rawMessage
-								.replace(/:path/g, exactPath)
-								.replace(/:field/g, fieldName)
-								.replace(/:params/g, rule.params.join(', '))
-								.replace(/:(\d+)/g, (match, param) => rule.params[param] || '');
-
-							messages.push(message);
-						} else {
-							throw new Error(`Could not find a message for '${rule.name}' at '${exactPath}'`);
-						}
-					}
-
-					// If it is null, Break after error
-					if (validationResult === null) {
-						break;
-					}
-				}
+				const messages = this.executeRules(fieldName, exactPath, value, rules);
 
 				if (messages.length > 0) {
 					if (!this.hasErrors) {
