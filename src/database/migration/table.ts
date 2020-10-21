@@ -207,11 +207,11 @@ export default class Table {
 		return this.createColumn(name, 'LongText');
 	}
 
-	enum(name: string, ...values: string[]): Column {
+	enum(name: string, values: string[]): Column {
 		return this.createColumn(name, 'Enum').meta({ values });
 	}
 
-	set(name: string, ...values: string[]): Column {
+	set(name: string, values: string[]): Column {
 		return this.createColumn(name, 'Set').meta({ values });
 	}
 
