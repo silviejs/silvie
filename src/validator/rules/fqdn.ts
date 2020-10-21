@@ -1,9 +1,10 @@
 import IValidationRule, { rule } from 'src/validator/rule';
+import Validator from 'src/validator';
 import { isFQDN } from 'validator';
 
 @rule('fqdn')
 export default class FQDNRule implements IValidationRule {
-	validate(value: any): boolean {
+	validate(validator: Validator, value: any): boolean {
 		return isFQDN(value);
 	}
 }

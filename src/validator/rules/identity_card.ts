@@ -1,9 +1,10 @@
 import IValidationRule, { rule } from 'src/validator/rule';
+import Validator from 'src/validator';
 import { isIdentityCard } from 'validator';
 
 @rule('identityCard')
 export default class IdentityCardRule implements IValidationRule {
-	validate(value: any, locale = 'fa-IR'): boolean {
+	validate(validator: Validator, value: any, locale = 'fa-IR'): boolean {
 		if (locale === 'fa_IR') {
 			if (!/^\d{10}$/.test(value)) {
 				return false;

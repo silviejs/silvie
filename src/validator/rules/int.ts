@@ -1,9 +1,10 @@
 import IValidationRule, { rule } from 'src/validator/rule';
+import Validator from 'src/validator';
 import { isInt } from 'validator';
 
 @rule('int')
 export default class IntRule implements IValidationRule {
-	validate(value: any): boolean {
-		return isInt(value);
+	validate(validator: Validator, value: any): boolean {
+		return typeof value === 'number' || (typeof value === 'string' && isInt(value));
 	}
 }

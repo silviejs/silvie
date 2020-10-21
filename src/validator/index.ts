@@ -22,43 +22,7 @@ export default class Validator {
 
 	generateNestedErrors = true;
 
-	private static parseRules(rules: Record<string, string>): Record<string, TRule[]> {
-		const parsedRules: Record<string, TRule[]> = {};
-
-		// Iterate over rule keys
-		Object.keys(rules).forEach((key: string) => {
-			// Create an empty array for that key
-			parsedRules[key] = [];
-
-			// Split the rules with '|'
-			rules[key].split('|').forEach((ruleStr) => {
-				// Get rule name and parameters by splitting with ':'
-				const [name, paramsStr] = ruleStr.split(':');
-
-				// Get rule handler
-				const handler = validationRules[name];
-
-				// If there is no handler throw an error
-				if (!handler) {
-					throw new Error(`Validation rule '${name}' not exists.`);
-				}
-
-				// Get parameters by splitting them with ','
-				const params = paramsStr ? paramsStr.split(',').map((param) => param.trim()) : [];
-
-				// Add the rule to the array
-				parsedRules[key].push({
-					name,
-					handler,
-					params,
-				});
-			});
-		});
-
-		return parsedRules;
-	}
-
-	private static findData(data: any, path: string[], traversed: string[] = []): { path: string[]; value: string }[] {
+	static findData(data: any, path: string[], traversed: string[] = []): { path: string[]; value: any }[] {
 		// Iterate over all path parts
 		for (let index = 0; index < path.length; index++) {
 			const part = path[index];
@@ -102,6 +66,42 @@ export default class Validator {
 		return [];
 	}
 
+	private static parseRules(rules: Record<string, string>): Record<string, TRule[]> {
+		const parsedRules: Record<string, TRule[]> = {};
+
+		// Iterate over rule keys
+		Object.keys(rules).forEach((key: string) => {
+			// Create an empty array for that key
+			parsedRules[key] = [];
+
+			// Split the rules with '|'
+			rules[key].split('|').forEach((ruleStr) => {
+				// Get rule name and parameters by splitting with ':'
+				const [name, paramsStr] = ruleStr.split(':');
+
+				// Get rule handler
+				const handler = validationRules[name];
+
+				// If there is no handler throw an error
+				if (!handler) {
+					throw new Error(`Validation rule '${name}' not exists.`);
+				}
+
+				// Get parameters by splitting them with ','
+				const params = paramsStr ? paramsStr.split(',').map((param) => param.trim()) : [];
+
+				// Add the rule to the array
+				parsedRules[key].push({
+					name,
+					handler,
+					params,
+				});
+			});
+		});
+
+		return parsedRules;
+	}
+
 	private placeErrorMessage(path: string[], messages: string[]): void {
 		let current = this.errors;
 		path.forEach((part, index) => {
@@ -137,7 +137,7 @@ export default class Validator {
 					const rule = rules[ruleIndex];
 
 					// Run the rule handler
-					const validationResult = rule.handler(value, ...rule.params);
+					const validationResult = rule.handler(this, value, ...rule.params);
 
 					// If it is undefined, Break with no errors
 					if (validationResult === undefined) {

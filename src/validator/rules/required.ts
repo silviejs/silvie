@@ -1,20 +1,10 @@
 import IValidationRule, { rule } from 'src/validator/rule';
+import Validator from 'src/validator';
+import checkExistence from 'src/validator/helpers/checkExistence';
 
 @rule('required')
 export default class RequiredRule implements IValidationRule {
-	validate(value: any): boolean {
-		if (value !== null && value !== undefined) {
-			if (typeof value === 'string') {
-				return value.trim().length > 0 || null;
-			}
-
-			if (value instanceof Array) {
-				return value.length > 0 || null;
-			}
-
-			return true;
-		}
-
-		return null;
+	validate(validator: Validator, value: any): boolean {
+		return checkExistence(value) || null;
 	}
 }

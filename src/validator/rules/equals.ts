@@ -1,8 +1,9 @@
 import IValidationRule, { rule } from 'src/validator/rule';
+import Validator from 'src/validator';
 
 @rule('equals')
 export default class EqualsRule implements IValidationRule {
-	validate(value: any, key: string): boolean {
+	validate(validator: Validator, value: any, key: string): boolean {
 		if (typeof value === 'object') {
 			return JSON.stringify(value) === JSON.stringify(key);
 		}

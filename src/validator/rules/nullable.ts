@@ -1,8 +1,9 @@
 import IValidationRule, { rule } from 'src/validator/rule';
+import Validator from 'src/validator';
 
 @rule('nullable')
 export default class NullableRule implements IValidationRule {
-	validate(value: any): boolean {
+	validate(validator: Validator, value: any): boolean {
 		if (value !== null && value !== undefined) {
 			if (typeof value === 'string') {
 				return value.trim().length > 0;
