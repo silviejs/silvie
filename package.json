@@ -1,9 +1,9 @@
 {
 	"name": "silvie",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"description": "Silvie Back-end Framework",
 	"main": "lib/bootstrap/index.js",
-	"types": "lib/bootstrap/index.d.ts",
+	"types": "lib/bootstrap/types.d.ts",
 	"bin": "lib/cli/index.js",
 	"files": [
 		"lib/**/*"
