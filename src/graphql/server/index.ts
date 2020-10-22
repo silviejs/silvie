@@ -53,6 +53,7 @@ class GraphQLServer {
 				}, {});
 
 				return {
+					res: context.res,
 					req: context.req,
 					loaders: contextLoaders,
 					timestamp: Date.now(),
