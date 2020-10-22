@@ -3,7 +3,7 @@
 	"version": "0.0.18",
 	"description": "Silvie Back-end Framework",
 	"main": "lib/bootstrap/index.js",
-	"typings": "lib/bootstrap/index",
+	"typings": "lib/bootstrap/index.d.ts",
 	"bin": "lib/cli/index.js",
 	"files": [
 		"lib/**/*"
