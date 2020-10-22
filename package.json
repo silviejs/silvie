@@ -1,15 +1,15 @@
 {
 	"name": "silvie",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"description": "Silvie Back-end Framework",
 	"main": "lib/bootstrap/index.js",
-	"types": "lib/bootstrap/index.d.ts",
+	"typings": "lib/bootstrap/index",
 	"bin": "lib/cli/index.js",
 	"files": [
 		"lib/**/*"
 	],
 	"scripts": {
-		"build": "rm -rf lib/* && cross-env NODE_ENV=production babel src -d lib -x \".ts,.js\" --copy-files && tsc",
+		"build": "rm -rf lib/* && cross-env NODE_ENV=production babel src -d lib -x \".ts,.js\" --copy-files && ttsc",
 		"prepare": "npm run build"
 	},
 	"repository": {
@@ -88,6 +88,8 @@
 		"eslint-import-resolver-alias": "^1.1.2",
 		"eslint-plugin-import": "^2.22.0",
 		"eslint-plugin-prettier": "^3.1.4",
-		"prettier": "^2.1.2"
+		"prettier": "^2.1.2",
+		"ttypescript": "^1.5.12",
+		"typescript-transform-paths": "^2.0.1"
 	}
 }
