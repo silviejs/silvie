@@ -10,9 +10,12 @@ class Auth {
 
 	payload: any;
 
-	constructor(payload: any, token: string) {
+	user: any;
+
+	constructor(payload: any, token: string, user?: any) {
 		this.token = token;
 		this.payload = payload;
+		this.user = user;
 	}
 
 	static init() {
