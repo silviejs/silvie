@@ -97,6 +97,27 @@ export class Database {
 	}
 
 	/**
+	 * Specify weather to check for foreign keys or not
+	 */
+	checkForeignKeys(state: boolean): Promise<any> {
+		return this.driver.setForeignKeyChecks(state);
+	}
+
+	/**
+	 * This will enable foreign key checks
+	 */
+	enableForeignKeyChecks(): Promise<any> {
+		return this.checkForeignKeys(true);
+	}
+
+	/**
+	 * This will disable foreign key checks
+	 */
+	disableForeignKeyChecks(): Promise<any> {
+		return this.checkForeignKeys(false);
+	}
+
+	/**
 	 * Closes the current database connection
 	 */
 	closeConnection(): void {

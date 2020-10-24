@@ -848,6 +848,10 @@ export default class MySQLDriver implements IDatabaseDriver {
 		return [result.affectedRows, result.changedRows];
 	}
 
+	async setForeignKeyChecks(state: boolean): Promise<any> {
+		await this.execute(`SET FOREIGN_KEY_CHECKS = ${state ? 1 : 0};`);
+	}
+
 	execute(query: string, params: TBaseValue[] = []): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.pool.query(query, params, (error, result) => {

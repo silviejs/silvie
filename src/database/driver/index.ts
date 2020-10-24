@@ -29,6 +29,8 @@ export default interface IDatabaseDriver {
 	dropTableIfExists(tableName: string): Promise<any>;
 	dropTable(tableName: string): Promise<any>;
 
+	setForeignKeyChecks(state: boolean): Promise<any>;
+
 	execute(query: string, params?: TBaseValue[]): Promise<any>;
 
 	closeConnection(): void;
