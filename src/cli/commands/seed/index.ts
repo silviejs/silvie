@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require */
+/* eslint-disable @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require,no-await-in-loop,no-restricted-syntax */
 
 import path from 'path';
 import Database from 'src/database';
@@ -42,19 +42,18 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 	} else if (Object.keys(seeders).length > 0) {
 		Database.init();
 
-		await Promise.all(
-			Object.keys(seeders).map((key: string) => {
-				return seeders[key].prototype
-					.seed()
-					.then(() => {
-						log.success('Seeded', `Successfully seeded '${key}'`);
-					})
-					.catch((err) => {
-						log.error('Seed Failed', `Could not seed '${key}'`);
-						log(err);
-					});
-			})
-		);
+		for (const key of Object.keys(seeders) as string[]) {
+			const seeder = seeders[key];
+
+			try {
+				await seeder.seed.up();
+
+				log.success('Seeded', `Successfully seeded '${key}'`);
+			} catch (error) {
+				log.error('Seed Failed', `Could not seed '${key}'`);
+				log(error);
+			}
+		}
 
 		Database.closeConnection();
 	} else {
