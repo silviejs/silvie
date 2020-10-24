@@ -46,7 +46,7 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 			const seeder = seeders[key];
 
 			try {
-				await seeder.seed.up();
+				await seeder.prototype.seed();
 
 				log.success('Seeded', `Successfully seeded '${key}'`);
 			} catch (error) {
