@@ -1,6 +1,6 @@
 {
 	"name": "silvie",
-	"version": "0.0.19",
+	"version": "0.0.20",
 	"description": "Silvie Back-end Framework",
 	"main": "lib/bootstrap/index.js",
 	"typings": "lib/bootstrap/index.d.ts",
@@ -16,6 +16,16 @@
 		"type": "git",
 		"url": "ssh://git@github.com:hmak-me/silvie.git"
 	},
+	"keywords": [
+		"typescript",
+		"javascript",
+		"node",
+		"graphql",
+		"rest",
+		"api",
+		"backend",
+		"framework"
+	],
 	"author": "Hossein Maktoobian",
 	"license": "MIT",
 	"dependencies": {
