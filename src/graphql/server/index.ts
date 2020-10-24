@@ -79,6 +79,7 @@ class GraphQLServer {
 			app: httpServer.server,
 			path,
 			bodyParserConfig: false,
+			cors: false,
 		});
 	}
 }
