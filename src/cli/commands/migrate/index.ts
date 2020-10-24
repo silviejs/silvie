@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require */
+/* eslint-disable @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require,no-await-in-loop,no-restricted-syntax */
 
 import path from 'path';
 import Database from 'src/database';
@@ -29,7 +29,9 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 			if (args.rollback) {
 				await migration.prototype.down();
 			} else {
-				if (args.refresh) await migration.prototype.down();
+				if (args.refresh) {
+					await migration.prototype.down();
+				}
 
 				await migration.prototype.up();
 			}
@@ -46,27 +48,17 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 
 		await Database.disableForeignKeyChecks();
 
-		await Promise.all(
-			Object.values(migrations)
-				.map((migration: any) => {
-					const output = [];
+		if (args.rollback || args.refresh) {
+			for (const migration of Object.values(migrations) as any[]) {
+				await migration.prototype.down();
+			}
+		}
 
-					if (args.rollback) {
-						output.push(migration.prototype.down());
-					} else if (args.refresh) {
-						output.push(
-							migration.prototype.down().then(() => {
-								return migration.prototype.up();
-							})
-						);
-					} else {
-						output.push(migration.prototype.up());
-					}
-
-					return output;
-				})
-				.flat()
-		);
+		if (!args.rollback) {
+			for (const migration of Object.values(migrations) as any[]) {
+				await migration.prototype.up();
+			}
+		}
 
 		await Database.enableForeignKeyChecks();
 
