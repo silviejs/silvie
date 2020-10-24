@@ -24,6 +24,8 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 		if (migration) {
 			Database.init();
 
+			await Database.disableForeignKeyChecks();
+
 			if (args.rollback) {
 				await migration.prototype.down();
 			} else {
@@ -32,6 +34,8 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 				await migration.prototype.up();
 			}
 
+			await Database.enableForeignKeyChecks();
+
 			Database.closeConnection();
 		} else {
 			log.error('[Silvie] Migration Not Found');
@@ -39,6 +43,8 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 		}
 	} else if (Object.keys(migrations).length > 0) {
 		Database.init();
+
+		await Database.disableForeignKeyChecks();
 
 		await Promise.all(
 			Object.values(migrations)
@@ -61,6 +67,8 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 				})
 				.flat()
 		);
+
+		await Database.enableForeignKeyChecks();
 
 		Database.closeConnection();
 	} else {
