@@ -1,5 +1,5 @@
-import IMigration from 'base/database/migration/migration';
-import Schema from 'base/database/migration/schema';
+import IMigration from 'silvie/lib/database/migration/migration';
+import Schema from 'silvie/lib/database/migration/schema';
 
 export default class CLASS_NAME implements IMigration {
 	async up() {

@@ -1,10 +1,16 @@
+class CLASS_NAMEResolver {
+	static SINGULAR_NAME(): CLASS_NAME {
+		return null;
+	}
+
+	static PLURAL_NAME(): CLASS_NAME[] {
+		return [];
+	}
+}
+
 export default {
 	Query: {
-		SINGULAR_NAME(): any {
-			return null;
-		},
-		PLURAL_NAME(): any[] {
-			return [];
-		},
+		SINGULAR_NAME: CLASS_NAMEResolver.SINGULAR_NAME,
+		PLURAL_NAME: CLASS_NAMEResolver.PLURAL_NAME,
 	},
 };

@@ -1,5 +1,5 @@
 import log from 'src/utils/log';
-import { snakeCase } from 'change-case';
+import { pascalCase, snakeCase } from 'change-case';
 import pluralize from 'pluralize';
 import path from 'path';
 import fs from 'fs';
@@ -20,10 +20,14 @@ export default (args: { _: string[] }) => {
 		const filepath = path.resolve(resolversDir, `${filename}.ts`);
 
 		if (!fs.existsSync(filepath)) {
+			const className = pascalCase(name);
 			const singularName = snakeCase(pluralize(name, 1));
 			const pluralName = snakeCase(pluralize(name));
 
-			const content = template.replace(/SINGULAR_NAME/g, singularName).replace(/PLURAL_NAME/g, pluralName);
+			const content = template
+				.replace(/CLASS_NAME/g, className)
+				.replace(/SINGULAR_NAME/g, singularName)
+				.replace(/PLURAL_NAME/g, pluralName);
 
 			fs.writeFileSync(filepath, content);
 
