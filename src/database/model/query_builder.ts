@@ -78,7 +78,7 @@ export default class ModelQueryBuilder {
 		return data.map((row) => this.cast(row));
 	}
 
-	static hasMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+	static hasMany(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'HasMany',
 			count: 'many',
@@ -88,7 +88,7 @@ export default class ModelQueryBuilder {
 		};
 	}
 
-	static hasOne(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+	static hasOne(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'HasOne',
 			count: 'one',
@@ -98,7 +98,7 @@ export default class ModelQueryBuilder {
 		};
 	}
 
-	static belongsTo(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+	static belongsTo(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'BelongsTo',
 			count: 'one',
@@ -108,7 +108,7 @@ export default class ModelQueryBuilder {
 		};
 	}
 
-	static belongsToMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+	static belongsToMany(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'BelongsToMany',
 			count: 'many',
