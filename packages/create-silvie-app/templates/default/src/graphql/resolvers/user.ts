@@ -2,11 +2,11 @@ import User from 'models/user';
 
 export default {
 	Query: {
-		user({ id }): User {
-			return User.find(id);
+		user({ id }): Promise<User> {
+			return User.find(id) as Promise<User>;
 		},
-		users(): User[] {
-			return User.all();
+		users(): Promise<User[]> {
+			return User.all() as Promise<User[]>;
 		},
 	},
 };

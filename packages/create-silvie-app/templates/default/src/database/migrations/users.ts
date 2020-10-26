@@ -1,7 +1,7 @@
 import IMigration from 'silvie/lib/database/migration/migration';
 import Schema from 'silvie/lib/database/migration/schema';
 
-export default class ExamplesTableMigration implements IMigration {
+export default class UsersTableMigration implements IMigration {
 	async up() {
 		await Schema.create('users', (table) => {
 			table.id();
@@ -14,6 +14,6 @@ export default class ExamplesTableMigration implements IMigration {
 	}
 
 	async down() {
-		await Schema.dropIfExists('examples');
+		await Schema.dropIfExists('users');
 	}
 }

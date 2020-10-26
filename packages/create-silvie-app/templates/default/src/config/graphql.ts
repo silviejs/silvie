@@ -2,7 +2,7 @@ module.exports = {
 	enabled: true,
 
 	path: '/graphql',
-	middleware: 'example',
+	middleware: '',
 
 	playground: process.env.NODE_ENV === 'development',
 	introspection: true,
