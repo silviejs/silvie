@@ -78,6 +78,12 @@ export default class ModelQueryBuilder {
 		return data.map((row) => this.cast(row));
 	}
 
+	/**
+	 * Create many to many relation
+	 * @param model
+	 * @param foreignKey
+	 * @param primaryKey
+	 */
 	static hasMany(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'HasMany',
@@ -88,6 +94,12 @@ export default class ModelQueryBuilder {
 		};
 	}
 
+	/**
+	 * Create one to one relation
+	 * @param model
+	 * @param foreignKey
+	 * @param primaryKey
+	 */
 	static hasOne(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'HasOne',
@@ -98,6 +110,12 @@ export default class ModelQueryBuilder {
 		};
 	}
 
+	/**
+	 * Create one to many relation
+	 * @param model
+	 * @param foreignKey
+	 * @param primaryKey
+	 */
 	static belongsTo(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'BelongsTo',
@@ -108,6 +126,12 @@ export default class ModelQueryBuilder {
 		};
 	}
 
+	/**
+	 * Creates reversed many to many relation
+	 * @param model
+	 * @param foreignKey
+	 * @param primaryKey
+	 */
 	static belongsToMany(model: any, foreignKey: string, primaryKey?: string): IModelRelation {
 		return {
 			type: 'BelongsToMany',
@@ -118,6 +142,10 @@ export default class ModelQueryBuilder {
 		};
 	}
 
+	/**
+	 * Specify the relations you want to be fetched along with the main query
+	 * @param relationNames
+	 */
 	static with(...relationNames: string[]): QueryBuilder {
 		const qb = this.baseQueryBuilder;
 
@@ -208,11 +236,16 @@ export default class ModelQueryBuilder {
 		return mainData;
 	}
 
+	static extendBaseQueryBuilder(queryBuilder?: QueryBuilder) {
+		// This does nothing by default
+		return queryBuilder;
+	}
+
 	/**
 	 * Configures a query builder to match this model table and configuration
 	 */
 	static get baseQueryBuilder(): QueryBuilder {
-		return new QueryBuilder(this.table).extend({
+		const queryBuilder = new QueryBuilder(this.table).extend({
 			processData: this.processResults.bind(this),
 
 			useTimestamps: this.useTimestamps,
@@ -222,6 +255,12 @@ export default class ModelQueryBuilder {
 			useSoftDeletes: this.useSoftDeletes,
 			softDeleteTimestamp: this.softDeleteTimestamp,
 		});
+
+		if (this.extendBaseQueryBuilder instanceof Function) {
+			this.extendBaseQueryBuilder(queryBuilder);
+		}
+
+		return queryBuilder;
 	}
 
 	/**
