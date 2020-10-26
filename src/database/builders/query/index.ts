@@ -53,6 +53,8 @@ export default class QueryBuilder {
 		softDeleteTimestamp: string;
 		withTrashed: boolean;
 		onlyTrashed: boolean;
+
+		alongQueries: QueryBuilder[];
 	};
 
 	constructor(tableName?: string) {
@@ -75,6 +77,8 @@ export default class QueryBuilder {
 			softDeleteTimestamp: 'deleted_at',
 			withTrashed: false,
 			onlyTrashed: false,
+
+			alongQueries: [],
 		};
 
 		if (tableName) {
@@ -1332,6 +1336,12 @@ export default class QueryBuilder {
 			query,
 			params: params || [],
 		});
+
+		return this;
+	}
+
+	alongWith(queryBuilder: QueryBuilder): QueryBuilder {
+		this.options.alongQueries.push(queryBuilder);
 
 		return this;
 	}

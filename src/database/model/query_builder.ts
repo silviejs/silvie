@@ -6,6 +6,23 @@ import QueryBuilder from 'src/database/builders/query';
 import HavingConditionBuilder from 'src/database/builders/condition/having';
 import JoinConditionBuilder from 'src/database/builders/condition/join';
 
+export interface IModel {
+	fill(data: any): void;
+	fresh(): Promise<IModel>;
+	refresh(): Promise<void>;
+	update(data: any, silent: boolean): Promise<number>;
+	delete(): Promise<any>;
+	forceDelete(): Promise<number>;
+	save(): Promise<number>;
+}
+
+export type IModelRelation = {
+	type: 'HasMany' | 'HasOne' | 'BelongsToMany' | 'BelongsTo';
+	model: IModel;
+	foreignKey: string;
+	primaryKey: string | string[];
+};
+
 export default class ModelQueryBuilder {
 	protected static tableName = '';
 
@@ -20,6 +37,8 @@ export default class ModelQueryBuilder {
 	protected static useSoftDeletes = false;
 
 	protected static softDeleteTimestamp = 'deleted_at';
+
+	static relations: Record<string, IModelRelation> = {};
 
 	/**
 	 * Create a new instance of this model from a initial data object
@@ -685,5 +704,63 @@ export default class ModelQueryBuilder {
 
 	static orHavingRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		return this.baseQueryBuilder.orHavingRaw(query, params);
+	}
+
+	static hasMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'HasMany',
+			model,
+			foreignKey,
+			primaryKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static hasOne(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'HasOne',
+			model,
+			foreignKey,
+			primaryKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static belongsTo(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'BelongsTo',
+			model,
+			foreignKey,
+			primaryKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static belongsToMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'BelongsToMany',
+			model,
+			foreignKey,
+			primaryKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static with(...relationNames: string[]): QueryBuilder {
+		const qb = this.baseQueryBuilder;
+
+		relationNames.forEach((relationName) => {
+			const relationPath: string[] = relationName.split('.');
+			const relationModelPath = [this];
+
+			relationPath.forEach((part, index) => {
+				if (part in relationModelPath[index].relations) {
+					relationModelPath.push(relationModelPath[index].relations[part].model as any);
+				} else {
+					throw new Error(`There is no relation named '${part}' on '${relationModelPath[index]}' model.`);
+				}
+			});
+
+			console.log(relationPath);
+			console.log(relationModelPath);
+		});
+
+		return qb;
 	}
 }

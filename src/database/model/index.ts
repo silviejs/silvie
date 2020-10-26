@@ -1,6 +1,6 @@
-import ModelQueryBuilder from 'src/database/model/query_builder';
+import ModelQueryBuilder, { IModel } from 'src/database/model/query_builder';
 
-class Model extends ModelQueryBuilder {
+class Model extends ModelQueryBuilder implements IModel {
 	/**
 	 * Fetch all records from the table
 	 */

@@ -569,7 +569,16 @@ export default class MySQLDriver implements IDatabaseDriver {
 		}
 
 		params.push(...joinParams, ...whereParams, ...groupParams, ...orderParams, ...limitParams, ...unionParams);
-		query += [joinQuery, whereQuery, groupQuery, orderQuery, limitQuery, unionQuery].filter((q) => q !== '').join(' ');
+		query += `${[joinQuery, whereQuery, groupQuery, orderQuery, limitQuery, unionQuery]
+			.filter((q) => q !== '')
+			.join(' ')};`;
+
+		queryBuilder.options.alongQueries.forEach((aqb) => {
+			const [q, p] = this.compileSelect(aqb);
+
+			params.push(...p);
+			query += `${q};`;
+		});
 
 		return [query, params];
 	}
