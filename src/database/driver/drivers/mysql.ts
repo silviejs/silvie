@@ -274,12 +274,16 @@ export default class MySQLDriver implements IDatabaseDriver {
 				}
 
 				if (condition.type === 'in' || condition.type === 'not in') {
-					params.push(...(rhs as TBaseValue[]));
-					clause += `${lhs} ${condition.type.startsWith('not') ? 'NOT IN' : 'IN'} (${new Array(
-						(rhs as TBaseValue[]).length
-					)
-						.fill('?')
-						.join(', ')})`;
+					if (condition.rightHandSide instanceof QueryBuilder) {
+						clause += `${lhs} ${condition.type.startsWith('not') ? 'NOT IN' : 'IN'} ${rhs}`;
+					} else {
+						params.push(...(rhs as TBaseValue[]));
+						clause += `${lhs} ${condition.type.startsWith('not') ? 'NOT IN' : 'IN'} (${new Array(
+							(rhs as TBaseValue[]).length
+						)
+							.fill('?')
+							.join(', ')})`;
+					}
 				}
 
 				if (
@@ -544,6 +548,10 @@ export default class MySQLDriver implements IDatabaseDriver {
 			}
 		}
 
+		if (qb.options.processFinalQuery instanceof Function) {
+			qb.options.processFinalQuery(qb);
+		}
+
 		const [fieldsQuery, fieldsParams] = this.compileSelectFields(qb);
 		const [whereQuery, whereParams] = this.compileWhere(qb);
 		const [groupQuery, groupParams] = this.compileGroup(qb);
@@ -571,13 +579,13 @@ export default class MySQLDriver implements IDatabaseDriver {
 		params.push(...joinParams, ...whereParams, ...groupParams, ...orderParams, ...limitParams, ...unionParams);
 		query += `${[joinQuery, whereQuery, groupQuery, orderQuery, limitQuery, unionQuery]
 			.filter((q) => q !== '')
-			.join(' ')};`;
+			.join(' ')}`;
 
-		queryBuilder.options.alongQueries.forEach((aqb) => {
+		qb.options.alongQueries.forEach((aqb) => {
 			const [q, p] = this.compileSelect(aqb);
 
 			params.push(...p);
-			query += `${q};`;
+			query += `;${q}`;
 		});
 
 		return [query, params];

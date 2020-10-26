@@ -13,6 +13,7 @@ import WhereConditionBuilder from 'src/database/builders/condition/where';
 import HavingConditionBuilder from 'src/database/builders/condition/having';
 import JoinConditionBuilder from 'src/database/builders/condition/join';
 import Database from 'src/database';
+import cloneDeep from 'lodash/cloneDeep';
 
 export default class QueryBuilder {
 	options: {
@@ -21,7 +22,8 @@ export default class QueryBuilder {
 
 		select: ISelect[];
 		selectInto?: string;
-		processData: (data: any[]) => any[];
+		processData: (data: any[], queryBuilder: QueryBuilder) => any[];
+		processFinalQuery?: (queryBuilder: QueryBuilder) => void;
 
 		insert?: any[];
 		ignoreDuplicates?: boolean;
@@ -54,6 +56,7 @@ export default class QueryBuilder {
 		withTrashed: boolean;
 		onlyTrashed: boolean;
 
+		fetchingRelations?: any[];
 		alongQueries: QueryBuilder[];
 	};
 
@@ -78,6 +81,7 @@ export default class QueryBuilder {
 			withTrashed: false,
 			onlyTrashed: false,
 
+			fetchingRelations: [],
 			alongQueries: [],
 		};
 
@@ -101,7 +105,7 @@ export default class QueryBuilder {
 	 */
 	clone(): QueryBuilder {
 		const qb = new QueryBuilder();
-		qb.options = this.options;
+		qb.options = cloneDeep(this.options);
 		return qb;
 	}
 
@@ -109,7 +113,7 @@ export default class QueryBuilder {
 	 * Return all matching rows of this query
 	 */
 	async get(): Promise<any> {
-		return this.options.processData(await Database.proxy('select', this));
+		return this.options.processData(await Database.proxy('select', this), this);
 	}
 
 	/**
@@ -119,7 +123,7 @@ export default class QueryBuilder {
 		const qb = this.clone();
 		qb.options.limit = 1;
 
-		return this.options.processData(await Database.proxy('select', qb))[0] || null;
+		return this.options.processData(await Database.proxy('select', qb), this)[0] || null;
 	}
 
 	/**

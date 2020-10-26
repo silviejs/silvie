@@ -18,9 +18,10 @@ export interface IModel {
 
 export type IModelRelation = {
 	type: 'HasMany' | 'HasOne' | 'BelongsToMany' | 'BelongsTo';
-	model: IModel;
-	foreignKey: string;
-	primaryKey: string | string[];
+	count: 'one' | 'many';
+	model: any;
+	localKey: string | string[];
+	remoteKey: string | string[];
 };
 
 export default class ModelQueryBuilder {
@@ -77,12 +78,142 @@ export default class ModelQueryBuilder {
 		return data.map((row) => this.cast(row));
 	}
 
+	static hasMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'HasMany',
+			count: 'many',
+			model,
+			localKey: foreignKey,
+			remoteKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static hasOne(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'HasOne',
+			count: 'one',
+			model,
+			localKey: foreignKey,
+			remoteKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static belongsTo(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'BelongsTo',
+			count: 'one',
+			model,
+			remoteKey: foreignKey,
+			localKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static belongsToMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
+		return {
+			type: 'BelongsToMany',
+			count: 'many',
+			model,
+			remoteKey: foreignKey,
+			localKey: primaryKey || this.primaryKey,
+		};
+	}
+
+	static with(...relationNames: string[]): QueryBuilder {
+		const qb = this.baseQueryBuilder;
+
+		const relations = [];
+
+		relationNames.forEach((relationName) => {
+			const relationPath: string[] = relationName.split('.');
+			let superModel = this as any;
+			let relation = null;
+
+			relationPath.forEach((part) => {
+				if (part in superModel.relations) {
+					relation = superModel.relations[part];
+					superModel = relation.model;
+				} else {
+					throw new Error(`There is no relation named '${part}' on '${superModel}' model.`);
+				}
+			});
+
+			relations.push({
+				name: relationName,
+				path: relationPath,
+				parent: relationPath.slice(0, relationPath.length - 1).join(''),
+				relation,
+			});
+		});
+
+		relations.sort((a, b) => a.path.length - b.path.length);
+
+		qb.options.fetchingRelations = relations;
+		qb.options.processFinalQuery = (finalQueryBuilder) => {
+			const queryBuilders: Record<string, QueryBuilder> = {};
+
+			const rootQuery = finalQueryBuilder.clone();
+			rootQuery.options.fetchingRelations = [];
+			rootQuery.options.alongQueries = [];
+			rootQuery.options.processFinalQuery = null;
+
+			relations.forEach((rel) => {
+				const { relation } = rel;
+				const parentQuery = (rel.parent ? queryBuilders[rel.parent] : rootQuery).clone();
+
+				queryBuilders[rel.name] = relation.model.whereIn(relation.localKey, parentQuery.select(relation.remoteKey));
+			});
+
+			Object.values(queryBuilders).forEach((queryBuilder) => {
+				finalQueryBuilder.alongWith(queryBuilder);
+			});
+		};
+
+		return qb;
+	}
+
+	private static processResults(results, queryBuilder: QueryBuilder) {
+		if (queryBuilder.options.fetchingRelations.length === 0) {
+			return this.castAll(results);
+		}
+
+		const relations = queryBuilder.options.fetchingRelations as any[];
+		const mainData = this.castAll(results[0]);
+
+		const relationsData = {};
+		relations.forEach((relation, index) => {
+			relationsData[relation.name] = results[index + 1];
+		});
+
+		relations.reverse();
+		relations.forEach((rel) => {
+			if (rel.parent) {
+				relationsData[rel.parent].forEach((item) => {
+					const relationData = rel.relation.model.castAll(
+						relationsData[rel.name].filter((row) => row[rel.relation.localKey] === item[rel.relation.remoteKey])
+					);
+
+					item[rel.path.slice(-1)[0]] = rel.relation.count === 'one' ? relationData[0] || null : relationData;
+				});
+			} else {
+				mainData.forEach((item) => {
+					const relationData = rel.relation.model.castAll(
+						relationsData[rel.name].filter((row) => row[rel.relation.localKey] === item[rel.relation.remoteKey])
+					);
+
+					item[rel.name] = rel.relation.count === 'one' ? relationData[0] || null : relationData;
+				});
+			}
+		});
+
+		return mainData;
+	}
+
 	/**
 	 * Configures a query builder to match this model table and configuration
 	 */
 	static get baseQueryBuilder(): QueryBuilder {
 		return new QueryBuilder(this.table).extend({
-			processData: this.castAll.bind(this),
+			processData: this.processResults.bind(this),
 
 			useTimestamps: this.useTimestamps,
 			createTimestamp: this.createTimestamp,
@@ -704,63 +835,5 @@ export default class ModelQueryBuilder {
 
 	static orHavingRaw(query: string, params?: TBaseValue[]): QueryBuilder {
 		return this.baseQueryBuilder.orHavingRaw(query, params);
-	}
-
-	static hasMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
-		return {
-			type: 'HasMany',
-			model,
-			foreignKey,
-			primaryKey: primaryKey || this.primaryKey,
-		};
-	}
-
-	static hasOne(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
-		return {
-			type: 'HasOne',
-			model,
-			foreignKey,
-			primaryKey: primaryKey || this.primaryKey,
-		};
-	}
-
-	static belongsTo(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
-		return {
-			type: 'BelongsTo',
-			model,
-			foreignKey,
-			primaryKey: primaryKey || this.primaryKey,
-		};
-	}
-
-	static belongsToMany(model: IModel, foreignKey: string, primaryKey?: string): IModelRelation {
-		return {
-			type: 'BelongsToMany',
-			model,
-			foreignKey,
-			primaryKey: primaryKey || this.primaryKey,
-		};
-	}
-
-	static with(...relationNames: string[]): QueryBuilder {
-		const qb = this.baseQueryBuilder;
-
-		relationNames.forEach((relationName) => {
-			const relationPath: string[] = relationName.split('.');
-			const relationModelPath = [this];
-
-			relationPath.forEach((part, index) => {
-				if (part in relationModelPath[index].relations) {
-					relationModelPath.push(relationModelPath[index].relations[part].model as any);
-				} else {
-					throw new Error(`There is no relation named '${part}' on '${relationModelPath[index]}' model.`);
-				}
-			});
-
-			console.log(relationPath);
-			console.log(relationModelPath);
-		});
-
-		return qb;
 	}
 }
