@@ -188,7 +188,9 @@ export default class ModelQueryBuilder {
 				const { relation } = rel;
 				const parentQuery = (rel.parent ? queryBuilders[rel.parent] : rootQuery).clone();
 
-				queryBuilders[rel.name] = relation.model.whereIn(relation.localKey, parentQuery.select(relation.remoteKey));
+				queryBuilders[rel.name] = relation.model
+					.select(`${relation.model.table}.*`)
+					.join(parentQuery, `${relation.model.tableName}.${relation.localKey}`, `t.${relation.remoteKey}`, `t`);
 			});
 
 			Object.values(queryBuilders).forEach((queryBuilder) => {
