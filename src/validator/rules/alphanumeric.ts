@@ -4,7 +4,7 @@ import { isAlphaNumeric } from 'validator';
 
 @rule('alphanumeric')
 export default class AlphaNumericRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isAlphaNumeric(value);
 	}
 }

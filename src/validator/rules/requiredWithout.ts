@@ -4,7 +4,7 @@ import checkExistence from 'src/validator/helpers/checkExistence';
 
 @rule('requiredWithout')
 export default class RequiredWithoutRule implements IValidationRule {
-	validate(validator: Validator, value: any, path: string): boolean {
+	validate(validator: Validator, name: string, value: any, path: string): boolean {
 		const results = Validator.findData(validator.data, path.split('.'));
 
 		if (results.length === 0) {

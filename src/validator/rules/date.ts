@@ -4,7 +4,7 @@ import { isDate } from 'validator';
 
 @rule('date')
 export default class DateRule implements IValidationRule {
-	validate(validator: Validator, value: any, format?: string): boolean {
+	validate(validator: Validator, name: string, value: any, format?: string): boolean {
 		return isDate(value, format);
 	}
 }

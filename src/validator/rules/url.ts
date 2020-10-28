@@ -4,7 +4,7 @@ import { isURL } from 'validator';
 
 @rule('url')
 export default class URLRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isURL(value);
 	}
 }

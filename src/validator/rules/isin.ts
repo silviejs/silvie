@@ -4,7 +4,7 @@ import { isISIN } from 'validator';
 
 @rule('isin')
 export default class ISINRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isISIN(value);
 	}
 }

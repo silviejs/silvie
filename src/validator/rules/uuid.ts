@@ -4,7 +4,7 @@ import { isUUID } from 'validator';
 
 @rule('uuid')
 export default class UUIDRule implements IValidationRule {
-	validate(validator: Validator, value: any, version?: string): boolean {
+	validate(validator: Validator, name: string, value: any, version?: string): boolean {
 		return isUUID(value, version);
 	}
 }

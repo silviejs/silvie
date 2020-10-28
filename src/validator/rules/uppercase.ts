@@ -4,7 +4,7 @@ import { isUppercase } from 'validator';
 
 @rule('uppercase')
 export default class UppercaseRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isUppercase(value);
 	}
 }

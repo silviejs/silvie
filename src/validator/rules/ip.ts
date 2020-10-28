@@ -4,7 +4,7 @@ import { isIP } from 'validator';
 
 @rule('ip')
 export default class IPRule implements IValidationRule {
-	validate(validator: Validator, value: any, version = '4'): boolean {
+	validate(validator: Validator, name: string, value: any, version = '4'): boolean {
 		return isIP(value, version);
 	}
 }

@@ -4,7 +4,7 @@ import { isISRC } from 'validator';
 
 @rule('isrc')
 export default class ISRCRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isISRC(value);
 	}
 }

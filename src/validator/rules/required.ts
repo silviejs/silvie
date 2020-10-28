@@ -4,7 +4,7 @@ import checkExistence from 'src/validator/helpers/checkExistence';
 
 @rule('required')
 export default class RequiredRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return checkExistence(value) || null;
 	}
 }

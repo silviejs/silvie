@@ -3,7 +3,7 @@ import Validator from 'src/validator';
 
 @rule('equals')
 export default class EqualsRule implements IValidationRule {
-	validate(validator: Validator, value: any, key: string): boolean {
+	validate(validator: Validator, name: string, value: any, key: string): boolean {
 		if (typeof value === 'object') {
 			return JSON.stringify(value) === JSON.stringify(key);
 		}

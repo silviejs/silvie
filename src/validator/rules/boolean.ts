@@ -3,7 +3,7 @@ import Validator from 'src/validator';
 
 @rule('boolean')
 export default class BooleanRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		if (typeof value === 'boolean') {
 			return true;
 		}

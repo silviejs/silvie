@@ -4,7 +4,7 @@ import { before } from 'validator';
 
 @rule('before')
 export default class BeforeRule implements IValidationRule {
-	validate(validator: Validator, value: any, key: string): boolean {
+	validate(validator: Validator, name: string, value: any, key: string): boolean {
 		return before(value, key);
 	}
 }

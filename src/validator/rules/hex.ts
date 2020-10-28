@@ -4,7 +4,7 @@ import { isHexadecimal } from 'validator';
 
 @rule('hex')
 export default class HexadecimalRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isHexadecimal(value);
 	}
 }

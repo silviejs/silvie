@@ -4,7 +4,7 @@ import { isHexColor } from 'validator';
 
 @rule('hexColor')
 export default class HexColorRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isHexColor(value);
 	}
 }

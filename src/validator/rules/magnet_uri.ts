@@ -4,7 +4,7 @@ import { isMagnetURI } from 'validator';
 
 @rule('magnetUri')
 export default class MagnetURIRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isMagnetURI(value);
 	}
 }

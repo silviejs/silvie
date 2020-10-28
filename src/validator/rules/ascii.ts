@@ -4,7 +4,7 @@ import { isAscii } from 'validator';
 
 @rule('ascii')
 export default class ASCIIRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isAscii(value);
 	}
 }

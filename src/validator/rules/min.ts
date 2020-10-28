@@ -4,7 +4,7 @@ import { isNumeric } from 'validator';
 
 @rule('min')
 export default class MinRule implements IValidationRule {
-	validate(validator: Validator, value: any, minValue: string): boolean {
+	validate(validator: Validator, name: string, value: any, minValue: string): boolean {
 		const min = Number(minValue);
 
 		if (typeof value === 'number' || isNumeric(`${value}`)) {

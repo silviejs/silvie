@@ -4,7 +4,7 @@ import { isOctal } from 'validator';
 
 @rule('octal')
 export default class OctalRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isOctal(value);
 	}
 }

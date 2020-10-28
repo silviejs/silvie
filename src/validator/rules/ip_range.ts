@@ -4,7 +4,7 @@ import { isIPRange } from 'validator';
 
 @rule('ipRange')
 export default class IPRangeRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isIPRange(value);
 	}
 }

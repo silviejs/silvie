@@ -125,7 +125,7 @@ export default class Validator {
 			const rule = rules[ruleIndex];
 
 			// Run the rule handler
-			const validationResult = rule.handler(this, value, ...rule.params);
+			const validationResult = rule.handler(this, exactPath, value, ...rule.params);
 
 			// If it is undefined, Break with no errors
 			if (validationResult === undefined) {

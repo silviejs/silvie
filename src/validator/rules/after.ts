@@ -4,7 +4,7 @@ import { after } from 'validator';
 
 @rule('after')
 export default class AfterRule implements IValidationRule {
-	validate(validator: Validator, value: any, key: string): boolean {
+	validate(validator: Validator, name: string, value: any, key: string): boolean {
 		return after(value, key);
 	}
 }

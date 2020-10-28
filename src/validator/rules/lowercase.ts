@@ -4,7 +4,7 @@ import { isLowercase } from 'validator';
 
 @rule('lowercase')
 export default class LowercaseRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isLowercase(value);
 	}
 }

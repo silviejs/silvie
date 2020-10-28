@@ -4,7 +4,7 @@ import { isFloat } from 'validator';
 
 @rule('float')
 export default class FloatRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isFloat(value);
 	}
 }

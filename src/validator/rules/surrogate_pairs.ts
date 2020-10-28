@@ -4,7 +4,7 @@ import { isSurrogatePair } from 'validator';
 
 @rule('surrogate')
 export default class SurrogatePairRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isSurrogatePair(value);
 	}
 }

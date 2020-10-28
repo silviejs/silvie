@@ -4,7 +4,7 @@ import { isPort } from 'validator';
 
 @rule('port')
 export default class PortRule implements IValidationRule {
-	validate(validator: Validator, value: any): boolean {
+	validate(validator: Validator, name: string, value: any): boolean {
 		return isPort(value);
 	}
 }
