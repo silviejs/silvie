@@ -13,11 +13,15 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * @param id
 	 */
 	static async find(id: any): Promise<Model> {
-		return this.cast(await this.primaryKeyCondition(this.baseQueryBuilder, null, id).first()) as Model;
+		const result = await this.primaryKeyCondition(this.baseQueryBuilder, null, id).first();
+
+		return result ? (this.cast(result) as Model) : null;
 	}
 
 	static async findAll(...ids: any[]): Promise<Model[]> {
-		return this.castAll(await this.primaryKeyCondition(this.baseQueryBuilder, null, ids).get()) as Model[];
+		const results = await this.primaryKeyCondition(this.baseQueryBuilder, null, ids).get();
+
+		return results.length > 0 ? (this.castAll(results) as Model[]) : [];
 	}
 
 	/**

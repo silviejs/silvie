@@ -45,10 +45,12 @@ export default class ModelQueryBuilder {
 	 * Create a new instance of this model from a initial data object
 	 * @param initialData
 	 */
-	constructor(initialData: any) {
-		Object.keys(initialData).forEach((key) => {
-			this[key] = initialData[key];
-		});
+	constructor(initialData?: any) {
+		if (initialData) {
+			Object.keys(initialData).forEach((key) => {
+				this[key] = initialData[key];
+			});
+		}
 	}
 
 	/**
