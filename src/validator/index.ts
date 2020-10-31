@@ -145,6 +145,7 @@ export default class Validator {
 					const message = rawMessage
 						.replace(/:path/g, exactPath)
 						.replace(/:field/g, fieldName)
+						.replace(/:name/g, exactPath.split('.').pop())
 						.replace(/:params/g, rule.params.join(', '))
 						.replace(/:(\d+)/g, (match, param) => rule.params[param] || '');
 
