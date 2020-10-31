@@ -67,6 +67,20 @@ export default class Disk {
 	}
 
 	/**
+	 * Get file stats
+	 * @param filename
+	 */
+	stat(filename: string): Promise<fs.Stats> {
+		return new Promise<fs.Stats>((resolveFn, rejectFn) => {
+			try {
+				resolveFn(fs.statSync(this.resolve(filename)));
+			} catch (e) {
+				rejectFn(e);
+			}
+		});
+	}
+
+	/**
 	 * Reads a file with the given options
 	 * @param filename
 	 * @param options
