@@ -285,19 +285,7 @@ export default class ModelQueryBuilder {
 		} else if (this.primaryKey instanceof Array) {
 			if (ids instanceof Array) {
 				ids.forEach((id, index) => {
-					if (index === 0) {
-						queryBuilder.where((cb) => {
-							(this.primaryKey as string[]).forEach((key) => {
-								cb.where(key, id);
-							});
-						});
-					} else {
-						queryBuilder.orWhere((cb) => {
-							(this.primaryKey as string[]).forEach((key) => {
-								cb.where(key, id);
-							});
-						});
-					}
+					queryBuilder.where(this.primaryKey[index], id);
 				});
 			} else {
 				this.primaryKey.forEach((key) => {
