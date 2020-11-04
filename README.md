@@ -1,2 +1,2 @@
-# silvie.github.io
+# silviejs.github.io
 SilvieJS Github Page
