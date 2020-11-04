@@ -6,7 +6,10 @@ export const validationRules = {};
 
 export function rule(name: string): (target: any) => any {
 	return (Class: IValidationRule): IValidationRule => {
-		validationRules[name] = (Class as any).prototype.validate;
+		validationRules[name] = {
+			validate: (Class as any).prototype.validate,
+			messenger: (Class as any).prototype.messenger,
+		};
 
 		return Class;
 	};

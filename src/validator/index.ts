@@ -2,10 +2,12 @@ import { validationRules } from 'src/validator/rule';
 import validationMessages from 'src/validator/messages';
 
 export type TRuleHandler = (value: any, ...params: any[]) => boolean;
+export type TRuleMessenger = (result: any) => string;
 
 export type TRule = {
 	name: string;
 	handler: TRuleHandler;
+	messenger?: TRuleMessenger;
 	params: any[];
 };
 
@@ -79,11 +81,11 @@ export default class Validator {
 				// Get rule name and parameters by splitting with ':'
 				const [name, paramsStr] = ruleStr.split(':');
 
-				// Get rule handler
-				const handler = validationRules[name];
+				// Get rule
+				const rule = validationRules[name];
 
-				// If there is no handler throw an error
-				if (!handler) {
+				// If there is no rule throw an error
+				if (!rule) {
 					throw new Error(`Validation rule '${name}' not exists.`);
 				}
 
@@ -93,7 +95,8 @@ export default class Validator {
 				// Add the rule to the array
 				parsedRules[key].push({
 					name,
-					handler,
+					handler: rule.validate,
+					messenger: rule.messenger,
 					params,
 				});
 			});
@@ -136,6 +139,7 @@ export default class Validator {
 			if (validationResult !== true) {
 				// Find raw error message
 				const rawMessage =
+					(rule.messenger && rule.messenger(validationResult)) ||
 					this.messages[`${exactPath}:${rule.name}`] ||
 					this.messages[`${fieldName}:${rule.name}`] ||
 					validationMessages[rule.name];
