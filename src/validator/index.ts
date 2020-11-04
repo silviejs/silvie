@@ -2,7 +2,7 @@ import { validationRules } from 'src/validator/rule';
 import validationMessages from 'src/validator/messages';
 
 export type TRuleHandler = (value: any, ...params: any[]) => boolean;
-export type TRuleMessenger = (result: any) => string;
+export type TRuleMessenger = (result: any) => string | [];
 
 export type TRule = {
 	name: string;
@@ -16,7 +16,7 @@ export default class Validator {
 
 	rules: Record<string, TRule[]>;
 
-	messages: Record<string, string>;
+	messages: Record<string, string | string[]>;
 
 	errors: Record<string, any>;
 
@@ -145,15 +145,25 @@ export default class Validator {
 					validationMessages[rule.name];
 
 				if (rawMessage) {
-					// Replace placeholders
-					const message = rawMessage
-						.replace(/:path/g, exactPath)
-						.replace(/:field/g, fieldName)
-						.replace(/:name/g, exactPath.split('.').pop())
-						.replace(/:params/g, rule.params.join(', '))
-						.replace(/:(\d+)/g, (match, param) => rule.params[param] || '');
+					const rawMessages = [];
 
-					messages.push(message);
+					// Replace placeholders
+					if (typeof rawMessage === 'string') {
+						rawMessages.push(rawMessage);
+					} else if (rawMessage instanceof Array) {
+						rawMessages.push(...rawMessage);
+					}
+
+					rawMessages.forEach((msg) => {
+						const message = msg
+							.replace(/:path/g, exactPath)
+							.replace(/:field/g, fieldName)
+							.replace(/:name/g, exactPath.split('.').pop())
+							.replace(/:params/g, rule.params.join(', '))
+							.replace(/:(\d+)/g, (match, param) => rule.params[param] || '');
+
+						messages.push(message);
+					});
 				} else {
 					throw new Error(`Could not find a message for '${rule.name}' at '${exactPath}'`);
 				}
@@ -207,7 +217,7 @@ export default class Validator {
 	constructor(
 		data: Record<string, any> | any[],
 		rules: Record<string, string>,
-		messages?: Record<string, string>,
+		messages?: Record<string, string | string[]>,
 		generateNestedErrors = true
 	) {
 		this.data = data;
