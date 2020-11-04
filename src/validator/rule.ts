@@ -1,5 +1,5 @@
 export default interface IValidationRule {
-	validate(value: any, ...params: any[]): boolean;
+	validate(value: any, ...params: any[]): any;
 }
 
 export const validationRules = {};
