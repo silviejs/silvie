@@ -4,7 +4,7 @@ module.exports = {
   url: 'https://silviejs.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/logo.svg',
   organizationName: 'hmak-me', // Usually your GitHub org/user name.
   projectName: 'silviejs.github.io', // Usually your repo name.
   themeConfig: {
@@ -24,54 +24,13 @@ module.exports = {
         {to: 'blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/hmak-me/silvie',
-          label: 'GitHub',
           position: 'right',
+          className: 'git-hub-link'
         },
       ],
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Silvie',
-              to: 'docs/',
-            },
-          ],
-        },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Blog',
-              to: 'blog',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/hmak-me/silvie',
-            },
-          ],
-        },
-      ],
       copyright: `Copyright © ${new Date().getFullYear()} Hossein Maktoobian, Inc. Built with Docusaurus.`,
     },
   },
@@ -92,9 +51,10 @@ module.exports = {
             'https://github.com/facebook/docusaurus/edit/master/website/blog/',
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve('./src/css/custom.scss'),
         },
       },
     ],
   ],
+  plugins: ['docusaurus-plugin-sass'],
 };
