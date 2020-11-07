@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[18],{78:function(e,n,t){"use strict";t.r(n);var a=t(0),o=t.n(a),r=t(93);n.default=function(){return o.a.createElement(r.a,{title:"Home Page",description:"A typescript based nodejs framework"})}}}]);

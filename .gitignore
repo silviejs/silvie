@@ -1,11 +1,11 @@
 # Dependencies
-/node_modules
+**/node_modules
 
 # Generated files
 .docusaurus
 .cache-loader
-/build
-/.idea
+**/build
+**/.idea
 
 # Misc
 .DS_Store
