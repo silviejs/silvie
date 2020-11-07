@@ -1,0 +1,552 @@
+---
+id: installation
+title: Installation
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Requirements
+Before you install silvie, you need to make sure Node.js has been installed on your computer. It is always a good habit to have
+the latest version. 
+
+So verify your installation by running these two commands in **Terminal** or **CMD**. They will show you the installed
+version of your `node` and `npm`. 
+
+```bash
+node -v
+# v15.1.0
+
+npm -v
+# 7.0.8
+``` 
+You may see different results when you run these command, but it is okay. You can
+check the latest version on [official Node.js website](https://nodejs.org).
+ 
+## Installing Silvie
+You've got two options to install Silvie on your machine: *using a creator package*, or *installing it manually* in your
+project.
+
+### Creator package <sup>(recommended)</sup>
+The creator package is a npm package called [create-silvie-app](https://www.npmjs.com/package/create-silvie-app) built 
+for this case. It will create a project for you from a boilerplate template. 
+It also creates some basic models, controllers and database migrations to get you going from there.
+
+#### NPX
+The shortcut for executing npm packages is the `npx` command. It will execute the binaries from npm packages, even if
+they were not downloaded before. NPX is coming with the NPM package, so you don't need to install anything.
+ 
+```bash
+npx create-silvie-app APP_NAME
+```
+
+#### Global Install
+Otherwise, if you are going to use this package more often, you can install this package globally on your machine. 
+
+<Tabs
+    groupId="command-type"
+    defaultValue="npm"
+    values={[
+        { label: 'NPM', value: 'npm' },
+        { label: 'Yarn', value: 'yarn' }
+    ]}
+>
+<TabItem value="npm">
+
+```bash
+npm install --global create-silvie-app
+```
+
+</TabItem>
+<TabItem value="yarn">
+
+```bash
+yarn global add create-silvie-app
+```
+
+</TabItem>
+</Tabs>
+
+This will add the package to your globally installed npm packages, and then you can just create a Silvie app by running 
+one of these commands.
+
+<Tabs 
+    groupId="command-type"
+    defaultValue="npm"
+    values={[
+        { label: 'NPM', value: 'npm' },
+        { label: 'Yarn', value: 'yarn' },
+        { label: 'CLI', value: 'cli' }
+    ]}
+>
+<TabItem value="npm">
+
+```bash
+npm init silvie-app APP_NAME
+```
+
+</TabItem>
+<TabItem value="yarn">
+
+```bash
+yarn create silvie-app APP_NAME
+```
+
+</TabItem>
+<TabItem value="cli">
+
+```bash
+create-silvie-app APP_NAME
+```
+
+</TabItem>
+</Tabs>
+
+Now you should see a directory with the name `APP_NAME` that you have written after the command. Now just `cd` to that 
+directory and execute one of these commands to start the application in the development mode.
+
+<Tabs 
+    groupId="command-type"
+    defaultValue="npm"
+    values={[
+        { label: 'NPM', value: 'npm' },
+        { label: 'Yarn', value: 'yarn' },
+        { label: 'CLI', value: 'cli' }
+    ]}
+>
+<TabItem value="npm">
+
+```bash
+npm run dev
+```
+
+</TabItem>
+<TabItem value="yarn">
+
+```bash
+yarn dev
+```
+
+</TabItem>
+<TabItem value="cli">
+
+```bash
+silvie dev
+```
+
+</TabItem>
+</Tabs>
+
+### Manual Installation
+I think this option is for those who know how Silvie actually works under the hood, and have a good understanding of the
+standard [directory structure](directory-structure.md) and [configuration](configuration.md).
+
+#### Step: 0
+You need to have a node project first. If you have created your empty project, just go to [step 1](#step-1).
+
+:::note Node Project
+A node project is a directory with a valid `package.json` file.
+If you don't know how to create a node project, the next command should help.
+:::
+
+```bash
+mkdir test-silvie-app
+cd test-silvie-app
+npm init -y
+```
+
+#### Step: 1
+As the first step you have to add [silvie](https://www.npmjs.com/package/silvie) package to your project dependencies.
+This command will install the latest version of silvie in your projects `node_modules` directory.
+
+<Tabs 
+    groupId="command-type"
+    defaultValue="npm"
+    values={[
+        { label: 'NPM', value: 'npm' },
+        { label: 'Yarn', value: 'yarn' }
+    ]}
+>
+<TabItem value="npm">
+
+```bash
+npm install --save silvie
+```
+
+</TabItem>
+<TabItem value="yarn">
+
+```bash
+yarn add silvie
+```
+
+</TabItem>
+</Tabs>
+
+#### Step: 2
+Now you should create the initial directories and files. Make sure your structure matches the one below:
+
+```text
+project root
+├─ src
+│  ├─ assets
+│  ├─ bootstrap
+│  │  ├─ index.ts
+│  │  └─ types.d.ts
+│  ├─ config
+│  │  ├─ auth.ts
+│  │  ├─ database.ts
+│  │  ├─ graphql.ts
+│  │  ├─ http.ts
+│  │  ├─ mail.ts
+│  │  └─ storage.ts
+│  ├─ controllers
+│  ├─ database
+│  │  ├─ migrations
+│  │  │  └─ index.ts
+│  │  └─ seeders
+│  │     └─ index.ts
+│  ├─ graphql
+│  │  ├─ dataloaders
+│  │  ├─ resolvers
+│  │  └─ schemas
+│  └─ models
+├─ .env
+├─ .env.example
+├─ .gitignore
+└─ tsconfig.json
+```
+
+#### Step: 3
+Some of those files need to have initial content to let Silvie do its job. Make sure these files have their correct base
+contents.
+
+```typescript title="src/bootstrap/index.ts"
+import bootstrap from 'silvie/lib/bootstrap';
+
+import 'middlewares';
+import 'controllers';
+
+import * as schemas from 'graphql/schemas';
+import * as resolvers from 'graphql/resolvers';
+import * as dataLoaders from 'graphql/dataloaders';
+
+bootstrap({ schemas, resolvers, dataLoaders });
+```
+
+```typescript title="src/bootstrap/types.d.ts"
+declare module '*.gql' {}
+declare module '*.graphql' {}
+declare module 'graphql/schemas' {}
+declare module 'graphql/resolvers' {}
+declare module 'graphql/dataloaders' {}
+```
+
+```typescript title="src/config/auth.ts"
+module.exports = {
+	driver: 'jwt',
+
+	jwt: {
+		secret: '', // Defaults to APP_KEY
+		blacklist: './tmp/blacklist',
+	},
+};
+```
+
+```typescript title="src/config/database.ts"
+module.exports = {
+	type: '', // Defaults to DB_TYPE
+	host: '', // Defaults to DB_HOST
+	port: '', // Defaults to DB_PORT
+
+	database: '', // Defaults to DB_DATABASE
+	username: '', // Defaults to DB_USERNAME
+	password: '', // Defaults to DB_PASSWORD
+
+	mysql: {
+		connectionLimit: 10,
+		dateStrings: true,
+		multipleStatements: true,
+	},
+};
+```
+
+```typescript title="src/config/graphql.ts"
+module.exports = {
+	enabled: true,
+
+	path: '/graphql',
+	middleware: '',
+
+	playground: process.env.NODE_ENV === 'development',
+	introspection: true,
+
+	allowJSON: true,
+
+	allowUpload: true,
+	maxFiles: 10,
+	maxFileSize: 10485760, // 10 MB
+};
+```
+
+```typescript title="src/config/http.ts"
+module.exports = {
+	HTTP2: false,
+	port: 4000,
+	trustProxy: true,
+
+	statics: [
+		{
+			path: './assets',
+			alias: null,
+			options: {
+				acceptRanges: true,
+				cacheControl: true,
+				dotfiles: 'ignore',
+				etag: true,
+				extensions: false,
+				immutable: false,
+				index: false,
+				lastModified: true,
+				maxAge: 0,
+				redirect: true,
+			},
+		},
+	],
+
+	body: {
+		enabled: true,
+
+		text: {
+			enabled: false,
+			inflate: true,
+			limit: '10mb',
+			type: 'text/plain',
+			defaultCharset: 'utf-8',
+		},
+		raw: {
+			enabled: false,
+			inflate: true,
+			limit: '10mb',
+			type: 'application/octet-stream',
+		},
+		json: {
+			enabled: true,
+			inflate: true,
+			strict: true,
+			limit: '10mb',
+			type: 'application/json',
+		},
+		urlencoded: {
+			enabled: true,
+			inflate: true,
+			extended: true,
+			limit: '10mb',
+			parameterLimit: 1000,
+			type: 'application/x-www-form-urlencoded',
+		},
+	},
+
+	cookie: {
+		enabled: true,
+		secret: '', // Defaults to APP_KEY
+	},
+
+	session: {
+		enabled: true,
+		secret: '', // Defaults to APP_KEY
+		reSave: false,
+		saveUninitialized: false,
+		unset: 'destroy',
+		trustProxy: true,
+
+		driver: 'file',
+		driverOptions: {
+			file: {
+				path: './session',
+				extension: '.json',
+				ttl: 86400,
+			},
+			redis: {
+				host: '', // Defaults to REDIS_HOST
+				port: '', // Defaults to REDIS_PORT
+				password: '', // Defaults to REDIS_PASSWORD
+				ttl: 86400,
+				prefix: 'sess:',
+			},
+		},
+		cookie: {
+			name: 'sid',
+			path: '/',
+			httpOnly: true,
+			maxAge: 86400000, // 1 day in milliseconds
+			sameSite: true,
+			secure: true,
+		},
+	},
+
+	ssl: {
+		enabled: false,
+		certFile: '',
+		keyFile: '',
+		passphrase: '',
+	},
+
+	uploads: {
+		enabled: true,
+		tempDirectory: './tmp',
+		maxFileSize: 10485760, // 10 MB
+	},
+
+	cors: {
+		enabled: true,
+		originsAllowed: ['*'],
+		methodsAllowed: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+		headersAllowed: null,
+		headersExposed: null,
+		allowCredentials: true,
+		optionsSuccessStatus: 200,
+		maxAge: null,
+		continuePreflight: false,
+	},
+};
+```
+
+```typescript title="src/config/mail.ts"
+export default {
+	enabled: false,
+
+	host: 'example.com',
+	port: '465',
+
+	secure: true,
+	rejectUnauthorized: false,
+
+	accounts: {
+		'test@example.com': {
+			username: 'test@example.com',
+			password: '',
+		},
+	},
+};
+```
+
+```typescript title="src/config/storage.ts"
+module.exports = {
+	path: './storage',
+
+	disks: {
+		default: 'default',
+	},
+
+	files: {
+		hash: {
+			algorithm: 'sha256',
+			salt: '', // Defaults to APP_KEY
+		},
+	},
+};
+```
+
+```typescript title="src/database/migrations/index.ts"
+export default {};
+```
+
+```typescript title="src/database/seeders/index.ts"
+export default {};
+```
+
+```dotenv title=".env.example"
+APP_NAME=
+APP_ENV=
+APP_PORT=
+APP_DEBUG=
+APP_URL=
+APP_KEY=
+
+DB_TYPE=
+DB_HOST=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_DATABASE=
+
+REDIS_HOST=
+REDIS_PORT=
+REDIS_PASSWORD=
+```
+
+:::tip .env
+Don't forget to fill in the `APP_*` and `DB_*` fields in .env file. They are necessary to run the app!
+:::
+
+```gitignore title=".gitignore"
+# Dependencies
+node_modules
+
+# Miscellaneous
+/.silvie
+
+# Build
+/build
+/bundle
+```
+
+```json title="tsconfig.json"
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"target": "es5",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"outDir": "build",
+		"experimentalDecorators": true,
+		"baseUrl": ".",
+		"downlevelIteration": true,
+		"paths": {
+			"src/*": ["./src/*"],
+			"config/*": ["./src/config/*"],
+			"controllers/*": ["./src/controllers/*"],
+			"database/*": ["./src/database/*"],
+			"graphql/*": ["./src/graphql/*"],
+			"middlewares/*": ["./src/middlewares/*"],
+			"models/*": ["./src/models/*"]
+		}
+	}
+}
+```
+
+Well, now you are good to go. Start the app by running the following command:
+
+<Tabs
+    groupId="command-type"
+    defaultValue="npm"
+    values={[
+        { label: 'NPM', value: 'npm' },
+        { label: 'Yarn', value: 'yarn' },
+        { label: 'CLI', value: 'cli' }
+    ]}
+>
+<TabItem value="npm">
+
+```bash
+npm run dev
+```
+
+</TabItem>
+<TabItem value="yarn">
+
+```bash
+yarn dev
+```
+
+</TabItem>
+<TabItem value="cli">
+
+```bash
+silvie dev
+```
+
+</TabItem>
+</Tabs>
