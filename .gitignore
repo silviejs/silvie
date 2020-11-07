@@ -4,6 +4,8 @@
 # Generated files
 .docusaurus
 .cache-loader
+/build
+/.idea
 
 # Misc
 .DS_Store
