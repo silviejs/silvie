@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="be556d1a-482c-426e-910e-ff6a52f9ad90" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/silviejs.github.io.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/babel.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blog/2019-05-28-hola.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blog/2019-05-29-hello-world.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blog/2019-05-30-welcome.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/.nojekyll" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/01a85c17.31fee4be.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/031793e1.b38b0e8b.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/17896441.c2713433.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/2.0bd939f6.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/2.0bd939f6.js.LICENSE.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/27.dfc58849.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/28.35f7fa37.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/2868cdab.322caa5e.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/29.d811a34e.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/30.0271e6b7.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/30a24c52.744bedb9.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/3570154c.d368196e.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/404.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/616665f6.8bc6ff73.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/6875c492.43ac6c6c.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/7562a5aa.04d1e921.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/8e9f0a8a.f819ddee.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/935f2afb.489268d1.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/a7023ddc.87ad5841.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/a80da1cf.cf888578.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/af172acd.17b80f53.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/b2b675dd.07a812d3.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/b2f90839.adf7c976.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/bdd709f1.4f391799.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/hello-world/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/hola/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/tags/docusaurus/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/tags/facebook/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/tags/hello/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/tags/hola/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/tags/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/blog/welcome/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/c4f5d8e4.e2717f5b.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/ce3e42ad.b616d275.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/common.f18439e5.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/d610846f.b5c519c9.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/df361e2b.8bd5ec2e.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/docs/doc2/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/docs/doc3/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/docs/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/docs/mdx/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/e16015ca.4914ae78.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/img/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/img/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/img/undraw_docusaurus_mountain.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/img/undraw_docusaurus_react.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/img/undraw_docusaurus_tree.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/main.893102d5.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/main.893102d5.js.LICENSE.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/runtime~main.8f477af6.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/sitemap.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/styles.7d452e9f.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/styles.d073c834.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/getting-started.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/installation.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/introduction.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docusaurus.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sidebars.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/css/custom.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/styles.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/.nojekyll" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/undraw_docusaurus_mountain.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/undraw_docusaurus_react.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/undraw_docusaurus_tree.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="w9i46yu7" />
+  </component>
+  <component name="ProjectId" id="1jrfjA4XiOtAjoHkaxlUuhAMipw" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/static/img" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docs" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/website" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static/img" />
+      <recent name="$PROJECT_DIR$/website/docs" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="be556d1a-482c-426e-910e-ff6a52f9ad90" name="Default Changelist" comment="" />
+      <created>1604567263413</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1604567263413</updated>
+      <workItem from="1604567264481" duration="5914000" />
+      <workItem from="1604730690926" duration="384000" />
+      <workItem from="1604731076723" duration="2603000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add docusaurus" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add docusaurus" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="661" y="345" width="587" height="423" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604731454243">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="661" y="345" width="587" height="423" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1604731454243" />
+    <state x="652" y="276" width="616" height="554" key="find.popup" timestamp="1604731378684">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="652" y="276" width="616" height="554" key="find.popup/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1604731378684" />
+  </component>
+</project>
