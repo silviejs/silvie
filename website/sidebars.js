@@ -28,6 +28,10 @@ module.exports = {
             'seeders',
             'query-builders',
         ],
+        'Storage': [
+            'storage',
+            'disk',
+        ],
         'Models': [
             'models',
             'relationships',
