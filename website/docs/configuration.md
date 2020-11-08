@@ -27,14 +27,14 @@ resolved into the `.silvie` directory.
 
 A sample authentication configuration file:
 
-```typescript title="src/config/auth.ts"
+```typescript
 module.exports = {
 	driver: 'jwt',
 
 	jwt: {
 		secret: '6Zfj3bE8c3BGfKhhCAQOCgQQC0goEvdDR8x4lbQhFMJT2JcUe2gsPDzk149c', 
-		blacklist: './tmp/blacklist',
-	},
+		blacklist: './tmp/blacklist'
+	}
 };
 ```
 
@@ -56,13 +56,13 @@ The database port will be here. Each database has its port depends on the config
 `3306` port by default. This will take `DB_PORT` variable in .env file as its default value.
 
 #### database
-The database name that you need to use in the application. This will take `DB_NAME` variable in .env file as its default value.
+The database name that you need to use in the application. This will take `DB_DATABASE` variable in .env file as its default value.
 
 #### username
-The username of the database user. This will take `DB_USER` variable in .env file as its default value.
+The username of the database user. This will take `DB_USERNAME` variable in .env file as its default value.
 
 #### password
-The password of the database user. Leave empty if user has no password. This will take `DB_PASS` variable in
+The password of the database user. Leave empty if user has no password. This will take `DB_PASSWORD` variable in
 .env file as its default value. 
 
 ### MySQL Options
@@ -77,7 +77,7 @@ Weather to allow running multiple statements in a single query or not.
 
 A sample database configuration file:
 
-```typescript title="src/config/database.ts"
+```typescript
 module.exports = {
 	type: 'mysql',
 	host: 'localhost',
@@ -90,8 +90,8 @@ module.exports = {
 	mysql: {
 		connectionLimit: 10,
 		dateStrings: true,
-		multipleStatements: true,
-	},
+		multipleStatements: true
+	}
 };
 ```
 
@@ -131,21 +131,21 @@ Specifies the maximum size of an uploaded file in bytes.
 
 A sample GraphQL configuration file:
 
-```typescript title="src/config/graphql.ts"
+```typescript
 module.exports = {
 	enabled: true,
 
 	path: '/graphql',
 	middleware: '',
 
-	playground: process.env.NODE_ENV === 'development',
+	playground: true,
 	introspection: true,
 
 	allowJSON: true,
 
 	allowUpload: true,
 	maxFiles: 10,
-	maxFileSize: 10485760,
+	maxFileSize: 10485760
 };
 ```
 ---
@@ -592,21 +592,32 @@ module.exports = {
 ---
 
 ## Mail
+The mail helper will connect to an SMTP server and will send emails from your server. Here you will have to enter the 
+server credentials and define email accounts to be used later for sending emails. The mail helper will be discussed more
+later in the [Mail Section](mail.md). The file must be stored in `src/config/mail.ts`.
 
----
+#### enabled
+This option will enable or disable the mail functionality.
 
-## Storage
+#### host
+This will specify the hostname of the target mail server.
 
----
+#### port
+This will specify the port number of your mail server. Default port of standard SMTP might be `25`, `465` or `578`.
 
-## Dotenv
+#### secure
+Determines if the connection should be made over TLS or not.
 
----
+#### rejectUnauthorized
+This option will determine weather to reject unauthorized SSL certificates or not.
 
-## Typescript
+#### accounts
+This is the option that you will define your email accounts. It is an object that keys will be the email addresses, and 
+their corresponding value has to be an object containing a `username` and a `password` to access that email account.
 
+Here is a sample mail configuration file.
 
-```typescript title="src/config/mail.ts"
+```typescript
 export default {
 	enabled: false,
 
@@ -620,29 +631,117 @@ export default {
 		'test@example.com': {
 			username: 'test@example.com',
 			password: '',
-		},
-	},
+		}
+	}
 };
 ```
+
+---
+
+## Storage
+Silvie has a storage helper class, which handles file system operations. It is useful when you are uploading files or 
+need to manage your files on the server. The configuration file must be stored in `src/config/storage.ts`.
+
+#### path
+The path to initialize storage disks. The relative path will be resolved from the execution path.
+
+#### disks
+This is an object which defines the storage disks. The keys will be the storage name, and their value will be the actual 
+directory name for that disk. For further explanation on disks, go to [Storage Disks](disk.md) section.
+
+#### files
+The storage helper is able to create files. This is the configuration for the file creator.
+
+##### Filename Hash Configuration
+The files that are generated without specifying a name, will get a hashed name. Here you need to specify a hashing 
+`algorithm` that defaults to **sha256** and a `salt` method which defaults to **APP_KEY** if left empty.
+
+A sample storage configuration file:
 
 ```typescript title="src/config/storage.ts"
 module.exports = {
 	path: './storage',
 
 	disks: {
-		default: 'default',
+		default: 'default'
 	},
 
 	files: {
 		hash: {
 			algorithm: 'sha256',
-			salt: '', // Defaults to APP_KEY
-		},
-	},
+			salt: ''
+		}
+	}
 };
 ```
 
-```dotenv title=".env.example"
+---
+
+## Dotenv
+.env files are one of the best ways to keep your environment specific variables organized somewhere. A .env file must be 
+created in the root of the project. It will be copied into the build folder or injected into the bundled code.
+
+### Application
+These variables will be in different parts of the application itself.
+
+#### APP_NAME
+This will create a name for the application. You may want to show it somewhere in the future.
+
+#### APP_ENV
+This defines the environment in which the application is running. 
+
+#### APP_PORT
+This has to be a port number to run the application with that port. If no port was pass through the CLI args, this port 
+will be used with a higher priority than the port in the [HTTP Port Config](#port-1)
+
+#### APP_DEBUG
+Determines weather the application is in debug mode or not.
+
+#### APP_URL
+Specifies the URL of the application. This may be useful when you want to make requests to this URL, or show it somewhere 
+in your responses.
+
+#### APP_KEY
+This one is the most important variable here. Specifies a unique key for the application to use it in encryption and 
+salting hash data.
+
+### Database
+These variables will be used to connect to a database when the application starts.
+
+#### DB_TYPE
+Specifies the database type. For now, silvie just supports `mysql`.
+
+#### DB_HOST
+Specifies the database server hostname. Usually it is `localhost`, an IP address, or a full hostname. 
+
+#### DB_PORT
+Specifies the database server port number. The default port number for MySQL is `3306`.
+
+#### DB_USERNAME
+Specifies the database user username.
+
+#### DB_PASSWORD
+Specifies the database user password. Leave it blank if there was no password set for the user
+
+#### DB_DATABASE
+Specifies the database name.
+
+### Redis 
+The redis credentials will be used in the redis session driver. 
+
+#### REDIS_HOST
+Specifies the hostname of your redis server. This can be `localhost`, an IP address, or a full hostname.
+
+#### REDIS_PORT
+Specifies the redis server port number which is `6379` on a standard redis installation.
+
+#### REDIS_PASSWORD
+If your server needs a password for connecting to it, you should write it down here. Otherwise, leave it blank if there 
+is no password.
+
+Here is the content for a `.env.example` file:
+
+```dotenv
 APP_NAME=
 APP_ENV=
 APP_PORT=
@@ -662,23 +761,21 @@ REDIS_PORT=
 REDIS_PASSWORD=
 ```
 
-:::tip .env
+:::tip
 Don't forget to fill in the `APP_*` and `DB_*` fields in .env file. They are necessary to run the app!
 :::
 
-```gitignore title=".gitignore"
-# Dependencies
-node_modules
+---
 
-# Miscellaneous
-/.silvie
+## Typescript
+Since Silvie is working with the typescript, you need to create a configuration file for it in the root of the project.
+The file must be named `tsconfig.json`. To learn more about typescript configuration files, 
+[read here](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html). 
 
-# Build
-/build
-/bundle
-```
+You may have noticed that there is a part here named `paths`. In this part, we create alias paths for out main 
+directories to prevent writing dirty relative paths everywhere we need to import a module.
 
-
+Here is the recommended content for this file.
 
 ```json title="tsconfig.json"
 {
@@ -705,5 +802,7 @@ node_modules
 }
 ```
 
-If you don't have this directory in your project, `silvie fix` command will create the missing files with their default
+---
+
+If you don't have the **config directory** in your project, `silvie fix` command will create the missing files with their default
 values.
