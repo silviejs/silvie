@@ -50,6 +50,13 @@ export default async () => {
 		}
 	});
 
+	const typesFilePath = path.resolve(root, 'src/bootstrap/types.d.ts');
+	if (!fs.existsSync(typesFilePath)) {
+		fs.copyFileSync(path.resolve(__dirname, `./samples/types.d.txt`), typesFilePath);
+
+		log.info('[File Created]', 'src/bootstrap/types.d.ts');
+	}
+
 	let envOK = true;
 	if (!envEmitted) {
 		const appName = path.basename(root);
