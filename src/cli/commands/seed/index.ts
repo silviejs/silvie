@@ -14,7 +14,7 @@ babelRegister({
 	ignore: [],
 });
 
-export default async (args: { _: string[]; rollback: boolean; refresh: boolean }) => {
+export default async (args: { _: string[] }) => {
 	const filename = args._[1];
 
 	const seedersDir = path.resolve(process.rootPath, 'src/database/seeders');
