@@ -22,9 +22,7 @@ project root
 │  ├─ controllers
 │  ├─ database
 │  │  ├─ migrations
-│  │  │  └─ index.ts
 │  │  └─ seeders
-│  │     └─ index.ts
 │  ├─ graphql
 │  │  ├─ dataloaders
 │  │  ├─ resolvers
@@ -64,16 +62,7 @@ This directory will contain database migrations which will create database entit
 ### Seeders
 This directory will contain database seeders to insert initial data into database tables.
 
-:::note Database Files
-The migration files may contain foreign relations, so their order of execution matters.
-Seeder files may also create some records that are necessary to create other records in other seeders, so their order
-matter too.
-
-To keep them in order. You need to have an index file in those directories and import/export the seeders in the correct
-order of execution
-:::
-
-### Data
+### Data Loaders
 This directory will contain all of GraphQL data loaders.
 
 ### Resolvers
