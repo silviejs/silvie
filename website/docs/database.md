@@ -1,5 +1,5 @@
 ---
 id: database
-title: Database
-sidebar_label: Introduction
+title: Database Helper
+sidebar_label: Database
 ---

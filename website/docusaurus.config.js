@@ -5,7 +5,7 @@ module.exports = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   favicon: 'img/logo.svg',
-  organizationName: 'hmak-me', // Usually your GitHub org/user name.
+  organizationName: 'silviejs', // Usually your GitHub org/user name.
   projectName: 'silviejs.github.io', // Usually your repo name.
   themeConfig: {
     navbar: {
@@ -22,7 +22,7 @@ module.exports = {
           position: 'left',
         },
         {
-          href: 'https://github.com/hmak-me/silvie',
+          href: 'https://github.com/silviejs/silvie',
           position: 'right',
           className: 'git-hub-link'
         },

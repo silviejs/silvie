@@ -647,7 +647,7 @@ The path to initialize storage disks. The relative path will be resolved from th
 
 #### disks
 This is an object which defines the storage disks. The keys will be the storage name, and their value will be the actual 
-directory name for that disk. For further explanation on disks, go to [Storage Disks](disk.md) section.
+directory name for that disk. For further explanation on disks, go to [Storage Disks](storage.md#disk) section.
 
 #### files
 The storage helper is able to create files. This is the configuration for the file creator.

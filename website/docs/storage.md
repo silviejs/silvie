@@ -1,5 +1,7 @@
 ---
 id: storage
-title: Storage
-sidebar_title: Introduction
+title: Storage Helper
+sidebar_label: Storage
 ---
+
+## Disk

@@ -1,19 +1,24 @@
 module.exports = {
-    someSidebar: {
+    docsSidebar: {
         'Getting Started': [
             'introduction',
             'installation',
             'directory-structure',
             'configuration',
+            'cli',
+        ],
+        'Core Concepts': [
+            'http',
+            'graphql',
+            'database',
+            'storage',
         ],
         'HTTP': [
-            'http',
             'routing',
             'controllers',
             'middlewares',
         ],
         'GraphQL': [
-            'graphql',
             'schemas',
             'resolvers',
             'data-loaders',
@@ -23,30 +28,18 @@ module.exports = {
             'validation-rules',
         ],
         'Database': [
-            'database',
             'migrations',
             'seeders',
             'query-builders',
-        ],
-        'Storage': [
-            'storage',
-            'disk',
-        ],
-        'Models': [
             'models',
-            'relationships',
         ],
         'Security': [
             'authentication',
-            'encryption',
-            'hashing',
+            'cryptography',
         ],
         'Testing': [
             'unit-tests',
             'end-to-end-tests',
-        ],
-        'CLI': [
-            'cli'
         ]
     },
 };

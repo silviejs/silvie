@@ -1,4 +1,0 @@
----
-id: hashing
-title: Hashing
----
