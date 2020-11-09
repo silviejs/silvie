@@ -285,7 +285,7 @@ class HTTPServer {
 	}
 
 	/**
-	 * Starts listening on a port in this order: --port, -P, .env.APP_PORT, config.port, customPort
+	 * Starts listening on a port in this order: --port, -p, .env.APP_PORT, config.port, customPort
 	 */
 	start(customPort = 5000) {
 		let server = null;
@@ -327,7 +327,7 @@ class HTTPServer {
 		} else {
 			server = http.createServer(this.app);
 		}
-		const port = process.args.port || process.env.APP_PORT || config.port || customPort;
+		const port = process.args.port || process.args.p || process.env.APP_PORT || config.port || customPort;
 		server.listen(port, (error) => {
 			if (error) log.error('Server Start Failed', 'An error occurred');
 
