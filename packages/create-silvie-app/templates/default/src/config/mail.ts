@@ -1,4 +1,4 @@
-export default {
+module.exports = {
 	enabled: false,
 
 	host: 'example.com',
