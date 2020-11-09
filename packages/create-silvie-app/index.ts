@@ -64,8 +64,8 @@ function generatePackageJsonFile(rootPath: string): void {
 	}
 }
 
-function ensuryDirectoryStructure(rootPath: string): void {
-	const directoriesToCreate = ['src/assets', 'src/graphql/dataloaders', 'src/middlewares'];
+function verifyDirectoryStructure(rootPath: string): void {
+	const directoriesToCreate = ['src/assets', 'src/database/seeders', 'src/graphql/dataloaders', 'src/middlewares'];
 
 	const directoriesToCheck = [
 		'src/bootstrap',
@@ -121,7 +121,20 @@ ncp(path.resolve(__dirname, 'templates/default'), destPath, (error) => {
 	}
 
 	try {
-		fs.renameSync(path.resolve(destPath, '.npmignore'), path.resolve(destPath, '.gitignore'));
+		fs.writeFileSync(
+			path.resolve(destPath, '.gitignore'),
+			`# Dependencies
+node_modules
+
+# Miscellaneous
+/.silvie
+
+# Build
+/build
+/bundle
+`,
+			'utf8'
+		);
 	} catch (renameError) {
 		console.error(`Could not create .gitignore file`, renameError);
 	}
@@ -129,7 +142,7 @@ ncp(path.resolve(__dirname, 'templates/default'), destPath, (error) => {
 	console.log('Copied the boilerplate files');
 
 	console.log('Checking project structure...');
-	ensuryDirectoryStructure(destPath);
+	verifyDirectoryStructure(destPath);
 	console.log('Project structure is OK');
 
 	generateEnvFile(destPath);
