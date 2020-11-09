@@ -2,6 +2,8 @@ import IMigration from 'silvie/lib/database/migration/migration';
 import Schema from 'silvie/lib/database/migration/schema';
 
 export default class CLASS_NAME implements IMigration {
+	static order = 1;
+
 	async up() {
 		await Schema.create('TABLE_NAME', (table) => {
 			table.id();

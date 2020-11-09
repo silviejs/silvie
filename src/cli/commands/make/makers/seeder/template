@@ -1,6 +1,8 @@
 import ISeeder from 'silvie/lib/database/migration/seeder';
 
 export default class CLASS_NAME implements ISeeder {
+	static order = 1;
+
 	async seed() {
 		// Seed the table here
 	}
