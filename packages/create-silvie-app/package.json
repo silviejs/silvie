@@ -1,13 +1,15 @@
 {
   "name": "create-silvie-app",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Create a Silvie app boilerplate",
   "main": "lib/index.js",
   "scripts": {
     "build": "rimraf ./lib && cross-env NODE_ENV=production babel index.ts -d lib -x \".ts,.js\" --config-file ../../babel.config.js && ncp ./templates ./lib/templates",
     "prepare": "npm run build"
   },
-  "bin": "lib/index.js",
+  "bin": {
+    "create-silvie-app": "lib/index.js"
+  },
   "files": [
     "lib"
   ],
