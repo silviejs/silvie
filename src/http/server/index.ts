@@ -83,7 +83,7 @@ class HTTPServer {
 						bodyParser.urlencoded({
 							inflate: parser.inflate,
 							limit: parser.limit,
-							type: parser.type,
+							type: parser.mime,
 							extended: parser.options?.extended || false,
 							parameterLimit: parser.options?.parameterLimit || 1000,
 						})
@@ -95,7 +95,7 @@ class HTTPServer {
 						bodyParser.text({
 							inflate: parser.inflate,
 							limit: parser.limit,
-							type: parser.type,
+							type: parser.mime,
 							defaultCharset: parser.options?.defaultCharset,
 						})
 					);
@@ -106,7 +106,7 @@ class HTTPServer {
 						bodyParser.raw({
 							inflate: parser.inflate,
 							limit: parser.limit,
-							type: parser.type,
+							type: parser.mime,
 						})
 					);
 				}
