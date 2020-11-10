@@ -49,7 +49,7 @@ module.exports = {
 				mime: 'application/json',
 
 				options: {
-					strict: true,
+					strict: false,
 				},
 			},
 			{
