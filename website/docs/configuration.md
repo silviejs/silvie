@@ -336,7 +336,7 @@ module.exports = {
 }
 ```
 
-### Cookies
+### Cookie
 If you need to handle cookies in your request you need to enable it with this option.
 
 #### enabled
