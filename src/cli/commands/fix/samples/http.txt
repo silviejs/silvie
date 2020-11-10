@@ -25,34 +25,45 @@ module.exports = {
 	body: {
 		enabled: true,
 
-		text: {
-			enabled: false,
-			inflate: true,
-			limit: '10mb',
-			type: 'text/plain',
-			defaultCharset: 'utf-8',
-		},
-		raw: {
-			enabled: false,
-			inflate: true,
-			limit: '10mb',
-			type: 'application/octet-stream',
-		},
-		json: {
-			enabled: true,
-			inflate: true,
-			strict: true,
-			limit: '10mb',
-			type: 'application/json',
-		},
-		urlencoded: {
-			enabled: true,
-			inflate: true,
-			extended: true,
-			limit: '10mb',
-			parameterLimit: 1000,
-			type: 'application/x-www-form-urlencoded',
-		},
+		parsers: [
+			{
+				type: 'text',
+				inflate: true,
+				limit: '10mb',
+				mime: 'text/plain',
+
+				options: {
+					defaultCharset: 'utf-8',
+				},
+			},
+			{
+				type: 'raw',
+				inflate: true,
+				limit: '10mb',
+				mime: 'application/octet-stream',
+			},
+			{
+				type: 'json',
+				inflate: true,
+				limit: '10mb',
+				mime: 'application/json',
+
+				options: {
+					strict: true,
+				},
+			},
+			{
+				type: 'urlencoded',
+				inflate: true,
+				limit: '10mb',
+				mime: 'application/x-www-form-urlencoded',
+
+				options: {
+					extended: true,
+					parameterLimit: 1000,
+				},
+			},
+		],
 	},
 
 	cookie: {

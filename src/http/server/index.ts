@@ -65,47 +65,52 @@ class HTTPServer {
 	}
 
 	initBodyParser() {
-		if (config.body.enabled) {
-			if (config.body.json.enabled) {
-				this.app.use(
-					bodyParser.json({
-						limit: config.body.json.limit,
-						inflate: config.body.json.inflate,
-						strict: config.body.json.strict,
-						type: config.body.json.type,
-					})
-				);
-			}
-			if (config.body.urlencoded.enabled) {
-				this.app.use(
-					bodyParser.urlencoded({
-						inflate: config.body.urlencoded.inflate,
-						extended: config.body.urlencoded.extended,
-						limit: config.body.urlencoded.limit,
-						parameterLimit: config.body.urlencoded.parameterLimit,
-						type: config.body.urlencoded.type,
-					})
-				);
-			}
-			if (config.body.text.enabled) {
-				this.app.use(
-					bodyParser.text({
-						inflate: config.body.text.inflate,
-						limit: config.body.text.limit,
-						type: config.body.text.type,
-						defaultCharset: config.body.text.defaultCharset,
-					})
-				);
-			}
-			if (config.body.raw.enabled) {
-				this.app.use(
-					bodyParser.raw({
-						inflate: config.body.raw.inflate,
-						limit: config.body.raw.limit,
-						type: config.body.raw.type,
-					})
-				);
-			}
+		if (config.body.enabled && config.body.parsers instanceof Array) {
+			config.body.parsers.forEach((parser) => {
+				if (parser.type === 'json') {
+					this.app.use(
+						bodyParser.json({
+							limit: parser.limit,
+							inflate: parser.inflate,
+							type: parser.mime,
+							strict: parser.options?.strict || false,
+						})
+					);
+				}
+
+				if (parser.type === 'urlencoded') {
+					this.app.use(
+						bodyParser.urlencoded({
+							inflate: parser.inflate,
+							limit: parser.limit,
+							type: parser.type,
+							extended: parser.options?.extended || false,
+							parameterLimit: parser.options?.parameterLimit || 1000,
+						})
+					);
+				}
+
+				if (parser.type === 'text') {
+					this.app.use(
+						bodyParser.text({
+							inflate: parser.inflate,
+							limit: parser.limit,
+							type: parser.type,
+							defaultCharset: parser.options?.defaultCharset,
+						})
+					);
+				}
+
+				if (parser.type === 'raw') {
+					this.app.use(
+						bodyParser.raw({
+							inflate: parser.inflate,
+							limit: parser.limit,
+							type: parser.type,
+						})
+					);
+				}
+			});
 		}
 	}
 
