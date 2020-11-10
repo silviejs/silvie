@@ -245,24 +245,23 @@ module.exports = {
 ```
 
 ### Body
-This part will define how the server should parse the incoming request bodies. Currently, these data types are being 
-supported:
+This part will define how the server should parse the incoming request bodies. Currently, these data types supported:
 - **text**: plain/text
 - **raw**: application/octet-stream
 - **json**: application/json
 - **urlencoded**: application/x-www-form-urlencoded
 
-Note that you can use their behavior on other mime types. You just need to change the type parameter of that data type.
+Note that you can use their behavior on other mime types. You just need to change the mime parameter of that parser.
 
 #### enabled
 This option will enable/disable the body parser all along.
 
+#### parsers
+This option is an array of object which define a parser to be registered at application startup. A parser object can 
+have these properties:
 
-#### General Body Options
-The following options are allowed on all data types.
-
-##### enabled
-Weather to enable or disable that data type.
+##### type
+This indicates the type of that parser which can be `'text'`, `'raw'`, `'json'` or `'urlencoded'`.
 
 ##### inflate
 If set to `true` the deflated<sup>(compressed)</sup> bodies will be inflated, but if set to `false`, the deflated bodies
@@ -271,8 +270,11 @@ will be ignored.
 ##### limit
 Specifies the maximum size of incoming data in bytes.
 
-##### type
+##### mime
 Specifies the corresponding mime type of the incoming data.
+
+##### options
+Some parsers may accept extra options which you can specify them in this property.  
 
 #### Text Specific Options
 These options can only be defined on the text data type.
@@ -284,14 +286,15 @@ Specifies the default charset of the text when tries to decode the incoming raw 
 These options can only be defined on the JSON data type.
 
 ##### strict
-If set to `true`, it only accepts `Object`s and `Array`s. If set to `false`, accepts any valid JSON syntax.
+If set to `true`, it only accepts `Object`s and `Array`s. If set to `false`, accepts anything that `JSON.parse` accepts 
+as a valid JSON string.
 
 #### URL Encoded Specific Options
 These options can only be defined on the URL Encoded data type.
 
 ##### extended
-If set to `true`, It will allow parsing of nested and deep urlencoded data by using the **qs** library for parsing. If 
-set to `false`, It will only parse some simple urlencoded requests by using the **querystring** library.
+If set to `true`, It will allow parsing of nested urlencoded data by using the **qs** library for parsing. If set to 
+`false`, It will only parse some simple urlencoded requests by using the **querystring** library.
 
 ##### parameterLimit
 Specifies the maximum number of parameters in the incoming request body.
@@ -303,34 +306,45 @@ module.exports = {
 	body: {
         enabled: true,
 
-        text: {
-            enabled: false,
-            inflate: true,
-            limit: '10mb',
-            type: 'text/plain',
-            defaultCharset: 'utf-8',
-        },
-        raw: {
-            enabled: false,
-            inflate: true,
-            limit: '10mb',
-            type: 'application/octet-stream',
-        },
-        json: {
-            enabled: true,
-            inflate: true,
-            strict: true,
-            limit: '10mb',
-            type: 'application/json',
-        },
-        urlencoded: {
-            enabled: true,
-            inflate: true,
-            extended: true,
-            limit: '10mb',
-            parameterLimit: 1000,
-            type: 'application/x-www-form-urlencoded',
-        },
+		parsers: [
+			{
+				type: 'text',
+				inflate: true,
+				limit: '10mb',
+				mime: 'text/plain',
+
+				options: {
+					defaultCharset: 'utf-8'
+				}
+			},
+			{
+				type: 'raw',
+				inflate: true,
+				limit: '10mb',
+				mime: 'application/octet-stream'
+			},
+			{
+				type: 'json',
+				inflate: true,
+				limit: '10mb',
+				mime: 'application/json',
+
+				options: {
+					strict: false
+				}
+			},
+			{
+				type: 'urlencoded',
+				inflate: true,
+				limit: '10mb',
+				mime: 'application/x-www-form-urlencoded',
+
+				options: {
+					extended: true,
+					parameterLimit: 1000
+				}
+			}
+		]
     }
     // ...
 }

@@ -334,16 +334,19 @@ class UploadController implements Controller {
 You are able to configure different types of request bodies to be parsed and use them in your request handlers with 
 `req.body`. The available body parsers are:
 
-- **raw**: application/octet-stream
 - **text**: text/plain
+- **raw**: application/octet-stream
 - **json**: application/json
 - **urlencoded**: application/x-www-form-urlencoded
 
 Each of these parsers will create a middleware on the Express application which only responds its associated mime type 
-in the configuration file.
-You can change their default mime type in [Body part of HTTP Configuration](configuration.md#body) file. Currently, 
-there is a limitation in body parsers' configuration, and it will be improved in the future, so you the body parser 
-configuration will be more flexible.
+in the configuration file. You can change their default mime type in 
+[Body part of HTTP Configuration](configuration.md#body) file.
+
+:::caution
+Avoid registering too many body parsers in your application since they put a middleware in the way of requests, you may
+end up with performance issues.
+:::
 
 ### Raw
 Raw body parser will parse the request body into a `Buffer`. 
