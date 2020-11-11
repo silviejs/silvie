@@ -125,10 +125,7 @@ class HTTPServer {
 				const FileStore = fileStore(session);
 
 				store = new FileStore({
-					path: path.resolve(
-						process.rootPath,
-						(process.env.NODE_ENV === 'development' ? `.silvie/` : '') + config.session.driverOptions.file.path
-					),
+					path: path.resolve(process.rootPath, `.silvie/${config.session.driverOptions.file.path}`),
 					extension: config.session.driverOptions.file.extension,
 					ttl: config.session.driverOptions.file.ttl,
 				});
@@ -176,10 +173,7 @@ class HTTPServer {
 	initUploads() {
 		if (config.uploads.enabled) {
 			this.upload = multer({
-				dest: path.resolve(
-					process.rootPath,
-					(process.env.NODE_ENV === 'development' ? `.silvie/` : '') + config.uploads.tempDirectory
-				),
+				dest: path.resolve(process.rootPath, `.silvie/${config.uploads.tempDirectory}`),
 				limits: {
 					fieldSize: config.uploads.maxFileSize,
 				},
