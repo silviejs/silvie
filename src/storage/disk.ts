@@ -1,19 +1,7 @@
-import fs from 'fs';
+import { Stats, ReadStream, WriteStream, createReadStream, createWriteStream } from 'fs';
+import fs from 'fs/promises';
 import { resolve } from 'path';
 import ncp from 'ncp';
-
-type TData =
-	| string
-	| Uint8Array
-	| Uint8ClampedArray
-	| Uint16Array
-	| Uint32Array
-	| Int8Array
-	| Int16Array
-	| Int32Array
-	| Float32Array
-	| Float64Array
-	| DataView;
 
 type TEncoding = 'utf8' | 'ascii' | 'utf-8' | 'utf16le' | 'ucs2' | 'ucs-2' | 'base64' | 'latin1' | 'binary' | 'hex';
 
@@ -70,14 +58,8 @@ export default class Disk {
 	 * Get file stats
 	 * @param filename
 	 */
-	stat(filename: string): Promise<fs.Stats> {
-		return new Promise<fs.Stats>((resolveFn, rejectFn) => {
-			try {
-				resolveFn(fs.statSync(this.resolve(filename)));
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+	stat(filename: string): Promise<Stats> {
+		return fs.stat(this.resolve(filename));
 	}
 
 	/**
@@ -86,13 +68,7 @@ export default class Disk {
 	 * @param options
 	 */
 	get(filename: string, options?: TReadOptions): Promise<string | Buffer> {
-		return new Promise<string | Buffer>((resolveFn, rejectFn) => {
-			try {
-				resolveFn(fs.readFileSync(this.resolve(filename), options));
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return fs.readFile(this.resolve(filename), options);
 	}
 
 	/**
@@ -101,44 +77,31 @@ export default class Disk {
 	 * @param contents
 	 * @param options
 	 */
-	put(filename: string, contents: TData, options: TWriteOptions): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				fs.writeFileSync(this.resolve(filename), contents, options);
+	async put(filename: string, contents: string | Uint8Array, options: TWriteOptions): Promise<boolean> {
+		await fs.writeFile(this.resolve(filename), contents, options);
 
-				resolveFn(true);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return true;
 	}
 
 	/**
 	 * Checks to see if a file exists
 	 * @param filename
 	 */
-	exists(filename: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				resolveFn(fs.existsSync(this.resolve(filename)));
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+	async exists(filename: string): Promise<boolean> {
+		try {
+			await fs.stat(this.resolve(filename));
+			return true;
+		} catch {
+			return false;
+		}
 	}
 
 	/**
 	 * Checks to see if a file not exists
 	 * @param filename
 	 */
-	missing(filename: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				resolveFn(!fs.existsSync(this.resolve(filename)));
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+	async missing(filename: string): Promise<boolean> {
+		return !(await this.exists(filename));
 	}
 
 	/**
@@ -146,16 +109,10 @@ export default class Disk {
 	 * @param oldPath
 	 * @param newPath
 	 */
-	rename(oldPath: string, newPath: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				fs.renameSync(this.resolve(oldPath), this.resolve(newPath));
+	async rename(oldPath: string, newPath: string): Promise<boolean> {
+		await fs.rename(this.resolve(oldPath), this.resolve(newPath));
 
-				resolveFn(true);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return true;
 	}
 
 	/**
@@ -164,13 +121,7 @@ export default class Disk {
 	 * @param newPath
 	 */
 	move(oldPath: string, newPath: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				this.rename(oldPath, newPath).then(resolveFn).catch(rejectFn);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return this.rename(oldPath, newPath);
 	}
 
 	/**
@@ -178,18 +129,12 @@ export default class Disk {
 	 * @param source
 	 * @param destination
 	 */
-	copy(source: string, destination: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				if (fs.statSync(source).isDirectory()) {
-					this.copyDirectory(source, destination).then(resolveFn).catch(rejectFn);
-				}
+	async copy(source: string, destination: string): Promise<boolean> {
+		if ((await fs.stat(source)).isDirectory()) {
+			return this.copyDirectory(source, destination);
+		}
 
-				this.copyFile(source, destination).then(resolveFn).catch(rejectFn);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return this.copyFile(source, destination);
 	}
 
 	/**
@@ -197,16 +142,10 @@ export default class Disk {
 	 * @param filename
 	 * @param destination
 	 */
-	copyFile(filename: string, destination: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				fs.copyFileSync(this.resolve(filename), this.resolve(destination));
+	async copyFile(filename: string, destination: string): Promise<boolean> {
+		await fs.copyFile(this.resolve(filename), this.resolve(destination));
 
-				resolveFn(true);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return true;
 	}
 
 	/**
@@ -235,34 +174,22 @@ export default class Disk {
 	 * @param path
 	 * @param recursive
 	 */
-	delete(path: string, recursive = false): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				if (fs.statSync(path).isDirectory()) {
-					this.deleteDirectory(path, recursive).then(resolveFn).catch(rejectFn);
-				}
+	async delete(path: string, recursive = false): Promise<boolean> {
+		if ((await fs.stat(path)).isDirectory()) {
+			return this.deleteDirectory(path, recursive);
+		}
 
-				this.deleteFile(path).then(resolveFn).catch(rejectFn);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return this.deleteFile(path);
 	}
 
 	/**
 	 * Delete a file
 	 * @param filename
 	 */
-	deleteFile(filename: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				fs.unlinkSync(this.resolve(filename));
+	async deleteFile(filename: string): Promise<boolean> {
+		await fs.unlink(this.resolve(filename));
 
-				resolveFn(true);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return true;
 	}
 
 	/**
@@ -270,16 +197,10 @@ export default class Disk {
 	 * @param path
 	 * @param recursive
 	 */
-	deleteDirectory(path: string, recursive = false): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				fs.rmdirSync(this.resolve(path), { recursive });
+	async deleteDirectory(path: string, recursive = false): Promise<boolean> {
+		await fs.rmdir(this.resolve(path), { recursive });
 
-				resolveFn(true);
-			} catch (e) {
-				rejectFn(e);
-			}
-		});
+		return true;
 	}
 
 	/**
@@ -288,19 +209,13 @@ export default class Disk {
 	 * @param recursive
 	 * @param mode
 	 */
-	makeDirectory(path: string, recursive = false, mode = 0o777): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				fs.mkdirSync(this.resolve(path), {
-					recursive,
-					mode,
-				});
-
-				resolveFn(true);
-			} catch (e) {
-				rejectFn(e);
-			}
+	async makeDirectory(path: string, recursive = false, mode = 0o777): Promise<boolean> {
+		await fs.mkdir(this.resolve(path), {
+			recursive,
+			mode,
 		});
+
+		return true;
 	}
 
 	/**
@@ -308,8 +223,8 @@ export default class Disk {
 	 * @param path
 	 * @param options
 	 */
-	readStreamFrom(path: string, options?: TReadStreamOptions): fs.ReadStream {
-		return fs.createReadStream(this.resolve(path), options);
+	readStreamFrom(path: string, options?: TReadStreamOptions): ReadStream {
+		return createReadStream(this.resolve(path), options);
 	}
 
 	/**
@@ -317,7 +232,7 @@ export default class Disk {
 	 * @param path
 	 * @param options
 	 */
-	writeStreamTo(path: string, options?: TWriteStreamOptions): fs.WriteStream {
-		return fs.createWriteStream(this.resolve(path), options);
+	writeStreamTo(path: string, options?: TWriteStreamOptions): WriteStream {
+		return createWriteStream(this.resolve(path), options);
 	}
 }
