@@ -33,6 +33,7 @@ project root
 ├─ .gitignore
 └─ tsconfig.json
 ```
+
 ## Initial Directories
 Now we are going to discuss each directory, and the reason it is important to for the Silvie. Some directories need you 
 to create an initial file in them which is explained after directory description.
