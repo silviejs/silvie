@@ -18,7 +18,7 @@ project root
       │  ├─ readme.txt
       │  ├─ image.jpg
       │  └─ ...
-      └─ disk2
+      ├─ disk2
       │  ├─ profiles
       │  │  ├─ user1.png
       │  │  └─ ...
@@ -56,22 +56,43 @@ Storage.disks.default.put('./sample.txt', 'Hello Storage', 'utf8');
 The Disk class wraps around the Node.js `fs` library to offer some helper methods with a boundary access protection and
 promisified methods to be easier and safer to use.  
 
-### stat
-### get
-### put
-### exists
-### missing
-### rename
-### move
-### copy
-### copyFile
-### copyDirectory
-### delete
-### deleteFile
-### deleteDirectory
-### makeDirectory
-### readStreamFrom
-### writeStreamTo
+### disk.stat()
+This method takes a path string and returns a `Stats` object, giving you some extra information about that file. For 
+more information, read the docs about [Stats](https://nodejs.org/dist/latest-v15.x/docs/api/fs.html#fs_class_fs_stats).
+
+```typescript
+import Storage from 'silvie/lib/storage';
+
+Storage.disks.default.stat('./file.txt').then((stats) => {
+    console.log(stats.isDirectory() ? 'Directory' : 'File')
+
+    // Do with the file stats
+});
+```
+
+### disk.get()
+Use this method to read a file. This method reads a file if it exists, and returns either a `string` or a `Buffer`.
+
+#### path
+This parameter takes a string indicating the path to file.
+
+#### options
+This parameter can be an [encoding string](#tencoding) or file [read options](#treadoptions).
+
+### disks.put()
+### disks.exists()
+### disks.missing()
+### disks.rename()
+### disks.move()
+### disks.copy()
+### disks.copyFile()
+### disks.copyDirectory()
+### disks.delete()
+### disks.deleteFile()
+### disks.deleteDirectory()
+### disks.makeDirectory()
+### disks.readStreamFrom()
+### disks.writeStreamTo()
 
 ## File
 ### filename
@@ -80,3 +101,8 @@ promisified methods to be easier and safer to use.
 ### path
 ### ext
 ### randomName
+
+## Types
+### TEncoding
+### TReadOptions
+### TWriteOptions
