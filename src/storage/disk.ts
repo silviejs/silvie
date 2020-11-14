@@ -77,7 +77,7 @@ export default class Disk {
 	 * @param contents
 	 * @param options
 	 */
-	async put(filename: string, contents: string | Uint8Array, options: TWriteOptions): Promise<boolean> {
+	async put(filename: string, contents: string | Buffer | Uint8Array, options: TWriteOptions): Promise<boolean> {
 		await fs.writeFile(this.resolve(filename), contents, options);
 
 		return true;
