@@ -246,7 +246,15 @@ database.closeConnection();
 ``` 
 
 ## Driver
+A database driver needs to handle the communication with its corresponding database system. Currently, Silvie only 
+supports `mysql`.
+
+A driver needs to handle these responsibilities.
 - Initiate a connection to the database
 - Interpret commands into actual queries
+- Implement all methods required by the database class
 - Execute queries on the database and return the results
 - Close the connection to the database
+
+The database driver needs to implement the core functionality for all methods mentioned above. Because the database 
+class forwards everything to its driver.
