@@ -219,7 +219,7 @@ const result = await database.dropTableIfExists('logs');
 ### database.checkForeignKeys()
 This method will specify weather to care for foreign key constraints or not. Foreign keys might cause problems when we 
 are trying to create a table, update records or insert data into a table. 
-- **state** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type)
+- **state** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
 ```typescript
 await database.checkForeignKeys(true);
