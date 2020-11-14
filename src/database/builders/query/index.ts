@@ -113,7 +113,7 @@ export default class QueryBuilder {
 	 * Return all matching rows of this query
 	 */
 	async get(): Promise<any> {
-		return this.options.processData(await Database.proxy('select', this), this);
+		return this.options.processData(await Database.select(this), this);
 	}
 
 	/**
@@ -123,14 +123,14 @@ export default class QueryBuilder {
 		const qb = this.clone();
 		qb.options.limit = 1;
 
-		return this.options.processData(await Database.proxy('select', qb), this)[0] || null;
+		return this.options.processData(await Database.select(qb), this)[0] || null;
 	}
 
 	/**
 	 * Query database to see if there are any records matching this query
 	 */
 	exists(): Promise<boolean> {
-		return Database.proxy('exists', this);
+		return Database.exists(this);
 	}
 
 	/**
@@ -171,7 +171,7 @@ export default class QueryBuilder {
 	 * Return the count of records matching this query
 	 */
 	count(): Promise<number> {
-		return Database.proxy('count', this);
+		return Database.count(this);
 	}
 
 	/**
@@ -183,7 +183,7 @@ export default class QueryBuilder {
 			throw new Error("Column is not specified for 'average' method");
 		}
 
-		return Database.proxy('average', this, column);
+		return Database.average(this, column);
 	}
 
 	/**
@@ -195,7 +195,7 @@ export default class QueryBuilder {
 			throw new Error("Column is not specified for 'sum' method");
 		}
 
-		return Database.proxy('sum', this, column);
+		return Database.sum(this, column);
 	}
 
 	/**
@@ -207,7 +207,7 @@ export default class QueryBuilder {
 			throw new Error("Column is not specified for 'min' method");
 		}
 
-		return Database.proxy('min', this, column);
+		return Database.min(this, column);
 	}
 
 	/**
@@ -219,7 +219,7 @@ export default class QueryBuilder {
 			throw new Error("Column is not specified for 'max' method");
 		}
 
-		return Database.proxy('max', this, column);
+		return Database.max(this, column);
 	}
 
 	/**
@@ -235,7 +235,7 @@ export default class QueryBuilder {
 		this.options.insert = data;
 		this.options.ignoreDuplicates = ignore;
 
-		return Database.proxy('insert', this).then((results) => {
+		return Database.insert(this).then((results) => {
 			delete this.options.insert;
 			delete this.options.ignoreDuplicates;
 
@@ -260,7 +260,7 @@ export default class QueryBuilder {
 		this.options.update = data;
 		this.options.silentUpdate = silent;
 
-		return Database.proxy('update', this).then((results) => {
+		return Database.update(this).then((results) => {
 			delete this.options.update;
 			delete this.options.silentUpdate;
 
@@ -286,7 +286,7 @@ export default class QueryBuilder {
 		this.options.bulkUpdateKeys = keys;
 		this.options.silentUpdate = silent;
 
-		return Database.proxy('bulkUpdate', this).then((results) => {
+		return Database.bulkUpdate(this).then((results) => {
 			delete this.options.bulkUpdateData;
 			delete this.options.bulkUpdateKeys;
 			delete this.options.silentUpdate;
@@ -304,7 +304,7 @@ export default class QueryBuilder {
 			return this.softDelete();
 		}
 
-		return Database.proxy('delete', this);
+		return Database.delete(this);
 	}
 
 	/**
@@ -328,7 +328,7 @@ export default class QueryBuilder {
 			throw new Error('Soft delete timestamp is not specified in this query builder');
 		}
 
-		return Database.proxy('softDelete', this);
+		return Database.softDelete(this);
 	}
 
 	/**
@@ -343,7 +343,7 @@ export default class QueryBuilder {
 			throw new Error('Soft delete timestamp is not specified in this query builder');
 		}
 
-		return Database.proxy('restore', this);
+		return Database.restore(this);
 	}
 
 	/**

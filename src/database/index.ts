@@ -1,7 +1,8 @@
 import Table from 'src/database/migration/table';
 import IDatabaseDriver from 'src/database/driver';
 import drivers from 'src/database/driver/drivers';
-import { TBaseValue } from 'src/database/builders/condition';
+import { TBaseValue, TColumn } from 'src/database/builders/condition';
+import QueryBuilder from 'src/database/builders/query';
 
 const config = process.configs.database;
 
@@ -56,8 +57,56 @@ export class Database {
 		}
 	}
 
-	proxy(action: string, ...params): Promise<any> {
-		return this.driver[action](...params);
+	select(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.select(queryBuilder);
+	}
+
+	exists(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.exists(queryBuilder);
+	}
+
+	count(queryBuilder: QueryBuilder): Promise<number> {
+		return this.driver.count(queryBuilder);
+	}
+
+	average(queryBuilder: QueryBuilder, column: TColumn): Promise<number> {
+		return this.driver.average(queryBuilder, column);
+	}
+
+	sum(queryBuilder: QueryBuilder, column: TColumn): Promise<number> {
+		return this.driver.sum(queryBuilder, column);
+	}
+
+	min(queryBuilder: QueryBuilder, column: TColumn): Promise<any> {
+		return this.driver.min(queryBuilder, column);
+	}
+
+	max(queryBuilder: QueryBuilder, column: TColumn): Promise<any> {
+		return this.driver.max(queryBuilder, column);
+	}
+
+	insert(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.insert(queryBuilder);
+	}
+
+	update(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.update(queryBuilder);
+	}
+
+	bulkUpdate(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.bulkUpdate(queryBuilder);
+	}
+
+	delete(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.delete(queryBuilder);
+	}
+
+	softDelete(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.softDelete(queryBuilder);
+	}
+
+	restore(queryBuilder: QueryBuilder): Promise<any> {
+		return this.driver.restore(queryBuilder);
 	}
 
 	raw(query: string, params?: TBaseValue[]): Promise<any> {
