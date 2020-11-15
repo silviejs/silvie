@@ -39,6 +39,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
+          editUrl: 'https://github.com/silviejs/silviejs.github.io/tree/main/website',
         },
         blog: {
           showReadingTime: true,
