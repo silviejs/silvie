@@ -10,10 +10,10 @@ HTTP server is the core part of any back-end framework, including Silvie. It use
 ## Port Decision
 Silvie goes through the following steps to choose a port number to run its HTTP server. 
 
-1- Look for the `--port` in command line args
-2- Look for the `-p` in command line args
-3- Look for the `APP_PORT` in `.env` file
-4- Look for the port number in HTTP configuration file
+1. Look for the `--port` in command line args
+2. Look for the `-p` in command line args
+3. Look for the `APP_PORT` in `.env` file
+4. Look for the port number in HTTP configuration file
 
 If port number could not be found in any of these steps, Silvie will take `5000` as its fallback port number.
 
