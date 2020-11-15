@@ -33,6 +33,8 @@ class HTTPServer {
 	init() {
 		this.app = Express();
 
+		this.app.disable('x-powered-by');
+
 		if (config.trustProxy) {
 			this.app.set('trust proxy', 1);
 		}
