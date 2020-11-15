@@ -1,7 +1,10 @@
 module.exports = {
     docsSidebar: {
-        'Getting Started': [
+        'Silvie JS': [
             'introduction',
+            'contribution',
+        ],
+        'Getting Started': [
             'installation',
             'directory-structure',
             'configuration',
@@ -14,24 +17,24 @@ module.exports = {
             'storage',
         ],
         'HTTP': [
-            'routing',
             'controllers',
             'middlewares',
+            'routing',
         ],
         'GraphQL': [
             'schemas',
             'resolvers',
             'data-loaders',
         ],
-        'Validation': [
-            'validator',
-            'validation-rules',
-        ],
         'Database': [
             'migrations',
             'seeders',
             'query-builders',
             'models',
+        ],
+        'Validation': [
+            'validator',
+            'validation-rules',
         ],
         'Security': [
             'authentication',
