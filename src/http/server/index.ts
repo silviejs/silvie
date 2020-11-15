@@ -263,7 +263,7 @@ class HTTPServer {
 	 */
 	registerRoute(
 		method: string,
-		url: string,
+		url: string | RegExp,
 		routeMiddlewares: string[] = [],
 		upload: { action: string; options?: any } = null,
 		handler: (req: Request, res: Response) => void

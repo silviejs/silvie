@@ -7,7 +7,7 @@ export default class Controller {}
  * @param method Defines HTTP verb
  * @param url Specifies the url for accessing route
  */
-export function route(method: string, url: string): MethodDecorator {
+export function route(method: string, url: string | RegExp): MethodDecorator {
 	const methodName = method.toLowerCase();
 
 	return (target: any, key: string, descriptor: PropertyDescriptor) => {
