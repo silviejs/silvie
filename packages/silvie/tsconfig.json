@@ -5,8 +5,8 @@
 		"esModuleInterop": true,
 		"target": "es5",
 		"moduleResolution": "node",
-		"sourceMap": true,
 		"outDir": "./lib",
+		"sourceMap": true,
 		"experimentalDecorators": true,
 		"emitDeclarationOnly": true,
 		"baseUrl": ".",
@@ -16,5 +16,5 @@
 		"plugins": [{ "transform": "typescript-transform-paths", "afterDeclarations": true }]
 	},
 	"include": ["src/**/*"],
-	"exclude": ["node_modules", "lib"]
+	"exclude": ["node_modules", "lib", "templates"]
 }

@@ -4,7 +4,7 @@
   "description": "Create a Silvie app boilerplate",
   "main": "lib/index.js",
   "scripts": {
-    "build": "rimraf ./lib && cross-env NODE_ENV=production babel index.ts -d lib -x \".ts,.js\" --config-file ../../babel.config.js && ncp ./templates ./lib/templates",
+    "build": "rimraf ./lib && cross-env NODE_ENV=production babel index.ts -d lib -x \".ts,.js\" && ncp ./templates ./lib/templates",
     "prepare": "npm run build"
   },
   "bin": {

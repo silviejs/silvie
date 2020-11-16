@@ -23,16 +23,7 @@ module.exports = {
 
 		'import/resolver': {
 			alias: {
-				map: [
-					['src', './src'],
-					['base', './src/base'],
-					['bootstrap', './src/bootstrap'],
-					['controllers', './src/controllers'],
-					['database', './src/database'],
-					['graphql', './src/graphql'],
-					['middlewares', './src/middlewares'],
-					['models', './src/models'],
-				],
+				map: [['src', './src']],
 				extensions: ['.js', '.ts', '.gql', '.json'],
 			},
 		},

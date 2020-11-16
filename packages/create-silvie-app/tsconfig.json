@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"target": "es5",
+		"moduleResolution": "node",
+		"outDir": "./lib",
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"emitDeclarationOnly": true,
+		"baseUrl": "."
+	},
+	"exclude": ["node_modules", "lib", "templates"]
+}
