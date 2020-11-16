@@ -50,7 +50,7 @@ When there you got a Request instance in your scope. You can access your parsed 
 instance. It will be an object containing your cookies with their corresponding keys. 
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 class GreetingController implements Controller {
     @route('GET', '/greet')
@@ -95,7 +95,7 @@ options:
 - **overwrite**: This option will determine if cookies with the same name should be overwritten in the same request or not.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 class AuthenticationController implements Controller {
     @route('POST', '/login')
@@ -126,7 +126,7 @@ current date. It is recommended to set the expires attribute to a `0 Date Object
 attributes for that you have used to create it. 
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 class AuthenticationController implements Controller {
     @route('GET', '/logout')
@@ -181,7 +181,7 @@ session key-value pairs. So if you want to set a value to your session, simply a
 and name it whatever you want, and later access it from just like reading a property from a regular object.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 class ViewCountController implements Controller {
     @route('GET', '/view')
@@ -213,7 +213,7 @@ Multer restricts file uploads to the structure you define for it, so the client 
 structure.
 
 Silvie created some wrapper functions as method decorators which can be imported from the base controller file located 
-at `silvie/lib/http/controller`.
+at `silvie/http/controller`.
 
 When you configure file uploads for HTTP server, you should specify a temp path. Multer will upload the acceptable files 
 there, and then gives you a `File` object containing the path to that temporarily uploaded file and other file metadata.
@@ -236,7 +236,7 @@ To let user upload a single with a specific field name, you need to use `singleU
 single parameter which is the field name to accept the file with. Then you can access the uploaded file with `req.file`.
 
 ```typescript
-import Controller, { route, singleUpload } from 'silvie/lib/http/controller';
+import Controller, { route, singleUpload } from 'silvie/http/controller';
 
 class UploadController implements Controller {
     @route('POST', '/single-upload')
@@ -254,7 +254,7 @@ and `maxCount` for that field. If you don't specify a *maxCount*, it will use `1
 access your files with `req.files` which indices of that object are the field names you provided before.
 
 ```typescript
-import Controller, { route, multipleUpload } from 'silvie/lib/http/controller';
+import Controller, { route, multipleUpload } from 'silvie/http/controller';
 
 class UploadController implements Controller {
     @route('POST', '/multiple-upload')
@@ -277,7 +277,7 @@ accepts a `fieldname` and an optional `maxCount` parameter which defaults to `1`
 access to uploaded files from `req.files`.
 
 ```typescript
-import Controller, { route, arrayUpload } from 'silvie/lib/http/controller';
+import Controller, { route, arrayUpload } from 'silvie/http/controller';
 
 class UploadController implements Controller {
     @route('POST', '/array-upload')
@@ -299,7 +299,7 @@ number of files with any field name to be uploaded to that route. Then you can a
 the server.
 
 ```typescript
-import Controller, { route, allowUploads } from 'silvie/lib/http/controller';
+import Controller, { route, allowUploads } from 'silvie/http/controller';
 
 class UploadController implements Controller {
     @route('POST', '/uploads-anything')
@@ -319,7 +319,7 @@ If you want to prevent the client from uploading any files to a specific route, 
 So if a request comes with a file attached to it, a `LIMIT_UNEXPECTED_FILE` error will be raised.
 
 ```typescript
-import Controller, { route, preventUpload } from 'silvie/lib/http/controller';
+import Controller, { route, preventUpload } from 'silvie/http/controller';
 
 class UploadController implements Controller {
     @route('POST', '/no-uploads')

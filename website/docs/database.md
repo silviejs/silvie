@@ -10,7 +10,7 @@ different DBMS SQL syntax. There are some packages out there that help with this
 to fetch from the database in Javascript and that library will execute a query and returns the results for you. 
 
 Silvie has a built-in database helper to handle this kind of problem. Database class is a singleton class which its 
-instance is accessible all over the application. You just need to import it from `silvie/lib/database`.
+instance is accessible all over the application. You just need to import it from `silvie/database`.
 
 ## Database
 Database class is just a proxy class which delegates its responsibilities to its driver, in order to support various
@@ -24,7 +24,7 @@ However, you don't need to do this on your own, since the database module return
 export, but you can access the `Database` class itself by importing it as a named export of database module. 
 
 ```typescript
-import { Database } from 'silvie/lib/database';
+import { Database } from 'silvie/database';
 
 const db = Database.getInstance();
 ```

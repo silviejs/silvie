@@ -18,7 +18,7 @@ This command will create a `auth.ts` file in `src/middleware` of your project. T
 and adds the decorator to register it as the `auth` middleware. The result will be:
 
 ```typescript
-import IMiddleware, { middleware } from 'silvie/lib/http/middleware';
+import IMiddleware, { middleware } from 'silvie/http/middleware';
 
 @middleware('auth')
 export default class AuthMiddleware implements IMiddleware {
@@ -52,7 +52,7 @@ in your application, until you assign them to a route or register them as global
 
 This code will register a middleware with `csrf` name to be used later on the route handlers.
 ```typescript
-import IMiddleware, { middleware } from 'silvie/lib/http/middleware';
+import IMiddleware, { middleware } from 'silvie/http/middleware';
 
 @middleware('csrf')
 export default class CSRFMiddleware implements IMiddleware {
@@ -67,7 +67,7 @@ export default class CSRFMiddleware implements IMiddleware {
 The following code will register the `trimmer` middleware as a global middleware, which will be fired on every request.
 
 ```typescript
-import IMiddleware, { middleware } from 'silvie/lib/http/middleware';
+import IMiddleware, { middleware } from 'silvie/http/middleware';
 
 @middleware('trimmer', true)
 export default class TrimmerMiddleware implements IMiddleware {
@@ -97,10 +97,10 @@ has triggered with a request.
 
 ## Route Middlewares
 Unless global middlewares that are being attached to all requests, You can specify one or more middlewares to execute on
-a specific route handler. This is done by using the `@withMiddleware` decorator located at `silvie/lib/http/controller`.
+a specific route handler. This is done by using the `@withMiddleware` decorator located at `silvie/http/controller`.
 
 ```typescript
-import Controller, { route, withMiddleware } from 'silvie/lib/http/controller';
+import Controller, { route, withMiddleware } from 'silvie/http/controller';
 
 export default class BooksController implements Controller {
     @route('PUT', '/register')

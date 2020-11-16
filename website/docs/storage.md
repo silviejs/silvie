@@ -31,7 +31,7 @@ As you can see, Silvie creates a single directory for storage itself, and a dire
 defined in the [disk part of Storage Configuration](configuration.md#disks) file. 
 
 ## Storage
-You are able to use the storage from the `Storage` class located at `silvie/lib/storage`. This class does nothing 
+You are able to use the storage from the `Storage` class located at `silvie/storage`. This class does nothing 
 special by itself. It just initializes your disks and keeps them all together. The storage class will be initialized 
 when your application starts and creates a static `disks` property on the Storage class, which contains the disk class 
 instances by their keys. 
@@ -44,7 +44,7 @@ own directory path.
 By default, there is a `default` disk in the storage configuration, here is how you can access a disk named *'default'*:
 
 ```typescript
-import Storage from 'silvie/lib/storage';
+import Storage from 'silvie/storage';
 
 const disk = Storage.disks.default;
 // Assigns the default disk to disk constant, to be used later  
@@ -295,7 +295,7 @@ for the filename.
 
 
 ```typescript
-import File from 'silvie/lib/storage/file';
+import File from 'silvie/storage/file';
 
 new File('hello_world', 'txt');
 // Creates a 'hello_world.txt' instance

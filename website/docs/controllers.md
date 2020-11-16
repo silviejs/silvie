@@ -18,7 +18,7 @@ silvie make controller ProductsController
 A basic controller will look like this:
 
 ```typescript
-import Controller from 'silvie/lib/http/controller';
+import Controller from 'silvie/http/controller';
 
 export default class BasicController implements Controller {
     // Route Handlers
@@ -50,7 +50,7 @@ these objects are capable of, read the documentation for [Request](https://expre
 [Response](https://expressjs.com/en/5x/api.html#res).
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 import Post from 'models/post';
 
 export default class BasicController implements Controller {

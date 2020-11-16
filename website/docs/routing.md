@@ -9,10 +9,10 @@ as possible.
 
 ## Route Decorator
 Route decorator is how you define your routes and attach them to your request handlers. It can be imported from the main
-controller file located at `silvie/lib/http/controller`.
+controller file located at `silvie/http/controller`.
  
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 ```
 
 The route decorator will take two parameters:
@@ -27,7 +27,7 @@ As you may already know, the decorators are some functions written before someth
 they are marked with `@`.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 export default class GreetingController implements Controller {
 	@route('GET', '/say-hi')
@@ -79,7 +79,7 @@ lowercase when they are being registered.
 Basic Routes are some usual URLs without any parameters.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 import Book from 'models/book';
 
 export default class BooksController implements Controller {
@@ -140,7 +140,7 @@ astrix sign at the end of a routes trailing slash. The wildcard path that was ma
 accessible by `req.params[0]`;
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 export default class BooksController implements Controller {
     @route('GET', '/files/*')
@@ -158,7 +158,7 @@ export default class BooksController implements Controller {
 You may pass a regular expression as the url to the route decorator for handling more advanced routes.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 export default class BooksController implements Controller {
     @route('GET', /.*er$/)
@@ -177,7 +177,7 @@ in a URL string.
 A basic route parameters is a name identified with a `:` prefix.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 import Post from 'models/post';
 
 export default class PostsController implements Controller {
@@ -195,7 +195,7 @@ export default class PostsController implements Controller {
 You can make it optional with `?` sign after the parameter name.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 import Post from 'models/post';
 
 export default class PostsController implements Controller {
@@ -224,7 +224,7 @@ You may also need more control over the parameters you define in the URL. So you
 in a pair of parentheses.
 
 ```typescript
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 import Post from 'models/post';
 
 export default class PostsController implements Controller {
