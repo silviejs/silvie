@@ -1,13 +1,10 @@
 {
 	"name": "silvie",
-	"version": "0.0.43",
+	"version": "0.0.45",
 	"description": "Silvie Back-end Framework",
-	"main": "lib/bootstrap/index.js",
-	"typings": "lib/bootstrap/index.d.ts",
-	"bin": "lib/cli/index.js",
-	"files": [
-		"lib/**/*"
-	],
+	"main": "bootstrap/index.js",
+	"typings": "bootstrap/index.d.ts",
+	"bin": "cli/index.js",
 	"scripts": {
 		"build": "rm -rf lib/* && cross-env NODE_ENV=production babel src -d lib -x \".ts,.js\" --copy-files --config-file && ttsc",
 		"prepare": "npm run build"
@@ -16,6 +13,7 @@
 		"type": "git",
 		"url": "git+https://github.com/silviejs/silvie.git"
 	},
+	"homepage": "https://silviejs.org",
 	"keywords": [
 		"typescript",
 		"javascript",
