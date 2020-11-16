@@ -9,7 +9,7 @@ import babelRegister from '@babel/register';
 
 process.env.BABEL_DISABLE_CACHE = '1';
 babelRegister({
-	configFile: path.resolve(process.silviePath, 'lib/assets/babel.config.js'),
+	configFile: path.resolve(process.silviePath, 'assets/babel.config.js'),
 	extensions: ['.ts', '.js', '.gql', '.graphql', '.json'],
 	ignore: [],
 });

@@ -50,7 +50,7 @@ export default async () => {
 	childProcess.execSync(
 		`cross-env NODE_ENV=production IS_SILVIE_CLI=0 babel src -d build -x ".js,.ts" --copy-files --config-file ${path.resolve(
 			process.silviePath,
-			'lib/assets/babel.config.js'
+			'assets/babel.config.js'
 		)}`,
 		{ encoding: 'utf8' }
 	);

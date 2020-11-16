@@ -9,7 +9,7 @@ export default (args: { port: string; p: string }) => {
 	const cp = childProcess.exec(
 		`cross-env BABEL_DISABLE_CACHE=1 IS_SILVIE_CLI=0 NODE_ENV=development nodemon --exec babel-node --watch src src/bootstrap/index.ts -- -x ".ts,.js" --config-file ${path.resolve(
 			process.silviePath,
-			'lib/assets/babel.config.js'
+			'assets/babel.config.js'
 		)} ${port ? `--port ${port}` : ''}`,
 		{ encoding: 'utf8' }
 	);

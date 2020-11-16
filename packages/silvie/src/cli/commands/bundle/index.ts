@@ -7,7 +7,7 @@ export default () => {
 	childProcess.execSync(
 		`cross-env NODE_ENV=production IS_SILVIE_CLI=0 webpack --env.clean --config ${path.resolve(
 			process.silviePath,
-			'lib/assets/webpack.config.js'
+			'assets/webpack.config.js'
 		)}`,
 		{ encoding: 'utf8' }
 	);
