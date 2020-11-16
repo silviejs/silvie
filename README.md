@@ -1,5 +1,5 @@
 # Silvie JS
-[![GitHub](https://img.shields.io/github/license/silviejs/silvie)](https://github.com/silviejs/silvie/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/silviejs/silvie)](https://github.com/silviejs/silvie/blob/main/LICENSE)
 [![npm](https://img.shields.io/npm/v/silvie?color=red)](https://www.npmjs.org/package/silvie)
 [![Pull Requests](https://img.shields.io/badge/PRs-welcome-blue.svg)](CODE_OF_CONDUCT.md)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
@@ -37,4 +37,4 @@ There is a [contribution guide](http://silviejs.org/docs/contribution) prepared 
 Please read the guide to learn about proposing bugfixes and improvements, opening pull requests and development process.
 
 ## License
-Silvie is a [MIT licensed](https://github.com/silviejs/silvie/blob/master/LICENSE) project. 
+Silvie is a [MIT licensed](https://github.com/silviejs/silvie/blob/main/LICENSE) project. 
