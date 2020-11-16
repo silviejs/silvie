@@ -1,4 +1,4 @@
-import IMiddleware, { middleware } from 'silvie/lib/http/middleware';
+import IMiddleware, { middleware } from 'silvie/http/middleware';
 
 @middleware('MIDDLEWARE_NAME')
 export default class CLASS_NAME implements IMiddleware {

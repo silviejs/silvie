@@ -1,4 +1,4 @@
-import bootstrap from 'silvie/lib/bootstrap';
+import bootstrap from 'silvie/bootstrap';
 
 import 'middlewares';
 import 'controllers';

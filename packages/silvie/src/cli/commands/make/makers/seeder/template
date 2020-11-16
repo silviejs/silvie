@@ -1,4 +1,4 @@
-import ISeeder from 'silvie/lib/database/migration/seeder';
+import ISeeder from 'silvie/database/migration/seeder';
 
 export default class CLASS_NAME implements ISeeder {
 	static order = 1;

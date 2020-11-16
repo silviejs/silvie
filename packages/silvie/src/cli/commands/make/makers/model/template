@@ -1,4 +1,4 @@
-import Model from 'silvie/lib/database/model';
+import Model from 'silvie/database/model';
 
 export default class CLASS_NAME extends Model {
 	declare id: number;

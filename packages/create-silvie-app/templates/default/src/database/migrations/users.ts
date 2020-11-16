@@ -1,5 +1,5 @@
-import IMigration from 'silvie/lib/database/migration/migration';
-import Schema from 'silvie/lib/database/migration/schema';
+import IMigration from 'silvie/database/migration/migration';
+import Schema from 'silvie/database/migration/schema';
 
 export default class UsersTableMigration implements IMigration {
 	static order = 1;

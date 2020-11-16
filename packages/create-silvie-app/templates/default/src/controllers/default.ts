@@ -1,4 +1,4 @@
-import Controller, { route } from 'silvie/lib/http/controller';
+import Controller, { route } from 'silvie/http/controller';
 
 export default class DefaultController implements Controller {
 	@route('GET', '/')
