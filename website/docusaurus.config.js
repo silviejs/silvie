@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Silvie JS',
   tagline: 'Typescript based NodeJS Framework',
-  url: 'https://silviejs.github.io',
+  url: 'https://silviejs.org',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   favicon: 'img/logo.svg',
