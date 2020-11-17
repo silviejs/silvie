@@ -131,7 +131,7 @@ Then you need to create a method to fetch all users:
 import User from 'models/user';
 
 class UserResolver {
-    ...
+    // ...
 
     static users(): Promise<User[]> {
         return User.all() as Promise<User[]>;
@@ -140,7 +140,7 @@ class UserResolver {
 
 export default {
     Query: {
-        ...
+        // ...
 
         users: UserResolver.users
     }
@@ -158,7 +158,7 @@ method to for the `createUser` mutation.
 import User from 'models/user';
 
 class UserResolver {
-    ...
+    // ...
 
     static async createUser(
         obj, 
@@ -181,7 +181,7 @@ class UserResolver {
 }
 
 export default {
-    ...
+    // ...
 
     Mutation: {
         createUser: UserResolver.createUser
@@ -197,7 +197,7 @@ resolver on the User type.
 import User from 'models/user';
 
 class UserResolver {
-    ...
+    // ...
 
     static async fullname({ firstname, lastname }): Promise<string> {
         return `${firstname} ${lastname}`;
@@ -205,7 +205,7 @@ class UserResolver {
 }
 
 export default {
-    ...
+    // ...
 
     User: {
         fullname: UserResolver.fullname
