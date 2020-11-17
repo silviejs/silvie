@@ -51,7 +51,7 @@ extend type Query {
 ```
 
 Note that if you are building your system on GraphQL, You can create schemas and resolvers when you are creating 
-entities*(Models)*. For example, the following command will create a **Book model**, a **books migration**, a
+entities. For example, the following command will create a **Book model**, a **books migration**, a
 **book schema** and a **book resolver**.
 
 ```bash
