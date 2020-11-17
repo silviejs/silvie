@@ -48,6 +48,21 @@ you build your resolver in an object oriented manner.
 
 However, you can always define your resolvers directly into the default exported object.
 
+## Loading Resolvers
+The resolvers should be loaded at runtime. This is done by importing them all from their directory and passing them to
+the main Silvie bootstrap function. They need to be assigned to the `resolver` property of the bootstrap 
+parameter.
+
+```typescript
+import bootstrap from 'silvie/bootstrap';
+
+import schemas from 'graphql/schemas';
+import resolvers from 'graphql/resolvers';
+import dataLoaders from 'graphql/dataloaders';
+
+bootstrap({ schemas, resolvers, dataLoaders });
+```
+
 ## Resolver Methods
 A resolver is a method that will accept 4 parameters:
 - **obj**: The parent object
@@ -86,6 +101,7 @@ We also have extended the `Mutation` type to create a mutation to create a new u
 
 The following code examples will show you how you will define a resolver for each one.
 
+### Query Resolvers
 First you need to create a `user` resolver to resolve a single user:
 
 ```typescript {4-6,11}
@@ -134,6 +150,7 @@ export default {
 Well, this will try to fetch all users from the database and returns an array of users whenever the client asks for the 
 `users` query.
 
+### Mutation Resolvers
 Then you need to add a `Mutation` part to the exporting object and assign your mutation resolvers to it. Let's create a 
 method to for the `createUser` mutation.
 
@@ -172,6 +189,7 @@ export default {
 }
 ```
 
+### Property Resolvers
 You may have noticed a `fullname` property on the User type. That is a computed property which we are handling by a 
 resolver on the User type. 
 
