@@ -18,7 +18,7 @@ database systems. For example, we create a MySQL driver and configure the databa
 the application starts, database will initialize a singleton instance and its driver. Then when you want to do something
 with the database, it will forward your request to the driver and returns the results.
 
-### Database.getInstance()
+#### Database.getInstance()
 This is a static method to return the pre built instance of the database class, for the sake of singleton pattern. 
 However, you don't need to do this on your own, since the database module returns the database instance as its default
 export, but you can access the `Database` class itself by importing it as a named export of database module. 
@@ -34,7 +34,7 @@ In order to keep the code samples clean on this page, we are using sample variab
 You can learn more about writing query builders in [Query Builders](query-builders.md) section.
 :::
 
-### database.init()
+#### database.init()
 The init method is responsible to initialize the driver by passing the configurations to its constructor. This method 
 will run automatically when Silvie starts. You don't usually need to run this on your own. This will update the database 
 instance and its driver.
@@ -43,7 +43,8 @@ instance and its driver.
 database.init();
 ```
 
-### database.select()
+### Select
+#### database.select()
 This method will be used to select some records from the database. It accepts a query builder and returns a promise to 
 handle the response. Response will be an `array of record objects`.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md) 
@@ -52,7 +53,7 @@ handle the response. Response will be an `array of record objects`.
 const users = await database.select(usersQueryBuilder);
 ```
 
-### database.exists()
+#### database.exists()
 This method will check weather any record with the conditions defined in a query builder exist or not. This method will 
 accept a query builder and returns a `boolean` as the response. 
 - **queryBuilder** [<QueryBuilder\>](query-builders.md)
@@ -61,7 +62,8 @@ accept a query builder and returns a `boolean` as the response.
 const userHasLisence = await database.exists(userLisenceQueryBuilder);
 ```
 
-### database.count()
+### Aggregate
+#### database.count()
 This method will return the `number` of records that a query builder points to. 
 - **queryBuilder** [<QueryBuilder\>](query-builders.md) 
 
@@ -69,8 +71,7 @@ This method will return the `number` of records that a query builder points to.
 const postsCount = await database.count(postsQueryBuilder);
 ```
 
-
-### database.average()
+#### database.average()
 This method will get the average value of a column in all records that the query builder points to, and returns a 
 `number` as the result.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md) 
@@ -80,7 +81,7 @@ This method will get the average value of a column in all records that the query
 const postAverageRating = await database.average(postRatingsQueryBuilder, 'rating');
 ``` 
 
-### database.sum()
+#### database.sum()
 This method will return a `number` as the summation of a column in all records that the query builder points to.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md) 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -89,7 +90,7 @@ This method will return a `number` as the summation of a column in all records t
 const totalDonations = await database.sum(donationsQueryBuilder, 'price_paid');
 ```  
 
-### database.min()
+#### database.min()
 This method will return the minimum value of a column in the query builder's records. The return value may vary 
 depending on the type of the column.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md) 
@@ -99,7 +100,7 @@ depending on the type of the column.
 const minimumUsersAge = await database.min(usersQueryBuilder, 'age');
 ``` 
 
-### database.max()
+#### database.max()
 This method will return the maximum value of a column in the query builder's records. The return value may vary 
 depending on the type of the column.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md) 
@@ -109,7 +110,8 @@ depending on the type of the column.
 const maximumDonation = await database.min(donationsQueryBuilder, 'amount');
 ``` 
 
-### database.insert()
+### Insert
+#### database.insert()
 This method will insert data to a table. The table and the data will be defined in the query builder.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md)
 
@@ -117,7 +119,8 @@ This method will insert data to a table. The table and the data will be defined 
 const result = await database.insert(newCategoriesQueryBuilder);
 ```  
 
-### database.update()
+### Update
+#### database.update()
 This method will update the records of a table. The update table, conditions and data will be defined in the query 
 builder.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md)
@@ -126,7 +129,7 @@ builder.
 const result = await database.update(updateUserProfileQueryBuilder);
 ```   
 
-### database.bulkUpdate()
+#### database.bulkUpdate()
 The bulk update will be used to update different records with different data. You need to build a query builder for that
 purpose and pass it to this method. 
 - **queryBuilder** [<QueryBuilder\>](query-builders.md)
@@ -135,7 +138,8 @@ purpose and pass it to this method.
 const result = await database.bulkUpdate(updateEditorsBalanceQueryBuilder);
 ```  
 
-### database.delete()
+### Delete
+#### database.delete()
 This method will delete records from the database. The condition to find the records will be defined in the query 
 builder.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md)
@@ -144,7 +148,9 @@ builder.
 const result = await database.delete(deleteUserAccountQueryBuilder);
 ```
  
-### database.softDelete()
+ 
+ 
+#### database.softDelete()
 This method will soft delete records in the database. Soft delete is a technique used to mark database records as 
 deleted. This technique usually uses an additional column in that table. In silvie this record is `deleted_at` which is 
 a timestamp. You can learn more about soft deletes in [Soft Deletes part of Migrations](migrations.md#soft-deletes) section.   
@@ -154,7 +160,7 @@ a timestamp. You can learn more about soft deletes in [Soft Deletes part of Migr
 const result = await database.softDelete(deleteUserCommentQueryBuilder);
 ```
 
-### database.restore()
+#### database.restore()
 This method will restore soft deleted records, by nullifying their soft delete column.
 - **queryBuilder** [<QueryBuilder\>](query-builders.md)
  
@@ -162,7 +168,45 @@ This method will restore soft deleted records, by nullifying their soft delete c
 const result = await database.restore(undeleteUserCommentQueryBuilder);
 ```
 
-### database.raw()
+### Schema
+#### database.createTable()
+This method will create a table with the given table definition. A table definition contains all columns and constraints
+of a table. To learn more about tables, read [Table part of Migrations](migrations.md#table) section.
+- **table** [<Table\>](migrations.md#table) 
+
+```typescript
+const result = await database.createTable(employeesTable);
+```
+
+#### database.truncateTable()
+This method will delete all records from a table, and resets the auto increment value to its default.
+- **tableName** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript
+const result = await database.truncateTable('logs');
+```
+ 
+ 
+#### database.dropTable()
+This method will delete a table from the database. It will throw an error if the table does not exist.
+- **tableName** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript
+const result = await database.dropTable('visits');
+```
+ 
+ 
+#### database.dropTableIfExists()
+This method will delete a table from the database if that table exists.
+- **tableName** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript
+const result = await database.dropTableIfExists('logs');
+```
+ 
+
+### Other
+#### database.raw()
 This method executes a raw query on the database. This method is only working for those databases working with 
 structured query languages *(aka SQL)*. The raw method takes a query as its first parameter which is a string, and a
 parameter array which will bind into the query parameter placeholders. By default, the parameters option is an empty 
@@ -183,40 +227,7 @@ const result = await database.raw('ALTER TABLE `users` ADD COLUMN `username` AFT
 // after the 'name' column of 'users' table
 ```
 
-### database.createTable()
-This method will create a table with the given table definition. A table definition contains all columns and constraints
-of a table. To learn more about tables, read [Table part of Migrations](migrations.md#table) section.
-- **table** [<Table\>](migrations.md#table) 
-
-```typescript
-const result = await database.createTable(employeesTable);
-```
-
-### database.truncateTable()
-This method will delete all records from a table, and resets the auto increment value to its default.
-- **tableName** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-
-```typescript
-const result = await database.truncateTable('logs');
-```
- 
-### database.dropTable()
-This method will delete a table from the database. It will throw an error if the table does not exist.
-- **tableName** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-
-```typescript
-const result = await database.dropTable('visits');
-```
- 
-### database.dropTableIfExists()
-This method will delete a table from the database if that table exists.
-- **tableName** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-
-```typescript
-const result = await database.dropTableIfExists('logs');
-```
- 
-### database.checkForeignKeys()
+#### database.checkForeignKeys()
 This method will specify weather to care for foreign key constraints or not. Foreign keys might cause problems when we 
 are trying to create a table, update records or insert data into a table. 
 - **state** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -238,7 +249,7 @@ await database.enableForeignKeyChecks();
 await database.disableForeignKeyChecks();
 ```
 
-### database.closeConnection()
+#### database.closeConnection()
 This method will close the underlying database connection.
 
 ```typescript
