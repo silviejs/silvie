@@ -114,14 +114,14 @@ export default class Column {
 		return this;
 	}
 
-	charset(value: string): Column {
-		this.options.charset = value;
+	charset(charset: string): Column {
+		this.options.charset = charset;
 
 		return this;
 	}
 
-	collate(value: string): Column {
-		this.options.collation = value;
+	collate(collation: string): Column {
+		this.options.collation = collation;
 
 		return this;
 	}
