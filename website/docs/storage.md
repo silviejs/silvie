@@ -36,7 +36,7 @@ special by itself. It just initializes your disks and keeps them all together. T
 when your application starts and creates a static `disks` property on the Storage class, which contains the disk class 
 instances by their keys. 
 
-### disks
+#### disks
 This is a static property on the storage class, it is an object which its key names are the disk names you've earlier 
 defined in your configuration file, and their value will be a Disk instance which handles file system operations in its 
 own directory path.
@@ -55,7 +55,8 @@ const disk = Storage.disks.default;
 The Disk class wraps around the Node.js `fs` library to offer some helper methods with a boundary access protection and
 promisified methods to be easier and safer to use.  
 
-### disk.stat()
+### File Info
+#### disk.stat()
 This method takes a path string and returns a `Stats` object, giving you some extra information about that file. For 
 more information, read the docs about [Stats](https://nodejs.org/dist/latest-v15.x/docs/api/fs.html#fs_class_fs_stats).
 - **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -66,7 +67,29 @@ disk.stat('./file.txt').then((stats) => {
 });
 ```
 
-### disk.get()
+### Check Existence
+#### disk.exists()
+This method checks to see weather a path exists or not, and returns a `Boolean` as the result.
+- **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript
+disk.exists('./images').then((state) => {
+    console.log(state ? 'exists' : `doesn't exist`);
+});
+```
+
+#### disk.missing()
+This method does the opposite of the `exists()` method. It returns `true` if the path does not exist.
+- **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript
+disk.missing('./images').then((state) => {
+    console.log(state ? `it's missing` : `it's there`);
+});
+```
+
+### Read / Write
+#### disk.get()
 Use this method to read a file. This method reads a file if it exists, and returns either a `string` or a `Buffer`.
 - **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **options** [<TEncoding\>](#tencoding) | [<TReadOptions\>](#treadoptions)
@@ -77,7 +100,7 @@ disk.get('./file.txt', 'utf8').then((contents) => {
 });
 ```
 
-### disks.put()
+#### disk.put()
 This method will write a `string` or a `buffer` content to a file. It takes 3 parameters:
 - **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **contents** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -91,42 +114,24 @@ disk.put('./file.txt', 'Test how it can be written to a file', 'utf8').then((sta
 });
 ```
 
-### disks.exists()
-This method checks to see weather a path exists or not, and returns a `Boolean` as the result.
-- **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+#### disk.makeDirectory()
+This method will create a directory with the given path. There are some times that you want to create a nested 
+directory, and the parent directories does not exist. You may specify the recursive flag to make sure the parents will 
+also be created.
+- **path** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **recursive?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
+- **mode?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) |
+   [<number\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type) default: `0o777`
 
 ```typescript
-disk.exists('./images').then((state) => {
-    console.log(state ? 'exists' : `doesn't exist`);
+disk.makeDirectory('./uploads/gallery/2020').then((state) => {
+    console.log(state ? `directory created` : `create directory failed`);
 });
-```
+``` 
 
-### disks.missing()
-This method does the opposite of the `exists()` method. It returns `true` if the path does not exist.
-- **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+### Copy / Move
 
-```typescript
-disk.missing('./images').then((state) => {
-    console.log(state ? `it's missing` : `it's there`);
-});
-```
-
-### disks.rename()
-This method will get a file and rename it to the given name. Note that this method does not move the file/directory, it 
-only changes the name of that file/directory, and it takes two parameters:
-- **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **newFilename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-
-This method returns `true` if it could rename successfully, and will fail if a file or directory already exists with 
-that name.
-
-```typescript
-disk.rename('./images/user2.png', 'user-2.png').then((state) => {
-    console.log(state ? `file has been renamed` : `couldn't rename the file`);
-});
-```
-
-### disks.move()
+#### disk.move()
 This method can be used to move a directory or a file, and returns with a `Boolean` state to indicate weather it was
 successful or not. It takes two parameters:
 - **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -138,7 +143,7 @@ disk.move('./images/user2.png', './images/users/user-2.png').then((state) => {
 });
 ```
 
-### disks.copy()
+#### disk.copy()
 This method will copy a file or a directory, depending on which one it is, it uses different method to copy it. This 
 method is a shorthand for the next two methods, in case you don't want to care about what you are copying. 
 - **source** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -155,7 +160,7 @@ Because directories might have a nested structure, their children should also be
 why there are different methods for copying directories and files.
 :::
 
-### disks.copyFile()
+#### disk.copyFile()
 This method will copy a file to a new location.
 - **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **destination** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -166,7 +171,7 @@ disk.copyFile('./documents/contract.pdf', './documents/user-2-contract.pdf').the
 });
 ``` 
 
-### disks.copyDirectory()
+#### disk.copyDirectory()
 This method will copy a directory to a new location. Since copying a directory needs a different approach. Silvie 
 utilizes [ncp](https://www.npmjs.com/package/ncp) package to copy the whole directory.
 - **source** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -178,7 +183,7 @@ disk.copyDirectory('./tmp/uploads', './documents/uploads').then((state) => {
 });
 ``` 
 
-### disks.delete()
+#### disk.delete()
 This method will delete a file or a directory, depending on which one it is, it uses different method to copy it. This 
 method is a shorthand for the next two methods, in case you just want to delete something anyway. 
 - **path** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -195,7 +200,7 @@ Because directories might have a nested structure, their children should also be
 method for deleting files and directories, or use the shorthand one.
 :::
 
-### disks.deleteFile()
+#### disk.deleteFile()
 This method will delete a file with the given filename.
 - **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
@@ -205,7 +210,7 @@ disk.deleteFile('./images/user2.png').then((state) => {
 });
 ``` 
 
-### disks.deleteDirectory()
+#### disk.deleteDirectory()
 This method will delete a directory with the given path. If you pass `true` for recursive, the children of 
 that directory will be deleted too.  
 - **path** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -217,22 +222,24 @@ disk.deleteDirectory('./images/users').then((state) => {
 });
 ``` 
 
-### disks.makeDirectory()
-This method will create a directory with the given path. There are some times that you want to create a nested 
-directory, and the parent directories does not exist. You may specify the recursive flag to make sure the parents will 
-also be created.
-- **path** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **recursive?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
-- **mode?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) |
-   [<number\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type) default: `0o777`
+### Rename
+#### disk.rename()
+This method will get a file and rename it to the given name. Note that this method does not move the file/directory, it 
+only changes the name of that file/directory, and it takes two parameters:
+- **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **newFilename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+This method returns `true` if it could rename successfully, and will fail if a file or directory already exists with 
+that name.
 
 ```typescript
-disk.makeDirectory('./uploads/gallery/2020').then((state) => {
-    console.log(state ? `directory created` : `create directory failed`);
+disk.rename('./images/user2.png', 'user-2.png').then((state) => {
+    console.log(state ? `file has been renamed` : `couldn't rename the file`);
 });
-``` 
+```
 
-### disks.readStreamFrom()
+### Stream
+#### disk.readStreamFrom()
 This method will create a `ReadStream` instance from the give file path. This method will take the following parameters:
 - **path** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **options?** [<TReadStreamOptions\>](#treadstreamoptions)
@@ -243,7 +250,7 @@ disk.readStreamFrom('./videos/trailer.mp4').then((stream) => {
 });
 ``` 
 
-### disks.writeStreamTo()
+#### disk.writeStreamTo()
 This method will create a `WriteStream` instance to the give file path. This method will take the following parameters:
 - **path** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **options?** [<TWriteStreamOptions\>](#twritestreamoptions)
@@ -258,12 +265,14 @@ disk.writeStreamTo('./data/backup.dat').then((stream) => {
 File class is a helper class to represent a file. It has some helper methods to create a file name. All of its methods
 can be chained together.
 
-### file.filename
+### Properties
+#### file.filename
 This property is a read only getter, which returns a string containing the full file path: `FILE_PATH/FILE_NAME[.FILE_EXT]`
 
 If there was no extension it will omit the whole extension part.
 
-### File()
+### Methods
+#### File()
 The file constructor will take two optional parameters:
 - **filename?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **extension?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -275,20 +284,19 @@ extension from the second parameter if it is present.
    
 If you pass no parameters to the constructor, It will only generate a random file name without extension.
 
-### file.name()
+#### file.name()
 This method will set a filename for the file instance. 
 - **filename** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
-### file.path()
+#### file.path()
 This method will set a path for the file instance.
 - **path** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
-### file.ext()
+#### file.ext()
 This method will set an extension for the file instance.
 - **extension** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
-
-### file.randomName()
+#### file.randomName()
 This method has no parameters and uses the configuration in the 
 [file name hash part of Storage configuration](configuration.md#filename-hash-configuration) file, to generate a random hash
 for the filename.
