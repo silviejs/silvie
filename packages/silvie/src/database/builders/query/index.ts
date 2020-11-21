@@ -153,6 +153,14 @@ export default class QueryBuilder {
 			return results.map((row) => row[keyColumn]);
 		}
 
+		if (override) {
+			return results.reduce((group, row) => {
+				group[row[keyColumn]] = row[valueColumn];
+
+				return group;
+			}, {});
+		}
+
 		return results.reduce((group, row) => {
 			const key = row[keyColumn];
 			const value = row[valueColumn];
