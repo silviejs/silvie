@@ -144,16 +144,16 @@ export default class QueryBuilder {
 	 * Query the database and return with an array of single field or a hashmap
 	 * @param keyColumn The column name to use for the keys
 	 * @param valueColumn If provided, it will be used to determine key, value pairs
-	 * @param override Override the duplicate keys in a hashmap
+	 * @param overwrite Override the duplicate keys in a hashmap
 	 */
-	async pluck(keyColumn: TColumn, valueColumn: TColumn = null, override = true): Promise<any> {
+	async pluck(keyColumn: TColumn, valueColumn: TColumn = null, overwrite = true): Promise<any> {
 		const results = await this.get();
 
 		if (!valueColumn) {
 			return results.map((row) => row[keyColumn]);
 		}
 
-		if (override) {
+		if (overwrite) {
 			return results.reduce((group, row) => {
 				group[row[keyColumn]] = row[valueColumn];
 
@@ -165,7 +165,7 @@ export default class QueryBuilder {
 			const key = row[keyColumn];
 			const value = row[valueColumn];
 
-			if (group[key] !== undefined && !override) {
+			if (group[key] !== undefined) {
 				throw new Error(`Pluck found a duplicate key '${keyColumn}': ${key}'`);
 			}
 
@@ -540,7 +540,7 @@ export default class QueryBuilder {
 	 * @param column
 	 * @param direction
 	 */
-	reorder(column?: TColumn, direction?: 'asc' | 'desc' | 'ASC' | 'DESC'): QueryBuilder {
+	reorder(column?: TColumn | QueryBuilder, direction?: 'asc' | 'desc' | 'ASC' | 'DESC'): QueryBuilder {
 		this.options.order = [];
 
 		if (column) {
