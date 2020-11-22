@@ -126,7 +126,7 @@ qb.selectRaw(
 The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
 ::: 
 
-### Conditions
+### Query Conditions
 #### qb.where()
 #### qb.whereNull()
 #### qb.whereNotNull()
@@ -232,6 +232,25 @@ const userDailyPosts = qb.selectCount('daily_posts')
 :::caution
 The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
 :::
+
+### Group Conditions
+#### qb.having()
+#### qb.havingNull()
+#### qb.havingNotNull()
+#### qb.havingBetween()
+#### qb.havingNotBetween()
+#### qb.havingIn()
+#### qb.havingNotIn()
+#### qb.havingLike()
+#### qb.havingNotLike()
+#### qb.havingColumn()
+#### qb.havingDate()
+#### qb.havingYear()
+#### qb.havingMonth()
+#### qb.havingDay()
+#### qb.havingTime()
+#### qb.havingRaw()
+
 
 ### Offset
 #### qb.offset()
@@ -606,11 +625,6 @@ new QueryBuilder('users').insert([
 ]);
 ```
 
-### Locks
-#### qb.sharedLock()
-#### qb.lockForUpdate()
-#### qb.clearLock()
-
 ### Alias Table
 #### qb.fromAliasTable()
 If you don't want to select your data from an actual table, it is possible to specify another query builder to use it as
@@ -656,8 +670,8 @@ qb.extend({
 The full query builder options explanation will be added to documentation later.
 
 ## Condition Builders
-### Having Condition Builder
 ### Where Condition Builder
+### Having Condition Builder
 ### Join Condition Builder
 
 ## Types
