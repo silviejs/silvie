@@ -191,7 +191,9 @@ parameters, And will add this query to your order clause untouched.
 - **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 
 ```typescript
-qb.orderByRaw('(SELECT COUNT(*) FROM `posts` WHERE `posts`.`user_id` = `users`.`id`) DESC');
+qb.orderByRaw(
+    '(SELECT COUNT(*) FROM `posts` WHERE `posts`.`user_id` = `users`.`id`) DESC'
+);
 ```
 
 For example, the above code will order the result by post count of each user. This code is just an example and has a 
@@ -203,15 +205,79 @@ The raw queries will be added to the final query untouched, so **use it if you k
 
 ### Group
 #### qb.groupBy()
+This method will group the results with the given columns. It is often used with the aggregate selections.
+- **...columns** [<string[]\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript {2}
+const userPostCount = await qb.selectCount('post_count')
+                              .groupBy('user_id')
+                              .get();
+```
+
+The above code will return the count of posts for each user.
+
 #### qb.groupByRaw()
+This method will add a raw query to the group clause.
+- **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+
+```typescript {3}
+const userDailyPosts = qb.selectCount('daily_posts')
+                         .join('posts', 'posts.user_id', 'users_id')
+                         .groupByRaw('`users`.`id`, DATE(`posts`.`created_at`)')
+                         .where('user.id', 2)
+                         .get();
+```
+
+:::caution
+The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
+:::
 
 ### Offset
 #### qb.offset()
+This method will be used to skip a specified number of records and fetch the rest.
+- **count** [<number\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type)
+
+```typescript
+qb.offset(10);
+// This query won't fetch the first 10 records
+```
+
 #### qb.skip()
+This is an equivalent of [offset()](#qboffset) method.
+- **count** [<number\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type)
+
+```typescript
+qb.skip(10);
+// This query won't fetch the first 10 records
+```
 
 ### Limit
 #### qb.limit()
+This method will be used to limit the number of records that are going to be fetched.
+- **count** [<number\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type)
+
+```typescript
+qb.limit(7);
+// This will return the first 7 records
+
+qb.offset(10).limit(5);
+// This will skip the first 10 records
+// And returns the next 5 records
+```
+
 #### qb.take()
+This is an equivalent of [limit()](#qblimit) method.
+- **count** [<number\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type)
+
+```typescript
+qb.take(7);
+// This will return the first 7 records
+
+qb.offset(10).take(5);
+// This will skip the first 10 records
+// And returns the next 5 records
+```
 
 ### Joins
 #### qb.join()
@@ -234,16 +300,26 @@ qb.select('name', 'family').union(
     true
 );
 ```
- 
- 
- 
+
 #### qb.unionRaw()
 This method will be used when you want to write a custom select for the union clause. It accepts a query string, and a
 parameter array. The union will remove the duplicate records from your results by default, unless you
 pass a `true` to the `all` parameter.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 - **all?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
+
+```typescript
+qb.select('name', 'family').union(
+    'SELECT `name`, `family` FROM `admins` WHERE `admins`.`id` > ?',
+    [10],
+    true
+);
+```
+
+:::caution
+The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
+:::
 
 ### Fetch
 #### qb.get()
@@ -284,15 +360,17 @@ faces a duplicate key. You can set the `overwrite` parameter to `true` to overwr
 #### qb.exists()
 This method will return `true` if it finds one or more records in your query criteria.
 
-```typescript
-const userExists = qb.where('phone', '+18005551234').exists();
+```typescript {2}
+const userExists = await qb.where('phone', '+18005551234')
+                           .exists();
 ```
 
 #### qb.doesntExist()
 This method will return `true` if there were no records in the query criteria.
 
-```typescript
-const isNewUser = await qb.where('phone', '+18005551234').doesntExist();
+```typescript {2}
+const isNewUser = await qb.where('phone', '+18005551234')
+                          .doesntExist();
 ``` 
 
 ### Aggregates
@@ -349,7 +427,7 @@ to `silent` parameter.
 ```typescript
 new QueryBuilder('users').where('id', 10).update({
     name: 'Silvie'
-})
+});
 ```
 
 #### qb.bulkUpdate()
