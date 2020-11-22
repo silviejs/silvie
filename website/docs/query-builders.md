@@ -615,9 +615,29 @@ new QueryBuilder('users').insert([
 #### qb.fromAliasTable()
 
 ### Other Methods
-#### qb.extend()
 #### qb.clone()
+This method will create a fresh independent copy of the query builder instance.
 
+```typescript
+const qbc = qb.clone();
+```
+
+#### qb.extend()
+This method can be used to set options on the query builder instance. Use this method if you are familiar with the 
+options structure and their valid values. Otherwise, just use the provided helper methods of the query builder.
+ 
+```typescript
+qb.extend({
+    softDeleteTimestamp: 'removed_at', // Change default soft delete column name
+    useTimestamps: false, // Disable using create and update timestamps
+    processData: (data) => {  // Register a data processor
+        console.log(data);
+        return data;
+    }
+});
+```
+
+The full query builder options explanation will be added to documentation later.
 
 ## Condition Builders
 ### Having Condition Builder
