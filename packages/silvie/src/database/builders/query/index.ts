@@ -450,7 +450,7 @@ export default class QueryBuilder {
 	 * @param queryBuilder Query builder to select from
 	 * @param alias Alias name of the resulting table
 	 */
-	fromAliasTable(queryBuilder: QueryBuilder, alias?: string): QueryBuilder {
+	fromAliasTable(queryBuilder: QueryBuilder, alias: string): QueryBuilder {
 		this.options.aliasTable = {
 			queryBuilder,
 			alias,
