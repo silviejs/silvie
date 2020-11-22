@@ -281,10 +281,82 @@ qb.offset(10).take(5);
 
 ### Joins
 #### qb.join()
+This method will do an [INNER JOIN](https://www.w3resource.com/sql/joins/perform-an-inner-join.php) between two tables.
+- **table** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **column1** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **column2?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **alias?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+If the `table` parameter is a `string`, it will try to join that with an actual table. However, it is possible to do a 
+join with another `QueryBuilder` which will be assumed as a sub query.
+
+If the `column1` parameter is a `Function`, it will be used as a callback function which will get a 
+[JoinConditionBuilder](query-builders.md#join-condition-builder) as its only parameter, and you need to specify the join condition criteria 
+with that instance of join condition builder. 
+
+If you pass a `string` to the `column1` parameter, It will be assumed as a column name and expects you specify the next 
+parameter.
+
+The `operator` parameter is a `string` and its value depends on `column2` parameter. If you specify a value for the 
+`column2`, This parameter will be treated as an actual [operator](query-builders.md#toperator). If you don't specify a
+`column2`, the `operator` parameter will be assumed as the `column2` parameter and operator will take its default which 
+is `=`.
+
+The `alias` parameter will set an alias for the joined table to be used as an abbreviation in other query parts.
+
+This specification will apply to the rest of join methods as mention below.
+
 #### qb.leftJoin()
+This method will do a [LEFT JOIN](https://www.w3resource.com/sql/joins/perform-a-left-join.php) between two tables. 
+- **table** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **column1** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **column2?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **alias?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+For more information about what these parameters do, please read [join()](query-builders.md#qbjoin) method description.
+
 #### qb.rightJoin()
+This method will do a [RIGHT JOIN](https://www.w3resource.com/sql/joins/perform-a-right-join.php) between two tables. 
+- **table** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **column1** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **column2?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **alias?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+For more information about what these parameters do, please read [join()](query-builders.md#qbjoin) method description.
+
 #### qb.crossJoin()
+This method will do a [CROSS JOIN](https://www.w3resource.com/sql/joins/cross-join.php) between two tables. 
+- **table** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **column1** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **column2?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **alias?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+For more information about what these parameters do, please read [join()](query-builders.md#qbjoin) method description.
+
 #### qb.outerJoin()
+This method will do an [OUTER JOIN](https://www.w3resource.com/sql/joins/perform-an-outer-join.php) between two tables. 
+- **table** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **column1** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **column2?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **alias?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+For more information about what these parameters do, please read [join()](query-builders.md#qbjoin) method description.
+
 
 ### Unions
 #### qb.union()
@@ -511,3 +583,19 @@ new QueryBuilder('users').insert([
 ### Other Methods
 #### qb.extend()
 #### qb.clone()
+
+
+## Condition Builders
+### Having Condition Builder
+### Where Condition Builder
+### Join Condition Builder
+
+## Types
+### TOperator
+Values of this type are strings matching the following list:
+- '='
+- '!='
+- '>'
+- '>='
+- '<'
+- '<='
