@@ -128,21 +128,118 @@ The raw queries will be added to the final query untouched, so **use it if you k
 
 ### Query Conditions
 #### qb.where()
+This method will add a condition to the query.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereNull()
+This method will add a condition which its operand should be null.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereNotNull()
+This method will add a condition which its operand should not be null.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereBetween()
+This method will add a condition which its operand should be between two values.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereNotBetween()
+This method will add a condition which its operand should not be between two values.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereIn()
+This method will add a condition which its operand should be present in a set of values.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereNotIn()
+This method will add a condition which its operand should not be present in a set of values.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereLike()
+This method will add a condition which its operand should be like a specified pattern.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
 #### qb.whereNotLike()
+This method will add a condition which its operand should be like a specified pattern.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
 #### qb.whereColumn()
+This method will add a condition to compare two columns values with each other.
+- **firstColumn** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **operator** [<TOperator\>](query-builders.md#toperator) | 
+[<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **secondColumn?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
 #### qb.whereDate()
+This method will add a condition for the date part of a date like column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereYear()
+This method will add a condition for the year part of a date like column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereMonth()
+This method will add a condition for the month part of a date like column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereDay()
+This method will add a condition for the day part of a date like column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereTime()
+This method will add a condition for the time part of a date like column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
+[<QueryBuilder\>](query-builders.md#query-builder) |
+[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+[<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
 #### qb.whereRaw()
+This method will add a raw query as a condition to your final query.
 
 ### Order
 #### qb.orderBy()
@@ -675,6 +772,7 @@ The full query builder options explanation will be added to documentation later.
 ### Join Condition Builder
 
 ## Types
+### TValue
 ### TOperator
 Values of this type are strings matching the following list:
 - =
