@@ -109,7 +109,7 @@ qb.selectSub(
 If your database supports raw queries, you will be able to write a raw database query here. You should pass a query 
 string, and a params array which defaults to an empty array `[]` if you don't specify it.
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 
 ```typescript
 qb.selectRaw("CONCAT(`name`, ' ', `family`) AS `fullname`");
@@ -188,7 +188,7 @@ qb.shuffle();
 You can write more complex order queries by using this method. This method will accept a query string and its 
 parameters, And will add this query to your order clause untouched.
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 
 ```typescript
 qb.orderByRaw('(SELECT COUNT(*) FROM `posts` WHERE `posts`.`user_id` = `users`.`id`) DESC');
@@ -222,7 +222,28 @@ The raw queries will be added to the final query untouched, so **use it if you k
 
 ### Unions
 #### qb.union()
+This method will add the results of a query builder to the end of the current query builder. Note that the columns, and 
+their data types must be the same. The union will remove the duplicate records from your results by default, unless you
+pass a `true` to the `all` parameter.
+- **queryBuilder** [<QueryBuilder\>](query-builders.md#query-builder)
+- **all?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) default: `false`
+
+```typescript
+qb.select('name', 'family').union(
+    new QueryBuilder('admins').select('name', 'family'),
+    true
+);
+```
+ 
+ 
+ 
 #### qb.unionRaw()
+This method will be used when you want to write a custom select for the union clause. It accepts a query string, and a
+parameter array. The union will remove the duplicate records from your results by default, unless you
+pass a `true` to the `all` parameter.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **all?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
 
 ### Fetch
 #### qb.get()
@@ -231,6 +252,7 @@ This method will execute the query and returns an array of results.
 ```typescript
 const results = await qb.get();
 ```
+
 #### qb.first()
 This method will execute the query and returns the first entry of the result set. This is done by temporarily limiting 
 the query itself. You may get a `null` if there was nothing found within the query criteria.
@@ -275,10 +297,41 @@ const isNewUser = await qb.where('phone', '+18005551234').doesntExist();
 
 ### Aggregates
 #### qb.count()
+This method will return the count of database records matching your query criteria. 
+
+```typescript
+const usersCount = await qb.count();
+```
+
 #### qb.average()
+This method will return the average of a given column. This only works for a numeric column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript
+const averageAge = await qb.average('age');
+```
+
 #### qb.sum()
+This method will return the summation of a given column. This only works for a numeric column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript
+const totalBalance = await qb.sum('balance');
+```
+
 #### qb.min()
+This method will return the minimum value of a given column.
+
+```typescript
+const minimumAge = await qb.min('age');
+```
+
 #### qb.max()
+This method will return the maximum value of a given column.
+
+```typescript
+const maximumBalance = await qb.max('balance');
+```
 
 ### Update
 #### qb.update()
