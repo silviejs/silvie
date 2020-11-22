@@ -613,6 +613,21 @@ new QueryBuilder('users').insert([
 
 ### Alias Table
 #### qb.fromAliasTable()
+If you don't want to select your data from an actual table, it is possible to specify another query builder to use it as
+the reference table of the query builder. The alias parameter will be an alias name for the sub query to be used as 
+reference to the sub query columns in other query parts.
+- **queryBuilder** [<QueryBuilder\>](query-builders.md#query-builder)
+- **alias** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+```typescript {2}
+new QueryBuilder()
+    .fromAliasTable(
+        new QueryBuilder('users').select('id', 'created_at'),
+        'u'
+    )
+    .where('u.id', '<', 10)
+    .get();
+```
 
 ### Other Methods
 #### qb.clone()
@@ -625,6 +640,7 @@ const qbc = qb.clone();
 #### qb.extend()
 This method can be used to set options on the query builder instance. Use this method if you are familiar with the 
 options structure and their valid values. Otherwise, just use the provided helper methods of the query builder.
+- **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
  
 ```typescript
 qb.extend({
