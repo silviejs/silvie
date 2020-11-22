@@ -545,9 +545,43 @@ the balance of user `21`.
 
 ### Delete
 #### qb.delete()
+This method will delete the records matching the query criteria.
+
+```typescript
+await new QueryBuilder('users').where('age', '<', 18).delete();
+// This will delete all underaged users
+```
+
 #### qb.useSoftDeletes()
+This method will just mark the query builder to be able to use [softDelete()](query-builders.md#qbsoftdelete) and 
+[restore()](query-builders.md#qbrestore) methods. You need to call this method before calling those methods.
+
+```typescript
+qb.useSoftDeletes();
+```
+
 #### qb.softDelete()
+This method will soft delete the records matching the query criteria. Soft deleting must be enabled on the table. This 
+can be done by adding a `deleted_at` timestamp field to the table. If you are going to change the name of this field, 
+you need needs to indicate the new name in the query builder options which can be done through the 
+[extend()](query-builders.md#qbextend) method. You also need to call [useSoftDeletes()](query-builders.md#qbusesoftdeletes)
+method before using this one.
+
+```typescript
+await new QueryBuilder('users').where('id', 12).softDelete();
+// This will soft delete the user with id = 12
+```
+
 #### qb.restore()
+This method will be used to restore soft deleted records. This is done by setting the soft delete field to `null`. 
+Before using this method, you should enable soft deleting on your table, and on your query builder. The default soft 
+delete column name is `deleted_at` which can be changed by [extend()](query-builders.md#qbextend). You also need to call
+[useSoftDeletes()](query-builders.md#qbusesoftdeletes) before using this one.
+
+```typescript
+await new QueryBuilder('users').where('id', 12).restore();
+// This will restore the soft deleted user with id = 12
+```
 
 ### Insert
 #### qb.insert()
@@ -593,9 +627,9 @@ new QueryBuilder('users').insert([
 ## Types
 ### TOperator
 Values of this type are strings matching the following list:
-- '='
-- '!='
-- '>'
-- '>='
-- '<'
-- '<='
+- =
+- !=
+- \>
+- \>=
+- <
+- <=
