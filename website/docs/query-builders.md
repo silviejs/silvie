@@ -321,6 +321,7 @@ const totalBalance = await qb.sum('balance');
 
 #### qb.min()
 This method will return the minimum value of a given column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
 ```typescript
 const minimumAge = await qb.min('age');
@@ -328,6 +329,7 @@ const minimumAge = await qb.min('age');
 
 #### qb.max()
 This method will return the maximum value of a given column.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
 ```typescript
 const maximumBalance = await qb.max('balance');
@@ -335,7 +337,61 @@ const maximumBalance = await qb.max('balance');
 
 ### Update
 #### qb.update()
+This method will update the records matching your query with the given data. The object keys will be used as column
+names, and their values will be set to them. This method will update all records with the same data. If you want to 
+update multiple records with different data, you need to use [bulkUpdate()](#qbbulkupdate) method. 
+
+Update will also update the `updated_at` column to the current date and time. This can be disabled by passing a `true` 
+to `silent` parameter.
+- **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+- **silent?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
+
+```typescript
+new QueryBuilder('users').where('id', 10).update({
+    name: 'Silvie'
+})
+```
+
 #### qb.bulkUpdate()
+The bulk update will be used to update multiple records with different data. This is handy when reducing the update
+queries in your application if you are doing multiple updates in a row. 
+
+The `data` parameter is the dataset to be used for the update, and it must contain the keys to search for their 
+corresponding records.
+
+The `keys` parameter is an array of key names. This will indicate which keys of the dataset should be used to find each 
+record. The keys that will not be mentioned in this parameter will be used to update the record.
+
+Update will also update the `updated_at` column to the current date and time. This can be disabled by passing a `true` 
+to `silent` parameter.
+- **data** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+- **keys** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+- **silent** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type)
+
+```typescript
+new QueryBuilder('users').bulkUpdate(
+    [
+        {
+            id: 2,
+            name: 'Sarah',
+            family: 'Connor'
+        },
+        {
+            id: 52,
+            name: 'Matthew',
+            age: 33
+        },
+        {
+            id: 21,
+            balance: 21000
+        }
+    ],
+    ['id']
+);
+```
+
+The above code will update the `name` and the `family` of the user `2`, the `name` and the `age` of user `52` and
+the balance of user `21`. 
 
 ### Delete
 #### qb.delete()
@@ -345,6 +401,26 @@ const maximumBalance = await qb.max('balance');
 
 ### Insert
 #### qb.insert()
+This method will insert a dataset into the database table. The `ignore` parameter indicates weather to ignore duplicate
+keys or not. Otherwise, it will throw a database error if you are inserting a duplicate key.
+- **data** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+- **ignore?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
+
+```typescript
+new QueryBuilder('users').insert([
+    {
+        name: 'Hossein',
+        family: 'Maktoobian',
+        age: 23,    
+    },
+    {
+    
+        name: 'John',
+        family: 'Doe',
+        age: 45,
+    },
+]);
+```
 
 ### Locks
 #### qb.sharedLock()
