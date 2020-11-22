@@ -146,9 +146,60 @@ The raw queries will be added to the final query untouched, so **use it if you k
 
 ### Order
 #### qb.orderBy()
-#### qb.orderByRaw()
+This method will order the results by a given column. The direction can be specified by the second parameter which 
+accepts `'asc'`, `'desc'`, `'ASC'` or `'DESC'` as its value. The direction parameter is optional and defaults to `ASC`.
+- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **direction?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) default: `'ASC''`
+
+```typescript
+qb.orderBy('name');
+// Orders results by an ascending order of 'name' field
+
+qb.orderBy('created_at', 'DESC');
+// Orders results by a descending order of 'created_at' field 
+```
+
+The order methods can be used more than once if you are going to order the results by multiple columns. For example, the
+above code orders the result by their name and orders the records with the same name, by their creation dates.
+
 #### qb.reorder()
+This method will clear the previously set orders on the query builder instance. If you pass a column and a direction to it, 
+it will set a new order on the query builder. 
+- **column?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **direction?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) default: `'ASC''`
+
+```typescript
+qb.reorder();
+// Clears the query order
+
+qb.reorder('family');
+// Clears order and sets a new order by 'family' field
+```
+
 #### qb.shuffle()
+This method will order the results randomly which results to a shuffled result.
+- **seed?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) default: `''`
+
+```typescript
+qb.shuffle();
+```
+
+#### qb.orderByRaw()
+You can write more complex order queries by using this method. This method will accept a query string and its 
+parameters, And will add this query to your order clause untouched.
+- **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+
+```typescript
+qb.orderByRaw('(SELECT COUNT(*) FROM `posts` WHERE `posts`.`user_id` = `users`.`id`) DESC');
+```
+
+For example, the above code will order the result by post count of each user. This code is just an example and has a 
+very low performance, since it will run that sub query for each record.
+
+:::caution
+The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
+:::
 
 ### Group
 #### qb.groupBy()
