@@ -723,6 +723,15 @@ import WhereConditionBuilder from 'silvie/database/builders/condition/where';
 const wcb = new WhereConditionBuilder();
 ```
 
+However, you usually don't need to create an instance, the common use case of this class is through the `where()` or 
+`orWhere()` method of the query builder class.
+
+```typescript
+qb.where((wcb) => {
+    // Configure the condition builder
+});
+```
+
 #### wcb.where()
 This method will add a condition to check a column with a value. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1110,6 +1119,15 @@ import HavingConditionBuilder from 'silvie/database/builders/condition/having';
 const hcb = new HavingConditionBuilder();
 ```
 
+Most of the times, you don't need to create an instance, the common use case of this class is through the `where()` or 
+`orWhere()` method of the query builder class.
+
+```typescript
+qb.having((hcb) => {
+    // Configure the condition builder
+});
+```
+
 #### hcb.having()
 This method will add a condition to check a column with a value. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1492,6 +1510,16 @@ import JoinConditionBuilder from 'silvie/database/builders/condition/join';
 
 const jcb = new JoinConditionBuilder();
 ```
+
+There are almost no cases that you might need to create an instance of this class on your own. You just need to use the
+instance provided to the join method callback function in a query builder, in case you want to write complex joining
+conditions.
+
+```typescript
+qb.join('posts', (jcb) => {
+    // Conficure the condition builder
+});
+``` 
 
 #### jcb.on()
 This method will add a condition to check a column with a value. 
