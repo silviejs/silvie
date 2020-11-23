@@ -64,16 +64,16 @@ export default class JoinConditionBuilder implements IConditionBuilder {
 
 	on(
 		column: TColumn | QueryBuilder | ((conditionBuilder: JoinConditionBuilder) => void),
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('value', 'and', column, operator, value);
 	}
 
 	orOn(
 		column: TColumn | QueryBuilder | ((conditionBuilder: JoinConditionBuilder) => void),
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('value', 'or', column, operator, value);
 	}
@@ -129,19 +129,19 @@ export default class JoinConditionBuilder implements IConditionBuilder {
 		return this.baseOn('not in', 'or', column, values);
 	}
 
-	onLike(column: TColumn | QueryBuilder, value: TValue): JoinConditionBuilder {
+	onLike(column: TColumn | QueryBuilder, value: string): JoinConditionBuilder {
 		return this.baseOn('like', 'and', column, value);
 	}
 
-	orOnLike(column: TColumn | QueryBuilder, value: TValue): JoinConditionBuilder {
+	orOnLike(column: TColumn | QueryBuilder, value: string): JoinConditionBuilder {
 		return this.baseOn('like', 'or', column, value);
 	}
 
-	onNotLike(column: TColumn | QueryBuilder, value: TValue): JoinConditionBuilder {
+	onNotLike(column: TColumn | QueryBuilder, value: string): JoinConditionBuilder {
 		return this.baseOn('not like', 'and', column, value);
 	}
 
-	orOnNotLike(column: TColumn | QueryBuilder, value: TValue): JoinConditionBuilder {
+	orOnNotLike(column: TColumn | QueryBuilder, value: string): JoinConditionBuilder {
 		return this.baseOn('not like', 'or', column, value);
 	}
 
@@ -155,80 +155,80 @@ export default class JoinConditionBuilder implements IConditionBuilder {
 
 	onDate(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('date', 'and', column, operator, value);
 	}
 
 	orOnDate(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('date', 'or', column, operator, value);
 	}
 
 	onYear(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('year', 'and', column, operator, value);
 	}
 
 	orOnYear(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('year', 'or', column, operator, value);
 	}
 
 	onMonth(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('month', 'and', column, operator, value);
 	}
 
 	orOnMonth(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('month', 'or', column, operator, value);
 	}
 
 	onDay(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('day', 'and', column, operator, value);
 	}
 
 	orOnDay(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('day', 'or', column, operator, value);
 	}
 
 	onTime(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('time', 'and', column, operator, value);
 	}
 
 	orOnTime(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): JoinConditionBuilder {
 		return this.baseOn('time', 'or', column, operator, value);
 	}

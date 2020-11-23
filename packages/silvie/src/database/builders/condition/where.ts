@@ -64,16 +64,16 @@ export default class WhereConditionBuilder implements IConditionBuilder {
 
 	where(
 		column: TColumn | QueryBuilder | ((conditionBuilder: WhereConditionBuilder) => void),
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('value', 'and', column, operator, value);
 	}
 
 	orWhere(
 		column: TColumn | QueryBuilder | ((conditionBuilder: WhereConditionBuilder) => void),
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('value', 'or', column, operator, value);
 	}
@@ -135,19 +135,19 @@ export default class WhereConditionBuilder implements IConditionBuilder {
 		return this.baseWhere('not in', 'or', column, values);
 	}
 
-	whereLike(column: TColumn | QueryBuilder, value: TValue): WhereConditionBuilder {
+	whereLike(column: TColumn | QueryBuilder, value: string): WhereConditionBuilder {
 		return this.baseWhere('like', 'and', column, value);
 	}
 
-	orWhereLike(column: TColumn | QueryBuilder, value: TValue): WhereConditionBuilder {
+	orWhereLike(column: TColumn | QueryBuilder, value: string): WhereConditionBuilder {
 		return this.baseWhere('like', 'or', column, value);
 	}
 
-	whereNotLike(column: TColumn | QueryBuilder, value: TValue): WhereConditionBuilder {
+	whereNotLike(column: TColumn | QueryBuilder, value: string): WhereConditionBuilder {
 		return this.baseWhere('not like', 'and', column, value);
 	}
 
-	orWhereNotLike(column: TColumn | QueryBuilder, value: TValue): WhereConditionBuilder {
+	orWhereNotLike(column: TColumn | QueryBuilder, value: string): WhereConditionBuilder {
 		return this.baseWhere('not like', 'or', column, value);
 	}
 
@@ -161,80 +161,80 @@ export default class WhereConditionBuilder implements IConditionBuilder {
 
 	whereDate(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('date', 'and', column, operator, value);
 	}
 
 	orWhereDate(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('date', 'or', column, operator, value);
 	}
 
 	whereYear(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('year', 'and', column, operator, value);
 	}
 
 	orWhereYear(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('year', 'or', column, operator, value);
 	}
 
 	whereMonth(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('month', 'and', column, operator, value);
 	}
 
 	orWhereMonth(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('month', 'or', column, operator, value);
 	}
 
 	whereDay(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('day', 'and', column, operator, value);
 	}
 
 	orWhereDay(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('day', 'or', column, operator, value);
 	}
 
 	whereTime(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('time', 'and', column, operator, value);
 	}
 
 	orWhereTime(
 		column: TColumn | QueryBuilder,
-		operator: TOperator | TValue | QueryBuilder,
-		value?: TValue | QueryBuilder
+		operator: TOperator | TBaseValue | QueryBuilder,
+		value?: TBaseValue | QueryBuilder
 	): WhereConditionBuilder {
 		return this.baseWhere('time', 'or', column, operator, value);
 	}
