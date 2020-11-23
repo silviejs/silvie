@@ -748,6 +748,38 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+wcb.where('username', 'hmak')
+   .orWhere('username', 'hmak-me')
+// Restricts the 'username' field to be 'hmak' ro 'hmak-me'
+```
+
+```typescript
+wcb.where((cb) => {
+    cb.whereNotNull('email')
+      .where('email_verified', false);
+}).orWhere((cb) => {
+    cb.whereNotNull('phone')
+      .where('phone_verified', false);
+});
+// Restricts to the users who
+// have an email and not verified it
+// or have a phone and not verified it
+```
+
+```typescript
+wcb.where(
+    new QueryBuilder('posts')
+        .selectCount('post_count')
+        .whereColumn('posts.user_id', 'users.id')
+        .groupBy('posts.user_id'),
+    '>=',
+    2
+);
+// Restricts to those users who
+// submitted between 2 or more posts
+```
+
 #### wcb.whereNull()
 This method will add a condition which its operand should be null. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -756,6 +788,12 @@ This method will add a condition which its operand should be null.
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
 
+```typescript
+wcb.whereNull('email');
+// Restricts to those users who
+// don't have an email
+```
+
 #### wcb.whereNotNull()
 This method will add a condition which its operand should not be null.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -763,6 +801,12 @@ This method will add a condition which its operand should not be null.
 
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
+
+```typescript
+wcb.whereNotNull('email');
+// Restricts to those users who
+// have an email address
+```
 
 #### wcb.whereBetween()
 This method will add a condition which its operand should be between two values. 
@@ -776,6 +820,11 @@ column in a single row, and will be treated as a sub select in the condition.
 
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column and two rows.
+
+```typescript
+wcb.whereBetween('age', [10, 20]);
+// Restricts to those users aged between 10 and 20
+```
 
 #### wcb.whereNotBetween()
 This method will add a condition which its operand should not be between two values. The `values` parameter must be an array
@@ -791,6 +840,12 @@ column in a single row, and will be treated as a sub select in the condition.
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column and two rows.
 
+```typescript
+wcb.whereNotBetween('birthdate', ['2020-01-01', '2020-12-31']);
+// Restricts to those users that
+// wasn't born in 2020
+```
+
 #### wcb.whereIn()
 This method will add a condition which its operand should be present in a set of values. The `values` parameter must be
 an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
@@ -804,6 +859,22 @@ column in a single row, and will be treated as a sub select in the condition.
 
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column.
+
+```typescript
+wcb.whereIn('name', ['Mike', 'Michael', 'Micah']);
+// Restricts to those users who
+// their name is listed in the array
+```
+
+```typescript
+wcb.whereIn(
+    'id',
+    new QueryBuilder('premium_users')
+        .select('user_id')
+);
+// Restricts to those users who
+// are listed in premium users
+```
 
 #### wcb.whereNotIn()
 This method will add a condition which its operand should not be present in a set of values. The `values` parameter must be
@@ -819,6 +890,12 @@ column in a single row, and will be treated as a sub select in the condition.
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column.
 
+```typescript
+wcb.whereNotIn('id', [1, 2]);
+// Restricts to those users who
+// their id is not 1 or 2
+```
+
 #### wcb.whereLike()
 This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
 used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
@@ -828,6 +905,13 @@ used in SQL which you can define wild cards with `'%'` and single unknown charac
 
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
+
+```typescript
+wcb.whereLike('family', '%son')
+   .orWhereLike('family', 'Jack%');
+// Restricts to those users who their family name
+// starts with 'Jack' or ends with 'son'
+```
 
 #### wcb.whereNotLike()
 This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
@@ -839,6 +923,12 @@ used in SQL which you can define wild cards with `'%'` and single unknown charac
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
 
+```typescript
+wcb.whereNotLike('family', 'S___h');
+// Restricts to those users who their family name
+// is not a 5 letter which start with an 'S' and ending with 'h'
+```
+
 #### wcb.whereColumn()
 This method will add a condition to compare two columns values with each other.
 - **firstColumn** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -848,6 +938,12 @@ This method will add a condition to compare two columns values with each other.
 
 If you don't specify a `secondColumn`, The value of the `operator` parameter will be assumed as the second column, and 
 the operator will be `=` by default.
+
+```typescript
+wcb.whereColumn('family', '!=', 'name');
+// Restricts to those users who their 
+// family is not equal to their name
+```
 
 #### wcb.whereDate()
 This method will add a condition for the date part of a date like column.
@@ -870,6 +966,11 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+wcb.whereDate('birthdate', '>=', '2000-01-01');
+// Restricts to those uses who was born after 2000
+```
+
 #### wcb.whereYear()
 This method will add a condition for the year part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -890,6 +991,11 @@ a query builder as the value, it will be treated as a sub select in the conditio
 
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
+
+```typescript
+wcb.whereYear('birthdate', '<', '2000');
+// Restricts to those uses who was born before 2000
+```
 
 #### wcb.whereMonth()
 This method will add a condition for the month part of a date like column.
@@ -912,6 +1018,11 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+wcb.whereMonth('birthdate', 3);
+// Restricts to those uses who was born in March
+```
+
 #### wcb.whereDay()
 This method will add a condition for the day part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -932,6 +1043,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
+
+```typescript
+wcb.whereDay('birthdate', 18);
+// Restricts to those uses who was born 
+// in the 18th day of the month
+```
 
 #### wcb.whereTime()
 This method will add a condition for the time part of a date like column.
@@ -954,6 +1071,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+wcb.whereTime('created_at', '>=', '00:00')
+   .whereTime('created_at', '<=', '06:00');
+// Restricts to those uses who registered between 00:00 and 06:00
+```
+
 #### wcb.whereRaw()
 This method will add a raw query as a condition to your final query. 
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -962,6 +1085,12 @@ This method will add a raw query as a condition to your final query.
 :::caution
 The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
 :::
+
+```typescript
+wcb.raw('id % 7 = 0')
+   .orRaw('id % 9 = 0');
+// Restricts to those user with an id divisible by 7 or 9 :D
+```
 
 ### Having Condition Builder
 This type of conditions will be applied to the grouped queries and limits their criteria. This condition builder will be 
