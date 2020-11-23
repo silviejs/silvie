@@ -1546,6 +1546,21 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .on('posts.published', true);
+// Only joining the published posts with their users
+```
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .on((cb) => {
+       cb.on('posts.published', true)
+         .orOn('posts.verified', true)
+   });
+// Only joining the published and verified posts
+```
+
 #### jcb.onNull()
 This method will add a condition which its operand should be null. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1554,6 +1569,12 @@ This method will add a condition which its operand should be null.
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onNull('posts.thumbnail');
+// Only joining posts without a thumbnail
+```
+
 #### jcb.onNotNull()
 This method will add a condition which its operand should not be null.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1561,6 +1582,12 @@ This method will add a condition which its operand should not be null.
 
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onNotNull('posts.translator_name');
+// Only joining posts with a translator name
+```
 
 #### jcb.onBetween()
 This method will add a condition which its operand should be between two values. 
@@ -1574,6 +1601,13 @@ column in a single row, and will be treated as a sub select in the condition.
 
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column and two rows.
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onBetween('posts.created_at', ['2019-01-01', '2020-12-31']);
+// Only joining posts that was 
+// posted in '2019 Jan 1' and '2020 Dec 31'
+```
 
 #### jcb.onNotBetween()
 This method will add a condition which its operand should not be between two values. The `values` parameter must be an array
@@ -1589,6 +1623,13 @@ column in a single row, and will be treated as a sub select in the condition.
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column and two rows.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onNotBetween('posts.review', [2, 7]);
+// Only joining posts that was not
+// reviewed 2 to 7 times
+```
+
 #### jcb.onIn()
 This method will add a condition which its operand should be present in a set of values. The `values` parameter must be
 an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
@@ -1602,6 +1643,13 @@ column in a single row, and will be treated as a sub select in the condition.
 
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column.
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onIn('posts.category', ['Science', 'Technology', 'Art']);
+// Only joining posts from
+// 'Science', 'Technology' and 'Art' categories
+```
 
 #### jcb.onNotIn()
 This method will add a condition which its operand should not be present in a set of values. The `values` parameter must be
@@ -1617,6 +1665,13 @@ column in a single row, and will be treated as a sub select in the condition.
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onNotIn('posts.user_id', [1, 2]);
+// Only joining posts that was not
+// from users with 1 or 2 id
+```
+
 #### jcb.onLike()
 This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
 used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
@@ -1626,6 +1681,13 @@ used in SQL which you can define wild cards with `'%'` and single unknown charac
 
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onLike('posts.title', 'Breaking News:%');
+// Only joining posts that their
+// title starts with 'Breaking News:'
+```
 
 #### jcb.onNotLike()
 This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
@@ -1637,6 +1699,13 @@ used in SQL which you can define wild cards with `'%'` and single unknown charac
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onNotLike('posts.title', '[DRAFT]%');
+// Only joining posts that their
+// title does not start with '[DRAFT]' tag
+```
+
 #### jcb.onColumn()
 This method will add a condition to compare two columns values with each other.
 - **firstColumn** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -1646,6 +1715,13 @@ This method will add a condition to compare two columns values with each other.
 
 If you don't specify a `secondColumn`, The value of the `operator` parameter will be assumed as the second column, and 
 the operator will be `=` by default.
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onColumn('posts.thumbnail', 'users.picture');
+// Only joining those posts that their thumbnail
+// is their user profile picture
+```
 
 #### jcb.onDate()
 This method will add a condition for the date part of a date like column.
@@ -1668,6 +1744,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onDate('posts.published_at', '2020-02-02');
+// Only joining posts that was posted on '2020-02-02'
+```
+
 #### jcb.onYear()
 This method will add a condition for the year part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1688,6 +1770,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onYear('posts.published_at', '>=', '2018');
+// Only joining posts that was posted after 2018
+```
 
 #### jcb.onMonth()
 This method will add a condition for the month part of a date like column.
@@ -1710,6 +1798,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onMonth('posts.published_at', '12');
+// Only joining posts that was posted in December
+```
+
 #### jcb.onDay()
 This method will add a condition for the day part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1730,6 +1824,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
+
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onDay('posts.published_at', '22');
+// Only joining posts that was posted on 22th day of month
+```
 
 #### jcb.onTime()
 This method will add a condition for the time part of a date like column.
@@ -1752,6 +1852,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+jcb.onColumn('users.id', 'posts.user_id')
+   .onTime('posts.published_at', '<', '10:30');
+// Only joining posts that was posted before 10:30 AM
+```
+
 #### jcb.onRaw()
 This method will add a raw query as a condition to your final query. 
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -1760,6 +1866,12 @@ This method will add a raw query as a condition to your final query.
 :::caution
 The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
 :::
+
+```typescript
+jcb.onRaw(
+    "`users`.`id` = `posts`.`user_id` AND UPPER(`users`.`name`) = 'JOE'"
+);
+```
 
 
 ## Types
