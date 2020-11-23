@@ -715,6 +715,14 @@ All of `WhereConditionBuilder` methods are available on the `QueryBuilder` class
 query in the first place. 
 :::
 
+The `WhereConditionBuilder` class can be found at `silvie/database/builders/condition/where`.
+
+```typescript
+import WhereConditionBuilder from 'silvie/database/builders/condition/where';
+
+const wcb = new WhereConditionBuilder();
+```
+
 #### wcb.where()
 This method will add a condition to check a column with a value. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -965,6 +973,14 @@ All of `HavingConditionBuilder` methods are available on the `QueryBuilder` clas
 query in the first place. 
 :::
 
+The `HavingConditionBuilder` class can be found at `silvie/database/builders/condition/having`.
+
+```typescript
+import HavingConditionBuilder from 'silvie/database/builders/condition/having';
+
+const hcb = new HavingConditionBuilder();
+```
+
 #### hcb.having()
 This method will add a condition to check a column with a value. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1210,6 +1226,14 @@ This type of condition builder will be used when you want to set a complex condi
 will be a column equality comparison for a join method to work, but if you want more than a single condition, or it is 
 more complicated, just give your `join()` method a function and do that with an instance of join condition builder which
 will be passed to that function as its only parameter.
+
+The `JoinConditionBuilder` class can be found at `silvie/database/builders/condition/join`.
+
+```typescript
+import JoinConditionBuilder from 'silvie/database/builders/condition/join';
+
+const jcb = new JoinConditionBuilder();
+```
 
 #### jcb.on()
 This method will add a condition to check a column with a value. 
