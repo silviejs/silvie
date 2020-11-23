@@ -1087,8 +1087,8 @@ The raw queries will be added to the final query untouched, so **use it if you k
 :::
 
 ```typescript
-wcb.raw('id % 7 = 0')
-   .orRaw('id % 9 = 0');
+wcb.whereRaw('id % 7 = 0')
+   .orWhereRaw('id % 9 = 0');
 // Restricts to those user with an id divisible by 7 or 9 :D
 ```
 
@@ -1135,6 +1135,38 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+hcb.having('username', 'hmak')
+   .orHaving('username', 'hmak-me')
+// Restricts the 'username' field to be 'hmak' ro 'hmak-me'
+```
+
+```typescript
+hcb.having((cb) => {
+    cb.havingNotNull('email')
+      .having('email_verified', false);
+}).orHaving((cb) => {
+    cb.havingNotNull('phone')
+      .having('phone_verified', false);
+});
+// Restricts to the users who
+// have an email and not verified it
+// or have a phone and not verified it
+```
+
+```typescript
+hcb.having(
+    new QueryBuilder('posts')
+        .selectCount('post_count')
+        .havingColumn('posts.user_id', 'users.id')
+        .groupBy('posts.user_id'),
+    '>=',
+    2
+);
+// Restricts to those users who
+// submitted between 2 or more posts
+```
+
 #### hcb.havingNull()
 This method will add a condition which its operand should be null. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1143,6 +1175,12 @@ This method will add a condition which its operand should be null.
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
 
+```typescript
+hcb.havingNull('email');
+// Restricts to those users who
+// don't have an email
+```
+
 #### hcb.havingNotNull()
 This method will add a condition which its operand should not be null.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1150,6 +1188,12 @@ This method will add a condition which its operand should not be null.
 
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
+
+```typescript
+hcb.havingNotNull('email');
+// Restricts to those users who
+// have an email address
+```
 
 #### hcb.havingBetween()
 This method will add a condition which its operand should be between two values. 
@@ -1163,6 +1207,11 @@ column in a single row, and will be treated as a sub select in the condition.
 
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column and two rows.
+
+```typescript
+hcb.havingBetween('age', [10, 20]);
+// Restricts to those users aged between 10 and 20
+```
 
 #### hcb.havingNotBetween()
 This method will add a condition which its operand should not be between two values. The `values` parameter must be an array
@@ -1178,6 +1227,12 @@ column in a single row, and will be treated as a sub select in the condition.
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column and two rows.
 
+```typescript
+hcb.havingNotBetween('birthdate', ['2020-01-01', '2020-12-31']);
+// Restricts to those users that
+// wasn't born in 2020
+```
+
 #### hcb.havingIn()
 This method will add a condition which its operand should be present in a set of values. The `values` parameter must be
 an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
@@ -1191,6 +1246,22 @@ column in a single row, and will be treated as a sub select in the condition.
 
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column.
+
+```typescript
+hcb.havingIn('name', ['Mike', 'Michael', 'Micah']);
+// Restricts to those users who
+// their name is listed in the array
+```
+
+```typescript
+hcb.havingIn(
+    'id',
+    new QueryBuilder('premium_users')
+        .select('user_id')
+);
+// Restricts to those users who
+// are listed in premium users
+```
 
 #### hcb.havingNotIn()
 This method will add a condition which its operand should not be present in a set of values. The `values` parameter must be
@@ -1206,6 +1277,12 @@ column in a single row, and will be treated as a sub select in the condition.
 The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
 returns a single column.
 
+```typescript
+hcb.havingNotIn('id', [1, 2]);
+// Restricts to those users who
+// their id is not 1 or 2
+```
+
 #### hcb.havingLike()
 This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
 used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
@@ -1215,6 +1292,13 @@ used in SQL which you can define wild cards with `'%'` and single unknown charac
 
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
+
+```typescript
+hcb.havingLike('family', '%son')
+   .orHavingLike('family', 'Jack%');
+// Restricts to those users who their family name
+// starts with 'Jack' or ends with 'son'
+```
 
 #### hcb.havingNotLike()
 This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
@@ -1226,6 +1310,12 @@ used in SQL which you can define wild cards with `'%'` and single unknown charac
 The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
 column in a single row, and will be treated as a sub select in the condition.
 
+```typescript
+hcb.havingNotLike('family', 'S___h');
+// Restricts to those users who their family name
+// is not a 5 letter which start with an 'S' and ending with 'h'
+```
+
 #### hcb.havingColumn()
 This method will add a condition to compare two columns values with each other.
 - **firstColumn** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -1235,6 +1325,12 @@ This method will add a condition to compare two columns values with each other.
 
 If you don't specify a `secondColumn`, The value of the `operator` parameter will be assumed as the second column, and 
 the operator will be `=` by default.
+
+```typescript
+hcb.havingColumn('family', '!=', 'name');
+// Restricts to those users who their 
+// family is not equal to their name
+```
 
 #### hcb.havingDate()
 This method will add a condition for the date part of a date like column.
@@ -1257,6 +1353,11 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+hcb.havingDate('birthdate', '>=', '2000-01-01');
+// Restricts to those uses who was born after 2000
+```
+
 #### hcb.havingYear()
 This method will add a condition for the year part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1277,6 +1378,11 @@ a query builder as the value, it will be treated as a sub select in the conditio
 
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
+
+```typescript
+hcb.havingYear('birthdate', '<', '2000');
+// Restricts to those uses who was born before 2000
+```
 
 #### hcb.havingMonth()
 This method will add a condition for the month part of a date like column.
@@ -1299,6 +1405,11 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+hcb.havingMonth('birthdate', 3);
+// Restricts to those uses who was born in March
+```
+
 #### hcb.havingDay()
 This method will add a condition for the day part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
@@ -1319,6 +1430,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
+
+```typescript
+hcb.havingDay('birthdate', 18);
+// Restricts to those uses who was born 
+// in the 18th day of the month
+```
 
 #### hcb.havingTime()
 This method will add a condition for the time part of a date like column.
@@ -1341,6 +1458,12 @@ a query builder as the value, it will be treated as a sub select in the conditio
 If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
 operator will be `=` by default.
 
+```typescript
+hcb.havingTime('created_at', '>=', '00:00')
+   .havingTime('created_at', '<=', '06:00');
+// Restricts to those uses who registered between 00:00 and 06:00
+```
+
 #### hcb.havingRaw()
 This method will add a raw query as a condition to your final query. 
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
@@ -1349,6 +1472,12 @@ This method will add a raw query as a condition to your final query.
 :::caution
 The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
 :::
+
+```typescript
+hcb.havingRaw('id % 7 = 0')
+   .orHavingRaw('id % 9 = 0');
+// Restricts to those user with an id divisible by 7 or 9
+```
 
 ### Join Condition Builder
 This type of condition builder will be used when you want to set a complex condition on a join method. Usually, there 
