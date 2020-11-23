@@ -109,7 +109,7 @@ qb.selectSub(
 If your database supports raw queries, you will be able to write a raw database query here. You should pass a query 
 string, and a params array which defaults to an empty array `[]` if you don't specify it.
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **params?** [<TBaseValue[]\>](#tbasevalue) default: `[]`
 
 ```typescript
 qb.selectRaw("CONCAT(`name`, ' ', `family`) AS `fullname`");
@@ -222,7 +222,7 @@ qb.shuffle();
 You can write more complex order queries by using this method. This method will accept a query string and its 
 parameters, And will add this query to your order clause untouched.
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **params?** [<TBaseValue\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 
 ```typescript
 qb.orderByRaw(
@@ -253,7 +253,7 @@ The above code will return the count of posts for each user.
 #### qb.groupByRaw()
 This method will add a raw query to the group clause.
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **params?** [<TBaseValue\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 
 ```typescript {3}
 const userDailyPosts = qb.selectCount('daily_posts')
@@ -391,7 +391,6 @@ This method will do an [OUTER JOIN](https://www.w3resource.com/sql/joins/perform
 
 For more information about what these parameters do, please read [join()](query-builders.md#qbjoin) method description.
 
-
 ### Unions
 #### qb.union()
 This method will add the results of a query builder to the end of the current query builder. Note that the columns, and 
@@ -412,7 +411,7 @@ This method will be used when you want to write a custom select for the union cl
 parameter array. The union will remove the duplicate records from your results by default, unless you
 pass a `true` to the `all` parameter.
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **params?** [<TBaseValue\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 - **all?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
 
 ```typescript
@@ -684,6 +683,7 @@ qb.extend({
 
 The full query builder options explanation will be added to documentation later.
 
+
 ## Condition Builders
 Condition builders are a way to create complex conditions by calling their methods. They will be transpiled into valid
 database query conditions using the database driver. There are different places that you need to specify conditions for.
@@ -705,7 +705,6 @@ version of these methods. It just gets a `or` prefix, but keeps the **camelCase*
 `orHavingNull()`, etc.   
 ::: 
  
-
 ### Where Condition Builder
 This type of conditions will be applied to the query and limits its criteria. This condition builder will be used when 
 you want to group conditions together in another condition clause, to change their precedence. In that case, you need to 
@@ -717,63 +716,120 @@ query in the first place.
 :::
 
 #### wcb.where()
-This method will add a condition to the query.
+This method will add a condition to check a column with a value. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+You are able to pass a `Function` to the `column` parameter. This will be callback function which will get a 
+[hereConditionBuilder](#where-condition-builder) instance, and the queries made with that condition builder will be 
+grouped together in the final query.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### wcb.whereNull()
-This method will add a condition which its operand should be null.
+This method will add a condition which its operand should be null. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
 
 #### wcb.whereNotNull()
 This method will add a condition which its operand should not be null.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
 #### wcb.whereBetween()
-This method will add a condition which its operand should be between two values.
+This method will add a condition which its operand should be between two values. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column and two rows.
 
 #### wcb.whereNotBetween()
-This method will add a condition which its operand should not be between two values.
+This method will add a condition which its operand should not be between two values. The `values` parameter must be an array
+with two [TBaseValue](#tbasevalue) entries.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column and two rows.
 
 #### wcb.whereIn()
-This method will add a condition which its operand should be present in a set of values.
+This method will add a condition which its operand should be present in a set of values. The `values` parameter must be
+an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column.
 
 #### wcb.whereNotIn()
-This method will add a condition which its operand should not be present in a set of values.
+This method will add a condition which its operand should not be present in a set of values. The `values` parameter must be
+an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column.
+
 #### wcb.whereLike()
-This method will add a condition which its operand should be like a specified pattern.
+This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
+used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
 #### wcb.whereNotLike()
-This method will add a condition which its operand should be like a specified pattern.
+This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
+used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
 
 #### wcb.whereColumn()
 This method will add a condition to compare two columns values with each other.
@@ -782,56 +838,122 @@ This method will add a condition to compare two columns values with each other.
 [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **secondColumn?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
+If you don't specify a `secondColumn`, The value of the `operator` parameter will be assumed as the second column, and 
+the operator will be `=` by default.
+
 #### wcb.whereDate()
 This method will add a condition for the date part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### wcb.whereYear()
 This method will add a condition for the year part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### wcb.whereMonth()
 This method will add a condition for the month part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### wcb.whereDay()
 This method will add a condition for the day part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### wcb.whereTime()
 This method will add a condition for the time part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### wcb.whereRaw()
-This method will add a raw query as a condition to your final query.
+This method will add a raw query as a condition to your final query. 
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **params?** [<TBaseValue\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 
+:::caution
+The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
+:::
 
 ### Having Condition Builder
 This type of conditions will be applied to the grouped queries and limits their criteria. This condition builder will be 
@@ -844,63 +966,120 @@ query in the first place.
 :::
 
 #### hcb.having()
-This method will add a condition to the query.
+This method will add a condition to check a column with a value. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+You are able to pass a `Function` to the `column` parameter. This will be callback function which will get a 
+[HavingConditionBuilder](#having-condition-builder) instance, and the queries made with that condition builder will be 
+grouped together in the final query.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### hcb.havingNull()
-This method will add a condition which its operand should be null.
+This method will add a condition which its operand should be null. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
 
 #### hcb.havingNotNull()
 This method will add a condition which its operand should not be null.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
 #### hcb.havingBetween()
-This method will add a condition which its operand should be between two values.
+This method will add a condition which its operand should be between two values. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column and two rows.
 
 #### hcb.havingNotBetween()
-This method will add a condition which its operand should not be between two values.
+This method will add a condition which its operand should not be between two values. The `values` parameter must be an array
+with two [TBaseValue](#tbasevalue) entries.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column and two rows.
 
 #### hcb.havingIn()
-This method will add a condition which its operand should be present in a set of values.
+This method will add a condition which its operand should be present in a set of values. The `values` parameter must be
+an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column.
 
 #### hcb.havingNotIn()
-This method will add a condition which its operand should not be present in a set of values.
+This method will add a condition which its operand should not be present in a set of values. The `values` parameter must be
+an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column.
+
 #### hcb.havingLike()
-This method will add a condition which its operand should be like a specified pattern.
+This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
+used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
 #### hcb.havingNotLike()
-This method will add a condition which its operand should be like a specified pattern.
+This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
+used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
 
 #### hcb.havingColumn()
 This method will add a condition to compare two columns values with each other.
@@ -909,56 +1088,122 @@ This method will add a condition to compare two columns values with each other.
 [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **secondColumn?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
+If you don't specify a `secondColumn`, The value of the `operator` parameter will be assumed as the second column, and 
+the operator will be `=` by default.
+
 #### hcb.havingDate()
 This method will add a condition for the date part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### hcb.havingYear()
 This method will add a condition for the year part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### hcb.havingMonth()
 This method will add a condition for the month part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### hcb.havingDay()
 This method will add a condition for the day part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### hcb.havingTime()
 This method will add a condition for the time part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### hcb.havingRaw()
-This method will add a raw query as a condition to your final query.
+This method will add a raw query as a condition to your final query. 
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **params?** [<TBaseValue\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
 
+:::caution
+The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
+:::
 
 ### Join Condition Builder
 This type of condition builder will be used when you want to set a complex condition on a join method. Usually, there 
@@ -967,63 +1212,120 @@ more complicated, just give your `join()` method a function and do that with an 
 will be passed to that function as its only parameter.
 
 #### jcb.on()
-This method will add a condition to the query.
+This method will add a condition to check a column with a value. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+You are able to pass a `Function` to the `column` parameter. This will be callback function which will get a 
+[JoinConditionBuilder](#join-condition-builder) instance, and the queries made with that condition builder will be 
+grouped together in the final query.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### jcb.onNull()
-This method will add a condition which its operand should be null.
+This method will add a condition which its operand should be null. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
 
 #### jcb.onNotNull()
 This method will add a condition which its operand should not be null.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
 #### jcb.onBetween()
-This method will add a condition which its operand should be between two values.
+This method will add a condition which its operand should be between two values. 
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column and two rows.
 
 #### jcb.onNotBetween()
-This method will add a condition which its operand should not be between two values.
+This method will add a condition which its operand should not be between two values. The `values` parameter must be an array
+with two [TBaseValue](#tbasevalue) entries.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column and two rows.
 
 #### jcb.onIn()
-This method will add a condition which its operand should be present in a set of values.
+This method will add a condition which its operand should be present in a set of values. The `values` parameter must be
+an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column.
 
 #### jcb.onNotIn()
-This method will add a condition which its operand should not be present in a set of values.
+This method will add a condition which its operand should not be present in a set of values. The `values` parameter must be
+an array of [TBaseValue](#tbasevalue)s. This array should contain one or more entries in it.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `values` parameter must be an array containing two [TBaseValue](#tbasevalue) entries, or a query builder instance which 
+returns a single column.
+
 #### jcb.onLike()
-This method will add a condition which its operand should be like a specified pattern.
+This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
+used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
 #### jcb.onNotLike()
-This method will add a condition which its operand should be like a specified pattern.
+This method will add a condition which its operand should be like a specified pattern. The pattern is the same pattern
+used in SQL which you can define wild cards with `'%'` and single unknown characters with `'_'`.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder)
 - **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
 
 #### jcb.onColumn()
 This method will add a condition to compare two columns values with each other.
@@ -1032,58 +1334,131 @@ This method will add a condition to compare two columns values with each other.
 [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 - **secondColumn?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
 
+If you don't specify a `secondColumn`, The value of the `operator` parameter will be assumed as the second column, and 
+the operator will be `=` by default.
+
 #### jcb.onDate()
 This method will add a condition for the date part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### jcb.onYear()
 This method will add a condition for the year part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### jcb.onMonth()
 This method will add a condition for the month part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### jcb.onDay()
 This method will add a condition for the day part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### jcb.onTime()
 This method will add a condition for the time part of a date like column.
 - **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
 [<QueryBuilder\>](query-builders.md#query-builder) |
 [<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
+- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TBaseValue\>](query-builders.md#tbasevalue) | 
 [<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+- **value?** [<TBaseValue\>](query-builders.md#tbasevalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+
+The `column` parameter can be `string` value indicating a column name, or a query builder instance which returns a single 
+column in a single row, and will be treated as a sub select in the condition.
+
+The `operator` parameter can either be a [TOperator](#toperator) indicating the operator of condition, a 
+[TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. However, this depends on the next parameter.
+
+The `value` parameter should be a [TBaseValue](#tbasevalue) or a [QueryBuilder](#query-builder) instance. In case that you pass 
+a query builder as the value, it will be treated as a sub select in the condition clause.
+
+If you don't specify the `value` parameter, the value of `operator` parameter will be assumed as the value, and the 
+operator will be `=` by default.
 
 #### jcb.onRaw()
-This method will add a raw query as a condition to your final query.
+This method will add a raw query as a condition to your final query. 
 - **query** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **params?** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+- **params?** [<TBaseValue\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) default: `[]`
+
+:::caution
+The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
+:::
+
 
 ## Types
-### TValue
+### TBaseValue
+Values of this type can be one these:
+- [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- [<number\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type)
+- [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type)
+
 ### TOperator
 Values of this type are strings matching the following list:
 - =
