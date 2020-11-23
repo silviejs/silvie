@@ -126,120 +126,57 @@ qb.selectRaw(
 The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
 ::: 
 
-### Query Conditions
-#### qb.where()
-This method will add a condition to the query.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder) |
-[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
+### Conditions
+A query builder needs to have conditions to limit what you are fetching from the database. Here we group conditions into
+3 groups based on what their usage is:
+- [Where Conditions](#where-condition-builder)
+- [Having Conditions](#having-condition-builder)
+- [Join Conditions](#join-condition-builder) 
 
-#### qb.whereNull()
-This method will add a condition which its operand should be null.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
+**Where conditions** will specify the query criteria.
+**Having conditions** will define the query criteria for grouped queries using aggregate functions.
+**Join conditions** will indicate how two tables or queries should be joined together.
 
-#### qb.whereNotNull()
-This method will add a condition which its operand should not be null.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
+The QueryBuilder class implements all of [Where Condition Builder](#where-condition-builder) methods to let your define 
+your query criteria. It also implements all of [Having Condition Builder](#having-condition-builder) methods for you to
+use them in combination with your group queries. Therefore, you are able to call those methods directly from a query
+builder instance. Take a look at the following examples:
 
-#### qb.whereBetween()
-This method will add a condition which its operand should be between two values.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
-[<QueryBuilder\>](query-builders.md#query-builder)
+```typescript
+const results = await qb.where('name', 'Hannah').get();
+// Returns all users where their name is 'Hannah'
+```
 
-#### qb.whereNotBetween()
-This method will add a condition which its operand should not be between two values.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
-[<QueryBuilder\>](query-builders.md#query-builder)
+```typescript
+const results = await qb.whereBetween('age', [20, 32]).get();
+// Returns all users where their age is between 20 and 32
+```
 
-#### qb.whereIn()
-This method will add a condition which its operand should be present in a set of values.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
-[<QueryBuilder\>](query-builders.md#query-builder)
+They also can be used in combination:
 
-#### qb.whereNotIn()
-This method will add a condition which its operand should not be present in a set of values.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **values** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) |
-[<QueryBuilder\>](query-builders.md#query-builder)
+```typescript
+const results = await qb.whereLike('name', 'Jo%')
+                        .whereBetween('birthdate', ['1998-01-18', '2020-11-23'])
+                        .where('email_verified', false)
+                        .get();
+// Returns all users where their name starts with 'Jo'
+// and their birthdate is between 1998-01-18 and 2020-11-23
+// and they have not verified their email
+```
 
-#### qb.whereLike()
-This method will add a condition which its operand should be like a specified pattern.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+As mentioned before, having condition methods are also available on the query builder instance when you are using groups
+in your queries. Here are a few examples of their usage:
 
-#### qb.whereNotLike()
-This method will add a condition which its operand should be like a specified pattern.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+```typescript
+const results = await qb.select('name')
+                        .selectCount('count')
+                        .groupBy('name')
+                        .having('count', '>', 3)
+                        .get();
+// Returns the names that are repeated more than 3 times
+```
 
-#### qb.whereColumn()
-This method will add a condition to compare two columns values with each other.
-- **firstColumn** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **operator** [<TOperator\>](query-builders.md#toperator) | 
-[<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **secondColumn?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-
-#### qb.whereDate()
-This method will add a condition for the date part of a date like column.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder) |
-[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
-
-#### qb.whereYear()
-This method will add a condition for the year part of a date like column.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder) |
-[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
-
-#### qb.whereMonth()
-This method will add a condition for the month part of a date like column.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder) |
-[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
-
-#### qb.whereDay()
-This method will add a condition for the day part of a date like column.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder) |
-[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
-
-#### qb.whereTime()
-This method will add a condition for the time part of a date like column.
-- **column** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type) |
-[<QueryBuilder\>](query-builders.md#query-builder) |
-[<Function\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-- **operator?** [<TOperator\>](query-builders.md#toperator) | [<TValue\>](query-builders.md#tvalue) | 
-[<QueryBuilder\>](query-builders.md#query-builder)
-- **value?** [<TValue\>](query-builders.md#tvalue) | [<QueryBuilder\>](query-builders.md#query-builder)
-
-#### qb.whereRaw()
-This method will add a raw query as a condition to your final query.
+To learn more about available methods and their usage, please read [Condition Builders](#condition-builders) of this page.
 
 ### Order
 #### qb.orderBy()
@@ -329,25 +266,6 @@ const userDailyPosts = qb.selectCount('daily_posts')
 :::caution
 The raw queries will be added to the final query untouched, so **use it if you know what you are doing**.
 :::
-
-### Group Conditions
-#### qb.having()
-#### qb.havingNull()
-#### qb.havingNotNull()
-#### qb.havingBetween()
-#### qb.havingNotBetween()
-#### qb.havingIn()
-#### qb.havingNotIn()
-#### qb.havingLike()
-#### qb.havingNotLike()
-#### qb.havingColumn()
-#### qb.havingDate()
-#### qb.havingYear()
-#### qb.havingMonth()
-#### qb.havingDay()
-#### qb.havingTime()
-#### qb.havingRaw()
-
 
 ### Offset
 #### qb.offset()
@@ -770,7 +688,6 @@ The full query builder options explanation will be added to documentation later.
 ### Where Condition Builder
 ### Having Condition Builder
 ### Join Condition Builder
-
 ## Types
 ### TValue
 ### TOperator
