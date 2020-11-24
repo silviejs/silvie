@@ -178,6 +178,32 @@ const results = await qb.select('name')
 
 To learn more about available methods and their usage, please read [Condition Builders](#condition-builders) of this page.
 
+There are other conditional methods for querying soft deleted records too. You need to enable soft deletes on your query 
+builder before you try to use these methods. These methods will add the proper conditions to your queries to indicate
+how soft deleted records should be treated.
+
+#### qb.withTrashed()
+This method will allow the query to fetch all records, including soft deleted records.
+
+```typescript
+qb.withTrashed();
+```
+
+#### qb.onlyTrashed()
+This method will only fetch soft deleted records.
+
+```typescript
+qb.onlyTrashed();
+```
+
+#### qb.withoutTrashed()
+This method will only fetch records that are not soft deleted. The default behavior of query builder is not fetching
+soft deleted records.
+
+```typescript
+qb.withoutTrashed();
+```
+
 ### Order
 #### qb.orderBy()
 This method will order the results by a given column. The direction can be specified by the second parameter which 
