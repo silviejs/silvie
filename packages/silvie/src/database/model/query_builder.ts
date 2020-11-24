@@ -355,6 +355,14 @@ export default class ModelQueryBuilder {
 		throw new Error(`'${this.name}' model does not support soft deletes`);
 	}
 
+	static withoutTrashed(): QueryBuilder {
+		if (this.useSoftDeletes) {
+			return this.baseQueryBuilder.withoutTrashed();
+		}
+
+		throw new Error(`'${this.name}' model does not support soft deletes`);
+	}
+
 	static sharedLock(): QueryBuilder {
 		return this.baseQueryBuilder.sharedLock();
 	}
