@@ -317,20 +317,18 @@ new File().path('/home/hmak/silvie').name('readme').ext('.md');
 ```
 
 ## Types
-Some typescript custom types will be described here:  
-
 ### TEncoding
-TEncoding is a that needs to be one of the following encoding names:
-- ascii
-- base64
-- binary
-- hex
-- latin1
-- ucs2
-- ucs-2
-- utf8
-- utf-8
-- utf16le
+TEncoding is a string that needs to be one of the following encoding names:
+- 'ascii'
+- 'base64'
+- 'binary'
+- 'hex'
+- 'latin1'
+- 'ucs2'
+- 'ucs-2'
+- 'utf8'
+- 'utf-8'
+- 'utf16le'
 
 ### TReadOptions
 This option can be a [TEncoding](#tencoding) or an object containing two properties:
