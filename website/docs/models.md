@@ -337,25 +337,6 @@ export default class City extends Model {
 }
 ```
 
-#### Model.belongsToMany()
-This method will create a `many-to-many` relation between to models.
-- **model** [<Model\>](models.md#model-class)
-- **foreignKey** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-- **primaryKey?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
-
-If you don't specify the primary key column, It will use the model primary key be default.
-
-```typescript
-import Model from 'silvie/database/model';
-import Admin from 'models/admin';
-
-export default class Blog extends Model {
-	static relations = {
-	    admins: Model.belongsToMany(Admin, 'admin_id')
-    };
-}
-```
-
 #### Model.with()
 This method specifies which relations should be fetched along with the current model. The specified relation names 
 should be defined in the `relations` static property of your model class.   
@@ -369,12 +350,12 @@ const us = await Country.with('flag', 'states', 'states.cities')
                        .where('code', 'US')
                        .first();
 
-console.log(us.states); // -> [{name: 'Alabama', ...}, {name: 'Alaska', ...}, ...]
+console.log(us.states); // -> [{ name: 'Alabama', ... }, { name: 'Alaska', ... }, ...]
 
 const [alabama] = us.states;
-console.log(alabama.cities); // -> [{name: 'Abbeville', ...}, {name: 'Adamsville', ...}, ...]
+console.log(alabama.cities); // -> [{ name: 'Abbeville', ... }, { name: 'Adamsville', ... }, ...]
 
-console.log(us.flag); // -> {filename: '/uploads/flags/us.png', ...}
+console.log(us.flag); // -> { filename: '/uploads/flags/us.png', ... }
 ```
 
 
