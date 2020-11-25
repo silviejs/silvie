@@ -15,6 +15,7 @@ module.exports = {
             'graphql',
             'database',
             'storage',
+            'mail',
         ],
         'HTTP': [
             'controllers',
