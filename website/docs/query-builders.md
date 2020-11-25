@@ -649,6 +649,11 @@ keys or not. Otherwise, it will throw a database error if you are inserting a du
 - **data** [<Array\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 - **ignore?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
 
+The keys of the first object in the array will be used to form the insertion query, so you need to keep those objects 
+integrated. The keys must be same as the first one. 
+- If you have other keys that doesn't exist on the first object, they won't be used.
+- If the keys of the first object are missing from other objects it will throw an error.
+
 ```typescript
 new QueryBuilder('users').insert([
     {
