@@ -51,6 +51,7 @@ export default class User extends Model {
 }
 ``` 
 
+
 ### Query Builder
 The models came to help you with your query builders. The model class will create a base query builder that is 
 configured to work with the table belonging to that model. It also registers a data processor callback on the query 
@@ -93,6 +94,7 @@ export default class User extends Model {
 }
 ```
 
+
 ### Constructor
 The model constructor accepts an `object` as its only parameter to initialize a new instance with that initial data. It
 acts like casting that object into an instance of the model. This behavior will also be used to cast database results.
@@ -105,6 +107,7 @@ const user = new User({
     age: 22,
 });
 ```
+
 
 ### Properties
 #### Model.tableName
@@ -143,8 +146,61 @@ names, and their value must be a model relation. This will be discussed in detai
 
 ### Fetch
 #### Model.all()
+This method will fetch all records from the table, and returns an array of your model type.
+
+```typescript
+User.all();
+// returns all users in an array
+```
+
 #### Model.find()
+This method will search for a value on primary key column and returns that record. If the record was not found in the
+database, it will return `null`; 
+- **id** [<TBaseValue\>](query-builders.md#tbasevalue) | [<TBaseValue[]\>](query-builders.md#tbasevalue)
+
+If you only have a single column for your primary key, you will only need to pass a single value to the `id` parameter.
+But, if you have multiple columns for your primary key, you need to pass an array of values in the same order of your 
+primary keys to the `id` parameter.
+
+```typescript
+User.find(41);
+// Returns the user with id 41
+```
+
+Saying we have a `PostRating` model which contains a foreign key for the user id and another foreign key for the 
+post id which they are also primary keys. `primaryKey = ['user_id', 'post_id']`. The following code example will
+return a post rating which belongs to user `12` and post `7`.
+
+```typescript
+PostRating.find([12, 7]);
+```
+
 #### Model.findAll()
+This method will take one or more keys to look for. Then it will return the records that was found with those given ids.
+- **ids** [<TBaseValue[]\>](query-builders.md#tbasevalue) | [<TBaseValue[][]\>](query-builders.md#tbasevalue)
+
+```typescript
+User.find(1, 5, 10);
+// Returns the users with ids 1, 5, 10
+```
+
+```typescript
+PostRating.find([12, 7], [13, 2], [1, 5]);
+// Returns the post ratings with those key combinations
+```
+
+In addition to these methods you can always use the query builder methods on the model class to fetch your records from 
+the database. However, it will be a little painful to handle complex primary keys to find what you are looking for. Take 
+a look at the following code examples:
+
+```typescript
+User.whereIn(id, [1, 5, 10]).get();
+// Returns the users with ids 1, 5, 10
+
+Post.whereLike('title', '%New York%').first();
+// Fetches the first post with a title
+// containing 'New York'
+``` 
 
 
 ### Insert
