@@ -304,9 +304,10 @@ export default class ModelQueryBuilder {
 	/**
 	 * Insert a data array into the table and return with [LastInsertId, AffectedRows]
 	 * @param data
+	 * @param ignore Weather to ignore duplicate keys or not
 	 */
-	static insert(data: any[]): Promise<[number, number]> {
-		return this.baseQueryBuilder.insert(data);
+	static insert(data: any[], ignore?: boolean): Promise<[number, number]> {
+		return this.baseQueryBuilder.insert(data, ignore);
 	}
 
 	/**
