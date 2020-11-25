@@ -41,66 +41,6 @@ class Model extends ModelQueryBuilder implements IModel {
 	}
 
 	/**
-	 * Insert a data array into the table and return with [LastInsertId, AffectedRows]
-	 * @param data
-	 */
-	static insert(data: any[]): Promise<[number, number]> {
-		return this.baseQueryBuilder.insert(data);
-	}
-
-	/**
-	 * Delete a record of this kind (uses soft delete if it is enabled in model)
-	 * @param id
-	 */
-	static delete(id: TBaseValue | TBaseValue[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).delete(this.useSoftDeletes);
-	}
-
-	/**
-	 * Delete all the records of this kind (uses soft delete if it is enabled in model)
-	 * @param ids
-	 */
-	static deleteAll(...ids: (TBaseValue | TBaseValue[])[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, ids).delete(this.useSoftDeletes);
-	}
-
-	/**
-	 * Restore a soft deleted record of this kind
-	 * @param id
-	 */
-	static restore(id: TBaseValue | TBaseValue[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).restore();
-	}
-
-	/**
-	 * Restore soft deleted records of this kind
-	 * @param ids
-	 */
-	static restoreAll(...ids: (TBaseValue | TBaseValue[])[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, ids).delete(this.useSoftDeletes);
-	}
-
-	static bulkUpdate(data: any[], keys: string[] = [], silent = false): Promise<any> {
-		return this.baseQueryBuilder.bulkUpdate(data, keys, silent);
-	}
-
-	/**
-	 * Delete a record of this kind
-	 * @param id
-	 */
-	static forceDelete(id: TBaseValue | TBaseValue[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).delete();
-	}
-
-	/**
-	 * Delete all the records of this kind
-	 * @param ids
-	 */
-	static forceDeleteAll(...ids: (TBaseValue | TBaseValue[])[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, ids).delete();
-	}
-
-	/**
 	 * Fill this instance with the provided data
 	 * @param data
 	 */
