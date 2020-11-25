@@ -42,7 +42,6 @@ module.exports = {
         ],
         'Testing': [
             'unit-tests',
-            'end-to-end-tests',
         ]
     },
 };
