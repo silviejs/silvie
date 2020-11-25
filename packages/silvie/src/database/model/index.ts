@@ -1,4 +1,5 @@
 import ModelQueryBuilder, { IModel } from 'src/database/model/query_builder';
+import { TBaseValue } from 'src/database/builders/condition';
 
 class Model extends ModelQueryBuilder implements IModel {
 	/**
@@ -12,13 +13,13 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * Find a record in the table with the given id
 	 * @param id
 	 */
-	static async find(id: any): Promise<Model> {
+	static async find(id: TBaseValue | TBaseValue[]): Promise<Model> {
 		const result = await this.primaryKeyCondition(this.baseQueryBuilder, null, id).first();
 
 		return result ? (this.cast(result) as Model) : null;
 	}
 
-	static async findAll(...ids: any[]): Promise<Model[]> {
+	static async findAll(...ids: (TBaseValue | TBaseValue[])[]): Promise<Model[]> {
 		const results = await this.primaryKeyCondition(this.baseQueryBuilder, null, ids).get();
 
 		return results.length > 0 ? (this.castAll(results) as Model[]) : [];
@@ -51,7 +52,7 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * Delete a record of this kind (uses soft delete if it is enabled in model)
 	 * @param id
 	 */
-	static delete(id: any): Promise<number> {
+	static delete(id: TBaseValue | TBaseValue[]): Promise<number> {
 		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).delete(this.useSoftDeletes);
 	}
 
@@ -59,7 +60,7 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * Delete all the records of this kind (uses soft delete if it is enabled in model)
 	 * @param ids
 	 */
-	static deleteAll(...ids: any[]): Promise<number> {
+	static deleteAll(...ids: (TBaseValue | TBaseValue[])[]): Promise<number> {
 		return this.primaryKeyCondition(this.baseQueryBuilder, null, ids).delete(this.useSoftDeletes);
 	}
 
@@ -67,7 +68,7 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * Restore a soft deleted record of this kind
 	 * @param id
 	 */
-	static restore(id: any): Promise<number> {
+	static restore(id: TBaseValue | TBaseValue[]): Promise<number> {
 		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).restore();
 	}
 
@@ -75,7 +76,7 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * Restore soft deleted records of this kind
 	 * @param ids
 	 */
-	static restoreAll(...ids: any[]): Promise<number> {
+	static restoreAll(...ids: (TBaseValue | TBaseValue[])[]): Promise<number> {
 		return this.primaryKeyCondition(this.baseQueryBuilder, null, ids).delete(this.useSoftDeletes);
 	}
 
@@ -87,7 +88,7 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * Delete a record of this kind
 	 * @param id
 	 */
-	static forceDelete(id: any): Promise<number> {
+	static forceDelete(id: TBaseValue | TBaseValue[]): Promise<number> {
 		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).delete();
 	}
 
@@ -95,7 +96,7 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * Delete all the records of this kind
 	 * @param ids
 	 */
-	static forceDeleteAll(...ids: any[]): Promise<number> {
+	static forceDeleteAll(...ids: (TBaseValue | TBaseValue[])[]): Promise<number> {
 		return this.primaryKeyCondition(this.baseQueryBuilder, null, ids).delete();
 	}
 
