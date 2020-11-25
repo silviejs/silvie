@@ -205,7 +205,50 @@ Post.whereLike('title', '%New York%').first();
 
 ### Insert
 #### Model.create()
+This method will create a record in the database with the given object keys and values.    
+- **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+- **shouldReturn?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `true`
+
+Indicating weather to return the created record after it was created or not. This will make an extra query on the 
+database. So set it to `false` if you don't want to use it after the creation. If the value of this parameter is `false`
+then it will return the id of the inserted record.
+
+```typescript
+User.create({
+    name: 'Sonya',
+    family: 'Grats',
+    age: 19
+});
+```
+
 #### Model.insert()
+This method will create multiple records in the database. 
+- **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+The keys of the first object in the array will be used to form the insertion query, so you need to keep those objects 
+integrated. The keys must be same as the first one. 
+- If you have other keys that doesn't exist on the first object, they won't be used.
+- If the keys of the first object are missing from other objects it will throw an error.
+
+```typescript
+User.insert([
+    {
+        name: 'George',
+        family: 'Jordan',
+        age: 12
+    },
+    {
+        name: 'Desmond',
+        family: 'Simons',
+        age: 25
+    },
+    {
+        name: 'Samantha',
+        family: 'Taylor',
+        age: 27
+    }
+]);
+```
 
 
 ### Update
