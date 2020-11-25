@@ -207,7 +207,7 @@ Post.whereLike('title', '%New York%').first();
 #### Model.create()
 This method will create a record in the database with the given object keys and values.    
 - **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
-- **shouldReturn?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `true`
+- **shouldReturn?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `true`
 
 Indicating weather to return the created record after it was created or not. This will make an extra query on the 
 database. So set it to `false` if you don't want to use it after the creation. If the value of this parameter is `false`
@@ -273,17 +273,104 @@ User.insert([
 
 
 ## Model Instance
+An instance of a model have some methods to let you do some essential operations on that specific instance. 
+
 ### Delete
 #### model.delete()
+This method will delete the underlying database record. If you have enabled soft deletes on your model, it will soft 
+delete the record. Otherwise, it will remove the record from the database for good.
+
+```typescript
+const user = await User.find(4);
+
+user.delete();
+```
+
 #### model.forceDelete()
+This method will delete the record from the database without using the soft deletes even if it is enabled on the model.
+
+```typescript
+const user = await User.find(4);
+
+user.forceDelete();
+```
 
 
 ### Update
 #### model.update()
+This method will get an object and updates the database record using the object keys and values.
+- **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+- **silent?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
+
+If you don't want to touch the `updated_at` column when updating the record, you should pass a `true` value to the 
+`silent` parameter.
+
+```typescript
+const user = await User.find(4);
+
+user.update({
+    name: 'Sam',
+    age: 39
+});
+```
+
 #### model.save()
+When you are working with a model, you have access to its properties that are record fields. Use this method if you have changed the 
+model, and you want to save your changes in the database.
+- **silent?** [<boolean\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type) default: `false`
+
+```typescript
+const user = await User.find(4);
+
+user.name = 'Sam';
+user.age = 39;
+
+user.save();
+``` 
 
 
-### Other
+### Data
 #### model.fill()
+This method will assign an object entries to the model instance. This can be used to fill a model with a data object.
+- **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+```typescript
+const user = await User.find(4);
+
+user.fill({
+    name: 'Jim',
+    family: 'Valentine'
+});
+
+user.save();
+```
+
 #### model.fresh()
+This method will fetch and return a new fresh copy of the current instance from the database and returns.
+ 
+```typescript
+const user = await User.find(4);
+
+user.name = 'Kanan';
+
+const userCopy = user.fresh();
+// This will contain the original 
+// name form the database. since
+// it is a new copy
+```
+
 #### model.refresh()
+This method will reset all changes to the current instance by fetching its data from the database again. This will not 
+affect the new custom properties that you may have set on that instance. It only overrides the properties matching the
+database fields. 
+
+```typescript
+const user = await User.find(4);
+
+user.name = 'George';
+user.family = 'Walter';
+
+user.refresh();
+// The changes you've made to the user
+// will be reverted to its original.
+```
