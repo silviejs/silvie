@@ -265,11 +265,117 @@ User.insert([
 
 
 ### Relations
-#### Model.with()
+Model relations are a way to bind your models together. They are useful to fetch different entities within a single
+database query. The fetched relation data will be bundled into your reference model and will be accessible by the name
+that you provided for the relation name. Here are the relation methods that a model can have:
+
 #### Model.hasOne()
+This method will create a `one-to-one` relation between two models.
+- **model** [<Model\>](models.md#model-class)
+- **foreignKey** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **primaryKey?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+If you don't specify the primary key column, It will use the model primary key be default.
+
+```typescript
+import Model from 'silvie/database/model';
+import NationalFlag from 'models/national_flag';
+
+export default class Country extends Model {
+	static relations = {
+	    flag: Model.hasOne(NationalFlag, 'country_id')
+    };
+}
+```
+
 #### Model.hasMany()
+This method will create a `one-to-many` relation between two models.
+- **model** [<Model\>](models.md#model-class)
+- **foreignKey** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **primaryKey?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+If you don't specify the primary key column, It will use the model primary key be default.
+
+```typescript
+import Model from 'silvie/database/model';
+import State from 'models/state';
+
+export default class Country extends Model {
+	static relations = {
+	    states: Model.hasMany(State, 'country_id')
+    };
+}
+```
+
+```typescript
+import Model from 'silvie/database/model';
+import City from 'models/city';
+
+export default class State extends Model {
+	static relations = {
+	    cities: Model.hasMany(City, 'state_id')
+    };
+}
+```
+
 #### Model.belongsTo()
+This method will create a reversed `one-to-many` relation between two models.
+- **model** [<Model\>](models.md#model-class)
+- **foreignKey** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **primaryKey?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+If you don't specify the primary key column, It will use the model primary key be default.
+
+```typescript
+import Model from 'silvie/database/model';
+import State from 'models/state';
+
+export default class City extends Model {
+	static relations = {
+	    state: Model.belongsTo(State, 'state_id')
+    };
+}
+```
+
 #### Model.belongsToMany()
+This method will create a `many-to-many` relation between to models.
+- **model** [<Model\>](models.md#model-class)
+- **foreignKey** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+- **primaryKey?** [<string\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+If you don't specify the primary key column, It will use the model primary key be default.
+
+```typescript
+import Model from 'silvie/database/model';
+import Admin from 'models/admin';
+
+export default class Blog extends Model {
+	static relations = {
+	    admins: Model.belongsToMany(Admin, 'admin_id')
+    };
+}
+```
+
+#### Model.with()
+This method specifies which relations should be fetched along with the current model. The specified relation names 
+should be defined in the `relations` static property of your model class.   
+- **...relationNames** [<string[]\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type)
+
+Note that if you want to fetch nested relations on a model, you are able to write nested relation names in this method 
+by joining their name with a dot sign `'.'`. Take a look at the following example:
+
+```typescript
+const us = await Country.with('flag', 'states', 'states.cities')
+                       .where('code', 'US')
+                       .first();
+
+console.log(us.states); // -> [{name: 'Alabama', ...}, {name: 'Alaska', ...}, ...]
+
+const [alabama] = us.states;
+console.log(alabama.cities); // -> [{name: 'Abbeville', ...}, {name: 'Adamsville', ...}, ...]
+
+console.log(us.flag); // -> {filename: '/uploads/flags/us.png', ...}
+```
 
 
 ## Model Instance
