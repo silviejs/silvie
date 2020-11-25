@@ -71,6 +71,11 @@ Post.leftJoin('users', 'users.id', 'posts.user_id').get();
 // Fetches all posts joined with their user
 ```
 
+:::note
+We are not going to go through all these methods since they are exactly the same as their query builder equivalents. 
+Read more about query builder methods on [Query Builder](query-builders.md#query-builder) section.
+:::
+
 #### Model.baseQueryBuilder
 If you want to access the configured query builder of you model you can use this property.
 
@@ -177,7 +182,7 @@ PostRating.find([12, 7]);
 
 #### Model.findAll()
 This method will take one or more keys to look for. Then it will return the records that was found with those given ids.
-- **ids** [<TBaseValue[]\>](query-builders.md#tbasevalue) | [<TBaseValue[][]\>](query-builders.md#tbasevalue)
+- **...ids** [<TBaseValue[]\>](query-builders.md#tbasevalue) | [<TBaseValue[][]\>](query-builders.md#tbasevalue)
 
 ```typescript
 User.find(1, 5, 10);
@@ -203,7 +208,7 @@ Post.whereLike('title', '%New York%').first();
 ``` 
 
 
-### Insert
+### Create
 #### Model.create()
 This method will create a record in the database with the given object keys and values.    
 - **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
@@ -221,48 +226,59 @@ User.create({
 });
 ```
 
-#### Model.insert()
-This method will create multiple records in the database. 
-- **data** [<object\>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
-
-The keys of the first object in the array will be used to form the insertion query, so you need to keep those objects 
-integrated. The keys must be same as the first one. 
-- If you have other keys that doesn't exist on the first object, they won't be used.
-- If the keys of the first object are missing from other objects it will throw an error.
-
-```typescript
-User.insert([
-    {
-        name: 'George',
-        family: 'Jordan',
-        age: 12
-    },
-    {
-        name: 'Desmond',
-        family: 'Simons',
-        age: 25
-    },
-    {
-        name: 'Samantha',
-        family: 'Taylor',
-        age: 27
-    }
-]);
-```
-
-
-### Update
-#### Model.bulkUpdate()
-
 
 ### Delete
 #### Model.delete()
-#### Model.deleteAll()
-#### Model.restore()
-#### Model.restoreAll()
-#### Model.forceDelete()
-#### Model.forceDeleteAll()
+This method will delete a record of that model using the given id. If you have enabled soft deletes in your model, it 
+will use that to delete the record. Otherwise, the record will be deleted physically from the database.
+- **id** [<TBaseValue\>](query-builders.md#tbasevalue) | [<TBaseValue[]\>](query-builders.md#tbasevalue)
 
+```typescript
+User.delete(5);
+```
+
+#### Model.deleteAll()
+This method will take an array ids as its parameters, and deletes all records found with those ids. If you have
+enabled soft deletes, the records will be soft deleted. Otherwise, they will be deleted physically.
+- **...ids** [<TBaseValue[]\>](query-builders.md#tbasevalue) | [<TBaseValue[][]\>](query-builders.md#tbasevalue)
+
+```typescript
+User.deleteAll(5, 6, 7);
+```
+
+#### Model.restore()
+This method will restore a soft deleted record with a given id. It only works if you have enabled soft deletes on your 
+model. 
+- **id** [<TBaseValue\>](query-builders.md#tbasevalue) | [<TBaseValue[]\>](query-builders.md#tbasevalue)
+
+```typescript
+User.restore(6);
+```
+
+#### Model.restoreAll()
+This method will restore soft deleted records found with the give ids in its parameters. This only works if your have 
+enabled soft deletes on your model. 
+- **...ids** [<TBaseValue[]\>](query-builders.md#tbasevalue) | [<TBaseValue[][]\>](query-builders.md#tbasevalue)
+
+```typescript
+User.restoreAll(4, 5, 7);
+```
+
+#### Model.forceDelete()
+This method will get an id and deletes the underlying record found with that id.
+- **id** [<TBaseValue\>](query-builders.md#tbasevalue) | [<TBaseValue[]\>](query-builders.md#tbasevalue)
+
+```typescript
+User.forceDelete(10);
+```
+
+#### Model.forceDeleteAll()
+This method will delete records found with the given ids from the database.
+- **...ids** [<TBaseValue[]\>](query-builders.md#tbasevalue) | [<TBaseValue[][]\>](query-builders.md#tbasevalue)
+
+```typescript
+User.forceDeleteAll(7, 8, 9);
+```
 
 ### Relations
 Model relations are a way to bind your models together. They are useful to fetch different entities within a single
