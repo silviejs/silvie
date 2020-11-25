@@ -79,6 +79,10 @@ class Model extends ModelQueryBuilder implements IModel {
 		return this.primaryKeyCondition(this.baseQueryBuilder, null, ids).delete(this.useSoftDeletes);
 	}
 
+	static bulkUpdate(data: any[], keys: string[] = [], silent = false): Promise<any> {
+		return this.baseQueryBuilder.bulkUpdate(data, keys, silent);
+	}
+
 	/**
 	 * Delete a record of this kind
 	 * @param id
