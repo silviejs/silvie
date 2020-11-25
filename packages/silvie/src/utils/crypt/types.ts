@@ -1,5 +1,5 @@
-export type THashDigestType = 'latin1' | 'hex' | 'base64';
-export type TCipherDigestType =
+export type THashDigest = 'latin1' | 'hex' | 'base64';
+export type TCipherDigest =
 	| 'ascii'
 	| 'utf8'
 	| 'utf-8'
@@ -13,6 +13,7 @@ export type TCipherDigestType =
 
 export type TData =
 	| string
+	| Buffer
 	| Uint8Array
 	| Uint8ClampedArray
 	| Uint16Array
