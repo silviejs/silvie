@@ -50,6 +50,14 @@ export default class Crypt {
 	}
 
 	/**
+	 * Generate a buffer with random bytes
+	 * @param length
+	 */
+	static randomBytes(length): Buffer {
+		return crypto.randomBytes(length);
+	}
+
+	/**
 	 * Encrypt a data with a key and iv
 	 * @param data
 	 * @param key Encryption key
