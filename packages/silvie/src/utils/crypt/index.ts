@@ -107,7 +107,7 @@ export default class Crypt {
 
 		try {
 			const ivBuffer = iv instanceof Buffer ? iv : Buffer.from(iv, digest || 'hex');
-			const keyBuffer = key instanceof Buffer ? key : Buffer.from(key);
+			const keyBuffer = key instanceof Buffer ? key : Buffer.from(key, digest || 'hex');
 			const encryptedBuffer = typeof data === 'string' ? Buffer.from(data, digest || 'hex') : data;
 
 			const decipher = crypto.createDecipheriv(algorithm, keyBuffer, ivBuffer);
