@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { THashDigestType, TCipherDigestType, TData, THashMethod, TCipherMethod } from 'src/utils/crypt/types';
+import { THashDigest, TCipherDigest, TData, THashMethod, TCipherMethod } from 'src/utils/crypt/types';
 
 export default class Crypt {
 	/**
@@ -26,7 +26,7 @@ export default class Crypt {
 	 * @param algorithm Hashing algorithm (defaults to sha256)
 	 * @param digest returning digest type (defaults to hex)
 	 */
-	static hash(data: TData, algorithm?: THashMethod, digest?: THashDigestType): string {
+	static hash(data: TData, algorithm?: THashMethod, digest?: THashDigest): string {
 		return crypto
 			.createHash(algorithm || 'sha256')
 			.update(data)
@@ -61,7 +61,7 @@ export default class Crypt {
 		data: TData,
 		key: string | Buffer,
 		algorithm: TCipherMethod,
-		digest?: TCipherDigestType,
+		digest?: TCipherDigest,
 		IVLength = 16
 	): { iv: string; data: string } {
 		if (key === undefined) {
@@ -91,7 +91,7 @@ export default class Crypt {
 		key: string | Buffer,
 		iv: string | Buffer,
 		algorithm: TCipherMethod,
-		digest?: TCipherDigestType
+		digest?: TCipherDigest
 	) {
 		if (key === undefined || iv === undefined) {
 			throw new Error('Cannot decrypt without the Key and IV');
