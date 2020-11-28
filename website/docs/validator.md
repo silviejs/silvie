@@ -78,6 +78,8 @@ A rule string is a string with rule names separated with a pipe line character `
 they can be specified by separating the parameters from the rule name with a colon character `:`. Multiple parameters 
 can also be separated with a comma character `,`. 
 
+You can find a full list of available validation rules in [Validation Rules](validation-rules.md) section.
+
 ```typescript
 const rules = {
     phone: 'requiredWithout:email|phone:en-US',
@@ -147,3 +149,12 @@ The fourth one will reach the `friends` property in the root object, then it wil
 of `friends` array.
 
 In all these three steps, searching will be cancelled if something is missing along the path.
+
+
+### Errors
+After you've created a validator instance, the data will be validated against the rules object. If anything fails during
+the validation, an error message will be added to the `errors` parameter of the validator instance. Also, another 
+parameter `hasErrors` which will be `true` indicating if anything failed in validation.
+
+The `errors` parameter is an object with the keys that matches the data names, and their values will be a `string array` 
+in case a data had more than one issue.
