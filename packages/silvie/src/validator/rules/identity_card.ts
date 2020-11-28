@@ -4,7 +4,7 @@ import { isIdentityCard } from 'validator';
 
 @rule('identityCard')
 export default class IdentityCardRule implements IValidationRule {
-	validate(validator: Validator, name: string, value: any, locale = 'fa-IR'): boolean {
+	validate(validator: Validator, name: string, value: any, locale: string): boolean {
 		if (locale === 'fa_IR') {
 			if (!/^\d{10}$/.test(value)) {
 				return false;
@@ -20,6 +20,7 @@ export default class IdentityCardRule implements IValidationRule {
 
 			return r < 2 ? c === r : c === 11 - r;
 		}
+
 		return isIdentityCard(value, locale);
 	}
 }
