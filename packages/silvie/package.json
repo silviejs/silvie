@@ -1,7 +1,7 @@
 {
 	"name": "silvie",
-	"version": "0.0.47",
-	"description": "Silvie Back-end Framework",
+	"version": "0.1.0",
+	"description": "Typescript Back-end Framework",
 	"main": "bootstrap/index.js",
 	"typings": "bootstrap/index.d.ts",
 	"bin": "cli/index.js",
