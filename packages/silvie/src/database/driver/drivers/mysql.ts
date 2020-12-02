@@ -216,7 +216,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 				if (condition.type === 'raw') {
 					params.push(...condition.params);
-					return condition.query;
+					clause += condition.query;
+
+					return clause;
 				}
 
 				if (condition.type === 'group') {
