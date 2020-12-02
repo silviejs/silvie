@@ -879,10 +879,6 @@ export default class QueryBuilder {
 		operator?: TOperator | TValue | QueryBuilder,
 		rhs?: TColumn | TValue | QueryBuilder
 	) {
-		if (this.options.where.length === 0 && relation === 'or') {
-			throw new Error(`You cannot use conditions with or relation as the first where condition`);
-		}
-
 		const condition: ICondition = { type, relation };
 
 		if (lhs instanceof Function) {
@@ -1098,10 +1094,6 @@ export default class QueryBuilder {
 	}
 
 	orWhereRaw(query: string, params?: TBaseValue[]): QueryBuilder {
-		if (this.options.where.length === 0) {
-			throw new Error(`You cannot use conditions with or relation as the first where condition`);
-		}
-
 		this.options.where.push({
 			type: 'raw',
 			relation: 'or',
@@ -1119,10 +1111,6 @@ export default class QueryBuilder {
 		operator?: TOperator | TValue | QueryBuilder,
 		rhs?: TColumn | TValue | QueryBuilder
 	) {
-		if (this.options.where.length === 0 && relation === 'or') {
-			throw new Error(`You cannot use conditions with or relation as the first having condition`);
-		}
-
 		const condition: ICondition = { type, relation };
 
 		if (lhs instanceof Function) {
@@ -1338,10 +1326,6 @@ export default class QueryBuilder {
 	}
 
 	orHavingRaw(query: string, params?: TBaseValue[]): QueryBuilder {
-		if (this.options.where.length === 0) {
-			throw new Error(`You cannot use conditions with or relation as the first having condition`);
-		}
-
 		this.options.having.push({
 			type: 'raw',
 			relation: 'or',

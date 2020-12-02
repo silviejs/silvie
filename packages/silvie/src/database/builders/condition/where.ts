@@ -23,10 +23,6 @@ export default class WhereConditionBuilder implements IConditionBuilder {
 		operator?: TOperator | TValue | QueryBuilder,
 		rhs?: TColumn | TValue | QueryBuilder
 	) {
-		if (this.conditions.length === 0 && relation === 'or') {
-			throw new Error(`You cannot use conditions with or relation as the first condition in WhereConditionBuilder`);
-		}
-
 		const condition: ICondition = { type, relation };
 
 		if (lhs instanceof Function) {
@@ -251,10 +247,6 @@ export default class WhereConditionBuilder implements IConditionBuilder {
 	}
 
 	orWhereRaw(query: string, params?: TBaseValue[]): WhereConditionBuilder {
-		if (this.conditions.length === 0) {
-			throw new Error(`You cannot use conditions with or relation as the first condition in WhereConditionBuilder`);
-		}
-
 		this.conditions.push({
 			type: 'raw',
 			relation: 'or',

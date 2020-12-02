@@ -23,10 +23,6 @@ export default class JoinConditionBuilder implements IConditionBuilder {
 		operator?: TOperator | TValue | QueryBuilder,
 		rhs?: TColumn | TValue | QueryBuilder
 	) {
-		if (this.conditions.length === 0 && relation === 'or') {
-			throw new Error(`You cannot use conditions with or relation as the first condition in JoinConditionBuilder`);
-		}
-
 		const condition: ICondition = { type, relation };
 
 		if (lhs instanceof Function) {
@@ -245,10 +241,6 @@ export default class JoinConditionBuilder implements IConditionBuilder {
 	}
 
 	orOnRaw(query: string, params?: TBaseValue[]): JoinConditionBuilder {
-		if (this.conditions.length === 0) {
-			throw new Error(`You cannot use conditions with or relation as the first condition in JoinConditionBuilder`);
-		}
-
 		this.conditions.push({
 			type: 'raw',
 			relation: 'or',
