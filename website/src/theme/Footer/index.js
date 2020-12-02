@@ -1,5 +1,6 @@
 import React from 'react';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import { Link } from 'react-router-dom';
+import styles from './styles.module.scss';
 
 const links = {
     docs: {
@@ -9,31 +10,52 @@ const links = {
         'HTTP': '/docs/controllers',
         'GraphQL': '/docs/graphql',
         'Database': '/docs/migrations',
-        'Validation': '/docs/validator',
-        'Security': '/docs/authentication',
-        'Testing': '/docs/unit-tests',
+    },
+    contribute: {
+        'Contribution Guide': '/docs/contribution',
+        'Code of Conduct': 'https://github.com/silviejs/silvie/blob/main/CODE_OF_CONDUCT.md',
+    },
+    source: {
+        'GitHub': 'https://github.com/silviejs/silvie',
+        'NPM': 'https://www.npmjs.com/package/silvie',
     }
 };
 
 export default () => {
     return (
-        <footer>
-            <small>Copyright &copy; <a href="https://github.com/hmak-me">hmak-me</a></small>
+        <footer className={styles.footer}>
+            <img className={styles.logo} src="/img/logo.svg" alt="Logo"/>
 
-            <section className="links">
-                {Object.keys(links).map((groupKey) => (
-                    <div className="group" key={groupKey}>
-                        <h3>{groupKey}</h3>
-                        <ul>
-                            {Object.keys(links[groupKey]).map((linkKey) => (
-                                <li key={linkKey}>
-                                    <a href={useBaseUrl(links[groupKey][linkKey])}>{linkKey}</a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
-            </section>
+            <nav>
+                {Object.keys(links).map((groupKey) => {
+                    const group = links[groupKey];
+
+                    return (
+                        <section key={groupKey}>
+                            <h4>{groupKey}</h4>
+                            <ul>
+                                {Object.keys(group).map((linkKey) => {
+                                    const link = group[linkKey];
+                                    return (
+                                        <li key={linkKey}>
+                                            {link.startsWith('http') ? (
+                                                <a href={link}>{linkKey}</a>
+                                            ) : (
+                                                <Link to={link}>{linkKey}</Link>
+                                            )}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </section>
+                    )
+                })}
+            </nav>
+
+            <small>
+                Copyright &copy; 2020
+                <a href="https://github.com/hmak-me">hmak-me</a>
+            </small>
         </footer>
     );
 };

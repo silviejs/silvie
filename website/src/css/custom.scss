@@ -10,13 +10,13 @@
 $brandColor: $materialLightBlue;
 
 :root {
-  --ifm-color-primary-darkest: #{darken($brandColor, 30%)};
-  --ifm-color-primary-darker: #{darken($brandColor, 20%)};
-  --ifm-color-primary-dark: #{darken($brandColor, 10%)};
-  --ifm-color-primary: #{$brandColor};
-  --ifm-color-primary-light: #{lighten($brandColor, 10%)};
-  --ifm-color-primary-lighter: #{lighten($brandColor, 20%)};
-  --ifm-color-primary-lightest: #{lighten($brandColor, 30%)};
+  --ifm-color-primary: #03a9f4;
+  --ifm-color-primary-dark: #0398dc;
+  --ifm-color-primary-darker: #0390cf;
+  --ifm-color-primary-darkest: #0276ab;
+  --ifm-color-primary-light: #14b4fc;
+  --ifm-color-primary-lighter: #20b8fc;
+  --ifm-color-primary-lightest: #44c3fd;
   --ifm-code-font-size: 95%;
 
   --ifm-link-color: #{darken($brandColor, 5%)};

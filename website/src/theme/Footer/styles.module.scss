@@ -1,0 +1,68 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: var(--ifm-background-surface-color);
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+
+  .logo {
+    width: 450px;
+    margin-bottom: 20px;
+    position: absolute;
+    top: -80px;
+    left: -40px;
+    opacity: 0.25;
+    filter: blur(35px);
+  }
+
+  nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 100px;
+    padding: 50px;
+
+    section {
+      h4 {
+        text-transform: uppercase;
+      }
+
+      ul {
+        padding: 0 0 0 5px;
+        list-style-type: none;
+
+        li {
+          color: var(--ifm-color-gray-600);
+
+          &:hover {
+            color: var(--ifm-color-primary);
+          }
+
+          a {
+            color: inherit;
+          }
+        }
+      }
+    }
+  }
+
+  small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    border-top: 1px solid var(--ifm-color-emphasis-100);
+    padding: 20px;
+
+    a {
+      margin-left: 5px;
+    }
+  }
+}
+
+@keyframes logo-hue {
+  0% {filter: blur(30px) hue-rotate(0deg)}
+  50% {filter: blur(30px) hue-rotate(360deg)}
+  0% {filter: blur(30px) hue-rotate(0deg)}
+}
