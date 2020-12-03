@@ -24,8 +24,6 @@ const links = {
 export default () => {
     return (
         <footer className={styles.footer}>
-            <img className={styles.logo} src="/img/logo.svg" alt="Logo"/>
-
             <nav>
                 {Object.keys(links).map((groupKey) => {
                     const group = links[groupKey];
