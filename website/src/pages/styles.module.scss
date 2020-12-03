@@ -97,4 +97,34 @@
       }
     }
   }
+
+  .featuresSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 100px;
+
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      margin-top: 50px;
+
+      .feature {
+        display: flex;
+        align-items: center;
+        padding: 50px;
+
+        .illustration {
+          width: 180px;
+          margin-right: 20px;
+        }
+
+        .info {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+  }
 }
