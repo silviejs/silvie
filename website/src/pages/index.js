@@ -40,7 +40,7 @@ function Home() {
 
                     <section className={styles.features}>
                         <div className={`${styles.tsready} ${styles.feature}`}>
-                            <img className={styles.illustration} src="/static/img/server-status.svg"
+                            <img className={styles.illustration} src="/img/server-status.svg"
                                  alt="Server Status"/>
 
                             <div className={styles.info}>
@@ -50,7 +50,7 @@ function Home() {
                             </div>
                         </div>
                         <div className={`${styles.graphql} ${styles.feature}`}>
-                            <img className={styles.illustration} src="/static/img/artificial-intelligence.svg"
+                            <img className={styles.illustration} src="/img/artificial-intelligence.svg"
                                  alt="Artificial Intelligence"/>
 
                             <div className={styles.info}>
@@ -61,7 +61,7 @@ function Home() {
                             </div>
                         </div>
                         <div className={`${styles.mvc} ${styles.feature}`}>
-                            <img className={styles.illustration} src="/static/img/folder-searching.svg"
+                            <img className={styles.illustration} src="/img/folder-searching.svg"
                                  alt="Folder Structure"/>
 
                             <div className={styles.info}>
@@ -71,7 +71,7 @@ function Home() {
                             </div>
                         </div>
                         <div className={`${styles.fastdev} ${styles.feature}`}>
-                            <img className={styles.illustration} src="/static/img/moving-forward.svg"
+                            <img className={styles.illustration} src="/img/moving-forward.svg"
                                  alt="Moving Forward"/>
 
                             <div className={styles.info}>
