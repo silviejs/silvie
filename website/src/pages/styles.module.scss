@@ -49,29 +49,55 @@
       }
     }
 
-    h1 {
-      font-size: 120px;
-      line-height: 1;
+    .content {
       position: relative;
       z-index: 1;
-    }
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-    p {
-      text-transform: uppercase;
-      font-size: 1.1em;
-      font-weight: 500;
-      color: var(--ifm-color-emphasis-700);
-      letter-spacing: 2px;
-      margin-top: 0;
-      position: relative;
-      z-index: 1;
-
-      .ts {
-        color: #007acc;
+      h1 {
+        font-size: 120px;
+        line-height: 1;
       }
 
-      .njs {
-        color: #68A063;
+      p {
+        text-transform: uppercase;
+        font-size: 1.1em;
+        font-weight: 500;
+        color: var(--ifm-color-emphasis-700);
+        letter-spacing: 2px;
+        margin-top: 0;
+
+        .ts {
+          color: #007acc;
+        }
+
+        .njs {
+          color: #68A063;
+        }
+      }
+
+      a {
+        color: var(--ifm-color-emphasis-800);
+        margin-top: 20px;
+        padding: 10px 30px;
+        border: 1px solid var(--ifm-color-emphasis-500);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: 0.3s;
+
+        &:hover {
+          color: var(--ifm-color-emphasis-1000);
+          border-color: var(--ifm-color-emphasis-700);
+        }
+
+        svg {
+          height: 18px;
+          margin-left: 15px;
+        }
       }
     }
 
@@ -123,6 +149,81 @@
         .info {
           display: flex;
           flex-direction: column;
+        }
+      }
+    }
+  }
+}
+
+
+@media only screen and (max-width: 1300px) {
+  .homePage {
+    .featuresSection {
+      max-width: 1000px;
+      margin: 0 auto;
+
+      .features {
+        margin-top: 0;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 1fr);
+
+        .feature {
+          padding: 25px 50px;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .homePage {
+    .firstSection {
+
+
+      .bubbles {
+        > * {
+          width: 350px;
+        }
+
+        .ts {
+          transform: translate(-550px, -110px);
+        }
+      }
+
+      .content {
+        h1 {
+          font-size: 80px;
+        }
+        p {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    }
+
+    .featuresSection {
+      padding: 100px 50px;
+
+      .features {
+        .feature {
+          padding: 25px;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .homePage {
+    .featuresSection {
+      .features {
+        .feature {
+          padding: 10px 0;
+
+          .illustration {
+            width: 20vw;
+          }
         }
       }
     }
