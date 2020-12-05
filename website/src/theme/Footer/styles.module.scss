@@ -6,16 +6,6 @@
   background: var(--ifm-background-surface-color);
   border-top: 1px solid var(--ifm-color-emphasis-200);
 
-  .logo {
-    width: 450px;
-    margin-bottom: 20px;
-    position: absolute;
-    top: -80px;
-    left: -40px;
-    opacity: 0.25;
-    filter: blur(35px);
-  }
-
   nav {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -61,8 +51,14 @@
   }
 }
 
-@keyframes logo-hue {
-  0% {filter: blur(30px) hue-rotate(0deg)}
-  50% {filter: blur(30px) hue-rotate(360deg)}
-  0% {filter: blur(30px) hue-rotate(0deg)}
+
+@media only screen and (max-width: 800px) {
+  .footer {
+    nav {
+      display: flex;
+      flex-direction: column;
+      grid-gap: 20px;
+      padding: 50px;
+    }
+  }
 }
