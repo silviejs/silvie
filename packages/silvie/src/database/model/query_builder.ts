@@ -273,7 +273,7 @@ export default class ModelQueryBuilder {
 	 * @param thisRef Uses the current instance properties to get primary key values
 	 * @param ids ID or IDs to search for
 	 */
-	static primaryKeyCondition(queryBuilder: QueryBuilder, thisRef: ModelQueryBuilder, ids?: any | any[]): QueryBuilder {
+	static primaryKeyCondition(queryBuilder: QueryBuilder, thisRef: ModelQueryBuilder, ids?: any[]): QueryBuilder {
 		if (thisRef) {
 			if (this.primaryKey instanceof Array) {
 				this.primaryKey.forEach((key) => {
@@ -283,19 +283,15 @@ export default class ModelQueryBuilder {
 				queryBuilder.where(this.primaryKey, thisRef[this.primaryKey]);
 			}
 		} else if (this.primaryKey instanceof Array) {
-			if (ids instanceof Array) {
-				ids.forEach((id, index) => {
-					queryBuilder.where(this.primaryKey[index], id);
+			ids.forEach((id) => {
+				queryBuilder.orWhere((cb) => {
+					(this.primaryKey as Array<string>).forEach((key, index) => {
+						cb.where(key, id[index]);
+					});
 				});
-			} else {
-				this.primaryKey.forEach((key) => {
-					queryBuilder.where(key, ids);
-				});
-			}
-		} else if (ids instanceof Array) {
-			queryBuilder.whereIn(this.primaryKey, ids);
+			});
 		} else {
-			queryBuilder.where(this.primaryKey, ids);
+			queryBuilder.whereIn(this.primaryKey, ids);
 		}
 
 		return queryBuilder;
@@ -315,7 +311,7 @@ export default class ModelQueryBuilder {
 	 * @param id
 	 */
 	static delete(id: TBaseValue | TBaseValue[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).delete(this.useSoftDeletes);
+		return this.primaryKeyCondition(this.baseQueryBuilder, null, [id]).delete(this.useSoftDeletes);
 	}
 
 	/**
@@ -331,7 +327,7 @@ export default class ModelQueryBuilder {
 	 * @param id
 	 */
 	static restore(id: TBaseValue | TBaseValue[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).restore();
+		return this.primaryKeyCondition(this.baseQueryBuilder, null, [id]).restore();
 	}
 
 	/**
@@ -351,7 +347,7 @@ export default class ModelQueryBuilder {
 	 * @param id
 	 */
 	static forceDelete(id: TBaseValue | TBaseValue[]): Promise<number> {
-		return this.primaryKeyCondition(this.baseQueryBuilder, null, id).delete();
+		return this.primaryKeyCondition(this.baseQueryBuilder, null, [id]).delete();
 	}
 
 	/**

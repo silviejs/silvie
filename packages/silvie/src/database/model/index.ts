@@ -14,7 +14,7 @@ class Model extends ModelQueryBuilder implements IModel {
 	 * @param id
 	 */
 	static async find(id: TBaseValue | TBaseValue[]): Promise<Model> {
-		const result = await this.primaryKeyCondition(this.baseQueryBuilder, null, id).first();
+		const result = await this.primaryKeyCondition(this.baseQueryBuilder, null, [id]).first();
 
 		return result ? (this.cast(result) as Model) : null;
 	}
@@ -34,6 +34,10 @@ class Model extends ModelQueryBuilder implements IModel {
 		const [insertId] = await this.baseQueryBuilder.insert([data]);
 
 		if (shouldReturn) {
+			if (this.primaryKey instanceof Array) {
+				return this.find(this.primaryKey.map((key) => data[key]));
+			}
+
 			return this.find(insertId);
 		}
 
