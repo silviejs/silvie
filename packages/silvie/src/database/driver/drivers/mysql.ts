@@ -479,31 +479,34 @@ export default class MySQLDriver implements IDatabaseDriver {
 		const groups = qb.options.group;
 		const havingConditions = qb.options.having;
 
-		if (groups.length === 0) {
-			return ['', []];
+		const params = [];
+		let query = '';
+
+		if (groups.length > 0) {
+			query = `GROUP BY ${groups
+				.map((group) => {
+					if (group.type === 'column') {
+						return this.col(group.column, qb.options.table);
+					}
+
+					if (group.type === 'raw') {
+						params.push(...group.params);
+						return group.query;
+					}
+
+					return '';
+				})
+				.join(', ')}`;
 		}
 
-		const params = [];
-		let query = `GROUP BY ${groups
-			.map((group) => {
-				if (group.type === 'column') {
-					return this.col(group.column, qb.options.table);
-				}
-
-				if (group.type === 'raw') {
-					params.push(...group.params);
-					return group.query;
-				}
-
-				return '';
-			})
-			.join(', ')}`;
+		if (groups.length > 0 && havingConditions.length > 0) {
+			query += ' ';
+		}
 
 		if (havingConditions.length > 0) {
 			const [q, p] = this.compileConditions(havingConditions, qb.options.table);
-
 			params.push(...p);
-			query += ` HAVING ${q}`;
+			query += `HAVING ${q}`;
 		}
 
 		return [query, params];
