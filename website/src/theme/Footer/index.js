@@ -52,7 +52,7 @@ export default () => {
 
             <small>
                 Copyright &copy; 2020
-                <a href="https://github.com/hmak-me">hmak-me</a>
+                <a target='_blank' rel='noopener' href="https://hmak.me">Hossein Maktoobian</a>
             </small>
         </footer>
     );
