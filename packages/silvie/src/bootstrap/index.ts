@@ -20,6 +20,10 @@ export default ({ schemas, resolvers, dataLoaders }) => {
 	}
 
 	HTTPServer.init();
-	GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
+
+	if (process.configs?.graphql?.enabled) {
+		GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
+	}
+
 	HTTPServer.start();
 };
