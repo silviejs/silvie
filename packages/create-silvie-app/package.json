@@ -4,8 +4,7 @@
   "description": "Create a Silvie app from boilerplate",
   "main": "./index.js",
   "scripts": {
-    "build": "node scripts/build.js",
-    "prepare": "npm run build"
+    "build": "node scripts/build.js"
   },
   "bin": {
     "create-silvie-app": "./index.js"

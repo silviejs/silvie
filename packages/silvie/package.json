@@ -6,8 +6,7 @@
 	"typings": "bootstrap/index.d.ts",
 	"bin": "cli/index.js",
 	"scripts": {
-		"build": "node scripts/build.js",
-		"prepare": "npm run build"
+		"build": "node scripts/build.js"
 	},
 	"repository": {
 		"type": "git",
