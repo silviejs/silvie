@@ -3,6 +3,7 @@ import IDatabaseDriver from 'src/database/driver';
 import drivers from 'src/database/driver/drivers';
 import { TBaseValue, TColumn } from 'src/database/builders/condition';
 import QueryBuilder from 'src/database/builders/query';
+import log from 'src/utils/log';
 
 const config = process.configs.database;
 
@@ -17,7 +18,15 @@ export class Database {
 	 * The database driver instance
 	 * @private
 	 */
-	private driver: IDatabaseDriver;
+	private privDriver: IDatabaseDriver;
+
+	private get driver(): IDatabaseDriver {
+		if (this.privDriver) {
+			return this.privDriver;
+		}
+
+		throw new Error('Database is not initialized');
+	}
 
 	/**
 	 * [SINGLETON] Disable the constructor
@@ -44,7 +53,7 @@ export class Database {
 		const type = config.type || process.env.DB_TYPE;
 
 		if (type in drivers) {
-			this.driver = new drivers[type]({
+			this.privDriver = new drivers[type]({
 				host: config.host || process.env.DB_HOST,
 				port: config.port || process.env.DB_PORT,
 
@@ -54,6 +63,8 @@ export class Database {
 
 				...(config[type] ?? {}),
 			});
+		} else {
+			log.error('Invalid Driver', `'${type}' is not a valid database driver`);
 		}
 	}
 

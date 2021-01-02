@@ -1,4 +1,6 @@
 module.exports = {
+	enabled: true,
+
 	type: '', // Defaults to DB_TYPE
 	host: '', // Defaults to DB_HOST
 	port: '', // Defaults to DB_PORT

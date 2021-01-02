@@ -14,7 +14,11 @@ import GraphQLServer from 'src/graphql/server';
 export default ({ schemas, resolvers, dataLoaders }) => {
 	Auth.init();
 	Storage.init();
-	Database.init();
+
+	if (process.configs?.database?.enabled) {
+		Database.init();
+	}
+
 	HTTPServer.init();
 	GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 	HTTPServer.start();
