@@ -4,7 +4,7 @@
   "description": "Create a Silvie app from boilerplate",
   "main": "./index.js",
   "scripts": {
-    "build": "rimraf ./lib && cross-env NODE_ENV=production babel index.ts -d lib -x \".ts,.js\" && ncp ./templates ./lib/templates",
+    "build": "node scripts/build.js",
     "prepare": "npm run build"
   },
   "bin": {
@@ -27,7 +27,6 @@
   "author": "Hossein Maktoobian",
   "license": "MIT",
   "dependencies": {
-    "ncp": "^2.0.0",
-    "rimraf": "^3.0.2"
+    "ncp": "^2.0.0"
   }
 }
