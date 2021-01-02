@@ -1,12 +1,12 @@
 {
 	"name": "silvie",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Typescript Back-end Framework",
 	"main": "bootstrap/index.js",
 	"typings": "bootstrap/index.d.ts",
 	"bin": "cli/index.js",
 	"scripts": {
-		"build": "rm -rf lib/* && cross-env NODE_ENV=production babel src -d lib -x \".ts,.js\" --copy-files --config-file && ttsc",
+		"build": "node scripts/build.js",
 		"prepare": "npm run build"
 	},
 	"repository": {
