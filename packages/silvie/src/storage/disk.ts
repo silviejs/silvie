@@ -127,11 +127,18 @@ export default class Disk {
 	 * Move a file
 	 * @param oldPath
 	 * @param newPath
+	 * @param overwrite
 	 */
-	async move(oldPath: string, newPath: string): Promise<boolean> {
-		await fs.rename(this.resolve(oldPath), this.resolve(newPath));
+	async move(oldPath: string, newPath: string, overwrite = false): Promise<boolean> {
+		if (await this.exists(oldPath)) {
+			if (overwrite || !(await this.exists(newPath))) {
+				await fs.rename(this.resolve(oldPath), this.resolve(newPath));
 
-		return true;
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
