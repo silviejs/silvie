@@ -1,4 +1,4 @@
-export type THashDigest = 'latin1' | 'hex' | 'base64';
+export type THashDigest = 'hex' | 'base64';
 export type TCipherDigest =
 	| 'ascii'
 	| 'utf8'
