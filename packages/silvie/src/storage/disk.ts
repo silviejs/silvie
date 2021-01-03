@@ -105,6 +105,14 @@ export default class Disk {
 	}
 
 	/**
+	 * Check to see if a path is a directory
+	 * @param path
+	 */
+	async isDirectory(path: string): Promise<boolean> {
+		return (await this.stat(path)).isDirectory();
+	}
+
+	/**
 	 * Rename a file
 	 * @param oldPath
 	 * @param newPath
