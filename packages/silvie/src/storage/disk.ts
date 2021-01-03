@@ -110,9 +110,13 @@ export default class Disk {
 	 * @param newPath
 	 */
 	async rename(oldPath: string, newPath: string): Promise<boolean> {
-		await fs.rename(this.resolve(oldPath), this.resolve(newPath));
+		if (!(await this.exists(newPath))) {
+			await fs.rename(this.resolve(oldPath), this.resolve(newPath));
 
-		return true;
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -120,8 +124,10 @@ export default class Disk {
 	 * @param oldPath
 	 * @param newPath
 	 */
-	move(oldPath: string, newPath: string): Promise<boolean> {
-		return this.rename(oldPath, newPath);
+	async move(oldPath: string, newPath: string): Promise<boolean> {
+		await fs.rename(this.resolve(oldPath), this.resolve(newPath));
+
+		return true;
 	}
 
 	/**
