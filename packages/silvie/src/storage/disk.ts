@@ -1,6 +1,6 @@
 import { Stats, ReadStream, WriteStream, createReadStream, createWriteStream } from 'fs';
 import fs from 'fs/promises';
-import { resolve, dirname } from 'path';
+import { resolve, join, dirname, basename } from 'path';
 import ncp from 'ncp';
 
 type TEncoding = 'utf8' | 'ascii' | 'utf-8' | 'utf16le' | 'ucs2' | 'ucs-2' | 'base64' | 'latin1' | 'binary' | 'hex';
@@ -139,8 +139,14 @@ export default class Disk {
 	 */
 	async move(oldPath: string, newPath: string, overwrite = false): Promise<boolean> {
 		if (await this.exists(oldPath)) {
-			if (overwrite || !(await this.exists(newPath))) {
-				await fs.rename(this.resolve(oldPath), this.resolve(newPath));
+			let dstPath = newPath;
+
+			if (await this.isDirectory(newPath)) {
+				dstPath = join(newPath, basename(oldPath));
+			}
+
+			if (overwrite || !(await this.exists(dstPath))) {
+				await fs.rename(this.resolve(oldPath), this.resolve(dstPath));
 
 				return true;
 			}
