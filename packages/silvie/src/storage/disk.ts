@@ -159,45 +159,72 @@ export default class Disk {
 	 * Copy a file or directory
 	 * @param source
 	 * @param destination
+	 * @param overwrite
 	 */
-	async copy(source: string, destination: string): Promise<boolean> {
-		if ((await fs.stat(source)).isDirectory()) {
-			return this.copyDirectory(source, destination);
+	async copy(source: string, destination: string, overwrite = false): Promise<boolean> {
+		if (await this.isDirectory(source)) {
+			return this.copyDirectory(source, destination, overwrite);
 		}
 
-		return this.copyFile(source, destination);
+		return this.copyFile(source, destination, overwrite);
 	}
 
 	/**
 	 * Copy a file
 	 * @param filename
 	 * @param destination
+	 * @param overwrite
 	 */
-	async copyFile(filename: string, destination: string): Promise<boolean> {
-		await fs.copyFile(this.resolve(filename), this.resolve(destination));
+	async copyFile(filename: string, destination: string, overwrite = false): Promise<boolean> {
+		if (await this.exists(filename)) {
+			let dest = destination;
 
-		return true;
+			if (await this.isDirectory(destination)) {
+				dest = join(destination, basename(filename));
+			}
+
+			if (overwrite || !(await this.exists(dest))) {
+				await fs.copyFile(this.resolve(filename), this.resolve(dest));
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
 	 * Copy a directory
 	 * @param source
 	 * @param destination
+	 * @param overwrite
 	 */
-	copyDirectory(source: string, destination: string): Promise<boolean> {
-		return new Promise<boolean>((resolveFn, rejectFn) => {
-			try {
-				ncp(this.resolve(source), this.resolve(destination), (error) => {
-					if (error) {
-						rejectFn(error);
-					}
+	async copyDirectory(source: string, destination: string, overwrite = false): Promise<boolean> {
+		if (await this.isDirectory(source)) {
+			let dest = destination;
 
-					resolveFn(true);
-				});
-			} catch (e) {
-				resolveFn(e);
+			if (await this.isDirectory(destination)) {
+				dest = join(destination, basename(source));
 			}
-		});
+
+			if (overwrite || !(await this.exists(dest))) {
+				return new Promise<boolean>((resolveFn, rejectFn) => {
+					try {
+						ncp(this.resolve(source), this.resolve(dest), (error) => {
+							if (error) {
+								rejectFn(error);
+							}
+
+							resolveFn(true);
+						});
+					} catch (e) {
+						resolveFn(e);
+					}
+				});
+			}
+		}
+
+		return false;
 	}
 
 	/**
