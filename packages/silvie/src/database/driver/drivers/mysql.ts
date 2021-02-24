@@ -14,6 +14,7 @@ interface MySQLOptions {
 	connectionLimit?: number;
 	dateStrings?: boolean;
 	multipleStatements?: boolean;
+	charset?: string;
 }
 
 export const MySQLTypes = {
@@ -71,6 +72,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 			connectionLimit: config.connectionLimit || 10,
 			dateStrings: config.dateStrings || true,
 			multipleStatements: config.multipleStatements || false,
+			charset: config.charset || 'utf8',
 		});
 	}
 
