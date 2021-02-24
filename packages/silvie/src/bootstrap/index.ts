@@ -10,10 +10,21 @@ import Auth from 'src/authentication';
 import Storage from 'src/storage';
 import HTTPServer from 'src/http/server';
 import GraphQLServer from 'src/graphql/server';
+import SocketServer from 'src/socket/server';
 
-export default ({ schemas, resolvers, dataLoaders, beforeInit, beforeStart, afterStart }) => {
-	if (beforeInit instanceof Function) {
-		beforeInit();
+type TBootstrapOptions = {
+	schemas: any;
+	resolvers: any;
+	dataLoaders: any;
+	socketNamespaces: any;
+	beforeInit?: any;
+	beforeStart?: any;
+	afterStart?: any;
+};
+
+export default (options: TBootstrapOptions) => {
+	if (options.beforeInit instanceof Function) {
+		options.beforeInit();
 	}
 
 	Auth.init();
@@ -26,16 +37,20 @@ export default ({ schemas, resolvers, dataLoaders, beforeInit, beforeStart, afte
 	HTTPServer.init();
 
 	if (process.configs?.graphql?.enabled) {
-		GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
+		GraphQLServer.init(HTTPServer, options.schemas, options.resolvers, options.dataLoaders);
 	}
 
-	if (beforeStart instanceof Function) {
-		beforeStart({ HTTPServer });
+	if (process.configs?.socket?.enabled) {
+		SocketServer.init(HTTPServer, options.socketNamespaces);
+	}
+
+	if (options.beforeStart instanceof Function) {
+		options.beforeStart({ HTTPServer });
 	}
 
 	HTTPServer.start();
 
-	if (afterStart instanceof Function) {
-		afterStart({ HTTPServer });
+	if (options.afterStart instanceof Function) {
+		options.afterStart({ HTTPServer });
 	}
 };

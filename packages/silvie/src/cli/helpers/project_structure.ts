@@ -8,6 +8,7 @@ export const directories = {
 	'src/graphql/dataloaders': 'Data Loaders',
 	'src/graphql/resolvers': 'Resolvers',
 	'src/graphql/schemas': 'Schemas',
+	'src/socket/namespaces': 'Schemas',
 	'src/middlewares': 'Middlewares',
 	'src/models': 'Models',
 };
@@ -19,6 +20,7 @@ export const files = {
 	'src/config/graphql.ts': 'graphql',
 	'src/config/http.ts': 'http',
 	'src/config/mail.ts': 'mail',
+	'src/config/socket.ts': 'socket',
 	'src/config/storage.ts': 'storage',
 	'.env': 'dotenv',
 	'tsconfig.json': 'tsconfig',

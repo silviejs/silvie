@@ -32,6 +32,7 @@ module.exports = (api) => {
 						graphql: './src/graphql',
 						middlewares: './src/middlewares',
 						models: './src/models',
+						socket: './src/socket',
 					},
 				},
 			],

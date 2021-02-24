@@ -49,6 +49,7 @@ class HTTPServer {
 		this.initGlobalMiddlewares();
 		this.initStatics();
 		this.initRoutes();
+		this.initServer();
 	}
 
 	initCORS() {
@@ -248,53 +249,7 @@ class HTTPServer {
 		});
 	}
 
-	/**
-	 * Return express server instance
-	 */
-	get expressServer() {
-		return this.app;
-	}
-
-	get server() {
-		return this.srv;
-	}
-
-	/**
-	 * Registers a route handler with some middlewares
-	 * @param method HTTP Verb
-	 * @param url Route URL
-	 * @param routeMiddlewares Route middlewares array
-	 * @param upload Upload configuration
-	 * @param handler Route handler
-	 */
-	registerRoute(
-		method: string,
-		url: string | RegExp,
-		routeMiddlewares: string[] = [],
-		upload: { action: string; options?: any } = null,
-		handler: (req: Request, res: Response) => void
-	) {
-		this.routes.push({
-			method,
-			url,
-			middlewares: routeMiddlewares,
-			upload,
-			handler,
-		});
-	}
-
-	/**
-	 * Registers a middleware on the whole HTTP Server
-	 * @param middlewareName The name middleware to register
-	 */
-	globalMiddleware(middlewareName: string) {
-		this.globalMiddlewares.push(middlewareName);
-	}
-
-	/**
-	 * Starts listening on a port in this order: --port, -p, .env.APP_PORT, config.port, customPort
-	 */
-	start(customPort = 5000) {
+	initServer() {
 		let server = null;
 		if (config.HTTP2) {
 			if (!config.ssl.enabled) {
@@ -336,9 +291,60 @@ class HTTPServer {
 		}
 
 		this.srv = server;
+	}
 
+	/**
+	 * Return express server instance
+	 */
+	get expressServer() {
+		return this.app;
+	}
+
+	/**
+	 * Return HTTP server instance
+	 */
+	get server() {
+		return this.srv;
+	}
+
+	/**
+	 * Registers a route handler with some middlewares
+	 * @param method HTTP Verb
+	 * @param url Route URL
+	 * @param routeMiddlewares Route middlewares array
+	 * @param upload Upload configuration
+	 * @param handler Route handler
+	 */
+	registerRoute(
+		method: string,
+		url: string | RegExp,
+		routeMiddlewares: string[] = [],
+		upload: { action: string; options?: any } = null,
+		handler: (req: Request, res: Response) => void
+	) {
+		this.routes.push({
+			method,
+			url,
+			middlewares: routeMiddlewares,
+			upload,
+			handler,
+		});
+	}
+
+	/**
+	 * Registers a middleware on the whole HTTP Server
+	 * @param middlewareName The name middleware to register
+	 */
+	globalMiddleware(middlewareName: string) {
+		this.globalMiddlewares.push(middlewareName);
+	}
+
+	/**
+	 * Starts listening on a port in this order: --port, -p, .env.APP_PORT, config.port, customPort
+	 */
+	start(customPort = 5000) {
 		const port = process.args.port || process.args.p || process.env.APP_PORT || config.port || customPort;
-		server.listen(port, (error) => {
+		this.srv.listen(port, (error) => {
 			if (error) log.error('Server Start Failed', 'An error occurred');
 
 			log.success('Server Started', `on http${config.HTTP2 || config.ssl.enabled ? 's' : ''}://localhost:${port}`);
