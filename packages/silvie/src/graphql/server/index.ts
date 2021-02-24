@@ -64,10 +64,10 @@ class GraphQLServer {
 		const path = config.path ?? '/graphql';
 
 		if (config.middleware && middlewares[config.middleware])
-			httpServer.server.use(path, middlewares[config.middleware]);
+			httpServer.expressServer.use(path, middlewares[config.middleware]);
 
 		if (config.allowUpload) {
-			httpServer.server.use(
+			httpServer.expressServer.use(
 				graphqlUploadExpress({
 					maxFiles: config.maxFiles,
 					maxFileSize: config.maxFileSize,
@@ -76,7 +76,7 @@ class GraphQLServer {
 		}
 
 		graphqlServer.applyMiddleware({
-			app: httpServer.server,
+			app: httpServer.expressServer,
 			path,
 			bodyParserConfig: false,
 			cors: false,

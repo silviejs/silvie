@@ -21,6 +21,8 @@ const config = process.configs.http;
 class HTTPServer {
 	app: any;
 
+	srv: any;
+
 	upload: any;
 
 	globalMiddlewares: string[] = [];
@@ -249,8 +251,12 @@ class HTTPServer {
 	/**
 	 * Return express server instance
 	 */
-	get server() {
+	get expressServer() {
 		return this.app;
+	}
+
+	get server() {
+		return this.srv;
 	}
 
 	/**
@@ -328,6 +334,9 @@ class HTTPServer {
 		} else {
 			server = http.createServer(this.app);
 		}
+
+		this.srv = server;
+
 		const port = process.args.port || process.args.p || process.env.APP_PORT || config.port || customPort;
 		server.listen(port, (error) => {
 			if (error) log.error('Server Start Failed', 'An error occurred');

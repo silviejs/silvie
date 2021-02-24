@@ -11,7 +11,11 @@ import Storage from 'src/storage';
 import HTTPServer from 'src/http/server';
 import GraphQLServer from 'src/graphql/server';
 
-export default ({ schemas, resolvers, dataLoaders }) => {
+export default ({ schemas, resolvers, dataLoaders, beforeInit, beforeStart, afterStart }) => {
+	if (beforeInit instanceof Function) {
+		beforeInit();
+	}
+
 	Auth.init();
 	Storage.init();
 
@@ -25,5 +29,13 @@ export default ({ schemas, resolvers, dataLoaders }) => {
 		GraphQLServer.init(HTTPServer, schemas, resolvers, dataLoaders);
 	}
 
+	if (beforeStart instanceof Function) {
+		beforeStart({ HTTPServer });
+	}
+
 	HTTPServer.start();
+
+	if (afterStart instanceof Function) {
+		afterStart({ HTTPServer });
+	}
 };
