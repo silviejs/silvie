@@ -233,7 +233,7 @@ export default class Disk {
 	 * @param recursive
 	 */
 	async delete(path: string, recursive = false): Promise<boolean> {
-		if ((await fs.stat(path)).isDirectory()) {
+		if (await this.isDirectory(path)) {
 			return this.deleteDirectory(path, recursive);
 		}
 
