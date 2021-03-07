@@ -33,12 +33,14 @@ export default async () => {
 		log.info('[Silvie Builder]', 'Cleaning build directory...');
 
 		fs.readdirSync(buildDir).forEach((file) => {
-			const filePath = path.resolve(buildDir, file);
+			if (file !== '.silvie') {
+				const filePath = path.resolve(buildDir, file);
 
-			if (fs.lstatSync(filePath).isDirectory()) {
-				fs.rmdirSync(filePath, { recursive: true });
-			} else {
-				fs.unlinkSync(filePath);
+				if (fs.lstatSync(filePath).isDirectory()) {
+					fs.rmdirSync(filePath, { recursive: true });
+				} else {
+					fs.unlinkSync(filePath);
+				}
 			}
 		});
 	}
