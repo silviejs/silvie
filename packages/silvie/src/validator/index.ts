@@ -30,7 +30,7 @@ export default class Validator {
 			const part = path[index];
 
 			// If the current part is a wildcard
-			if (part === '*') {
+			if (data !== undefined && data !== null && part === '*') {
 				// And it is the last part
 				if (index === path.length - 1) {
 					// Return an array of all items in the current path
@@ -50,7 +50,7 @@ export default class Validator {
 			}
 
 			// If this path part is in the current data section
-			if (part in data) {
+			if (data !== undefined && data !== null && part in data) {
 				// Get its value
 				const value = data[part];
 
