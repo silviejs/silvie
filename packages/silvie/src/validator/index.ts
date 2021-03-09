@@ -79,7 +79,7 @@ export default class Validator {
 			// Split the rules with '|'
 			rules[key].split('|').forEach((ruleStr) => {
 				// Get rule name and parameters by splitting with ':'
-				const [name, ...restParams] = ruleStr.split(':', 1);
+				const [name, ...restParams] = ruleStr.split(':');
 				const paramsStr = restParams.join(':');
 
 				// Get rule
