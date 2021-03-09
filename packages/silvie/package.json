@@ -1,6 +1,6 @@
 {
 	"name": "silvie",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"description": "Typescript Back-end Framework",
 	"main": "bootstrap/index.js",
 	"typings": "bootstrap/index.d.ts",
