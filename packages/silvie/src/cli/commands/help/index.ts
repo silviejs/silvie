@@ -1,5 +1,5 @@
 import log from 'src/utils/log';
-import commands from 'src/cli/commands/help/commands';
+import * as commands from 'src/cli/commands/help/commands/*';
 
 const mainCommands = {
 	build: 'Build the application',

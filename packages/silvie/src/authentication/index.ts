@@ -1,4 +1,4 @@
-import drivers from 'src/authentication/driver/drivers';
+import * as drivers from 'src/authentication/driver/drivers/*';
 import IAuthDriver from 'src/authentication/driver';
 
 const config = process.configs.auth;

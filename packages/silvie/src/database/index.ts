@@ -1,6 +1,6 @@
 import Table from 'src/database/migration/table';
 import IDatabaseDriver from 'src/database/driver';
-import drivers from 'src/database/driver/drivers';
+import * as drivers from 'src/database/driver/drivers/*';
 import { TBaseValue, TColumn } from 'src/database/builders/condition';
 import QueryBuilder from 'src/database/builders/query';
 import log from 'src/utils/log';

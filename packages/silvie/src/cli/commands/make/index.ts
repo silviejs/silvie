@@ -1,5 +1,5 @@
 import log from 'src/utils/log';
-import makers from 'src/cli/commands/make/makers';
+import * as makers from 'src/cli/commands/make/makers/*';
 
 const entityMakers = ['model', 'seeder', 'migration', 'resolver', 'schema', 'dataloader'];
 
