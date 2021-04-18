@@ -4,7 +4,7 @@ import pluralize from 'pluralize';
 import path from 'path';
 import fs from 'fs';
 
-const template = fs.readFileSync(path.resolve(__dirname, 'template'), { encoding: 'utf8' });
+import template from './template.txt';
 
 export default (args: { _: string[] }) => {
 	const name = args._[2];

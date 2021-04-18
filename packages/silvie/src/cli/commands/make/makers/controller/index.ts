@@ -3,7 +3,7 @@ import path from 'path';
 import log from 'src/utils/log';
 import { pascalCase, snakeCase } from 'change-case';
 
-const template = fs.readFileSync(path.resolve(__dirname, 'template'), { encoding: 'utf8' });
+import template from './template.txt';
 
 export default (args: { _: string[] }) => {
 	const name = args._[2];
