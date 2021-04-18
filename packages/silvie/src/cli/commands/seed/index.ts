@@ -5,14 +5,14 @@ import path from 'path';
 import Database from 'src/database';
 import log from 'src/utils/log';
 
-import babelRegister from '@babel/register';
+// import babelRegister from '@babel/register'; // TODO
 
-process.env.BABEL_DISABLE_CACHE = '1';
-babelRegister({
-	configFile: path.resolve(process.silviePath, 'assets/babel.config.js'),
-	extensions: ['.ts', '.js', '.gql', '.graphql', '.json'],
-	ignore: [],
-});
+// process.env.BABEL_DISABLE_CACHE = '1';
+// babelRegister({
+// 	configFile: path.resolve(process.silviePath, 'assets/babel.config.js'),
+// 	extensions: ['.ts', '.js', '.gql', '.graphql', '.json'],
+// 	ignore: [],
+// });
 
 export default async (args: { _: string[] }) => {
 	const filename = args._[1];

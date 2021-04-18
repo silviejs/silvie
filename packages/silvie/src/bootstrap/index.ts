@@ -3,7 +3,7 @@ import 'src/bootstrap/configs';
 import 'src/bootstrap/dotenv';
 import 'src/bootstrap/args';
 
-import 'src/validator/rules';
+import 'src/validator/rules/*';
 
 import Database from 'src/database';
 import Auth from 'src/authentication';

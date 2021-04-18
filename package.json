@@ -21,6 +21,7 @@
 		"eslint-import-resolver-alias": "^1.1.2",
 		"eslint-plugin-import": "^2.22.0",
 		"eslint-plugin-prettier": "^3.1.4",
+		"fast-glob": "^3.2.5",
 		"ncp": "^2.0.0",
 		"prettier": "^2.1.2",
 		"ttypescript": "^1.5.12",
