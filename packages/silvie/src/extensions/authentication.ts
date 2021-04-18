@@ -1,1 +1,1 @@
-declare module 'src/authentication/driver/drivers' {}
+declare module 'src/authentication/driver/drivers/*' {}
