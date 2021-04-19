@@ -33,6 +33,7 @@ module.exports = (aliases = {}) => {
 			build.onResolve({ filter: filterRegExp }, async (args) => {
 				const alias = args.path.match(filterRegExp)[1];
 				const importPath = path.resolve(aliases[alias], args.path.replace(matchRegExp, ''));
+
 				try {
 					if (!path.extname(importPath)) {
 						if ((await fs.stat(importPath)).isDirectory()) {
@@ -41,6 +42,8 @@ module.exports = (aliases = {}) => {
 
 						return await handleFile(importPath);
 					}
+
+					return { path: importPath };
 				} catch {
 					return await handleFile(importPath);
 				}
