@@ -1,31 +1,50 @@
-// const fs = require('fs/promises');
+const fs = require('fs/promises');
 const path = require('path');
 
-// const cwd = process.cwd();
+const handleDirectory = async (importPath) => {
+	const dirFiles = await fs.readdir(importPath);
+	const indexFile = dirFiles.find((file) => file.startsWith('index.'));
 
-const aliasImport = {
-	name: 'alias-import',
+	if (indexFile) {
+		return { path: path.join(importPath, indexFile) };
+	}
+};
+const handleFile = async (importPath) => {
+	const { dir: dirname, base: filename } = path.parse(importPath);
+	const dirFiles = await fs.readdir(dirname);
+	const importFile = dirFiles.find((file) => file.startsWith(filename));
 
-	setup(build) {
-		build.onResolve({ filter: /^src[^*]+$/ }, (args) => {
-			if (args.kind === 'import-statement') {
-				return { path: `./${path.relative(args.resolveDir, args.path)}`, external: true };
-			}
-		});
-		// build.onResolve({ filter: /^\./ }, (args) => {
-		// 	if (args.kind === 'import-statement' && !args.path.endsWith('txt')) {
-		// 		let relativePath = path
-		// 			.relative(args.resolveDir, path.join(args.resolveDir, args.path))
-		// 			.replace(/\.ts$/, '.js');
-		//
-		// 		if (!relativePath.includes('/')) {
-		// 			relativePath = `./${relativePath}`;
-		// 		}
-		//
-		// 		return { path: relativePath, external: true };
-		// 	}
-		// });
-	},
+	if (importFile) {
+		return { path: path.join(dirname, importFile) };
+	}
 };
 
-module.exports = aliasImport;
+module.exports = (aliases = {}) => {
+	const regExp = `^(${Object.keys(aliases)
+		.map((alias) => alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+		.join('|')})`;
+	const filterRegExp = new RegExp(regExp);
+	const matchRegExp = new RegExp(`${regExp}/?`);
+
+	return {
+		name: 'alias-import',
+
+		setup(build) {
+			build.onResolve({ filter: filterRegExp }, async (args) => {
+				const alias = args.path.match(filterRegExp)[1];
+				const importPath = path.resolve(aliases[alias], args.path.replace(matchRegExp, ''));
+				try {
+					if (!path.extname(importPath)) {
+						if ((await fs.stat(importPath)).isDirectory()) {
+							return await handleDirectory(importPath);
+						}
+
+						return await handleFile(importPath);
+					}
+				} catch {
+					return await handleFile(importPath);
+				}
+			});
+		},
+	};
+};

@@ -1,8 +1,6 @@
 const fs = require('fs/promises');
 const esbuild = require('esbuild');
 const fastGlob = require('fast-glob');
-// const path = require('path');
-const childProcess = require('child_process');
 const pkg = require('../package.json');
 
 const aliasImport = require('./plugins/alias-import');
@@ -18,12 +16,19 @@ const graphqlImport = require('./plugins/graphql-import');
 		console.time('build');
 		await esbuild.build({
 			platform: 'node',
-			plugins: [aliasImport, wildcardImport, graphqlImport],
+			plugins: [
+				aliasImport({
+					src: './src',
+				}),
+				wildcardImport(),
+				graphqlImport(),
+			],
 			entryPoints: await fastGlob('src/**/*.(js|ts)'),
 			outdir: 'lib',
 			outbase: 'src',
 			external: [...Object.keys(pkg.dependencies || {})],
 			bundle: true,
+			keepNames: true,
 		});
 		console.timeEnd('build');
 
