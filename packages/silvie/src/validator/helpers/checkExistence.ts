@@ -4,10 +4,6 @@ export default (value: any): boolean => {
 			return value.trim().length > 0;
 		}
 
-		if (value instanceof Array) {
-			return value.length > 0;
-		}
-
 		return true;
 	}
 
