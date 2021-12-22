@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import { merge } from 'lodash';
-import { makeExecutableSchema, ITypeDefinitions, ITypedef } from 'graphql-tools';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { middlewares } from 'src/http/middleware';
 import BaseQuery from 'src/graphql/base/schemas/query.gql';
@@ -13,16 +13,16 @@ import JSONResolver from 'src/graphql/base/resolvers/json';
 const config = process.configs.graphql;
 
 function makeSchema(schemas, resolvers) {
-	const typeDefsCollection: ITypeDefinitions = [BaseQuery as ITypedef, BaseMutation as ITypedef];
+	const typeDefsCollection = [BaseQuery, BaseMutation];
 	const resolversCollection = [];
 
 	if (config.allowUpload) {
-		typeDefsCollection.push(UploadSchema as ITypedef);
+		typeDefsCollection.push(UploadSchema);
 		resolversCollection.push(UploadResolver);
 	}
 
 	if (config.allowJSON) {
-		typeDefsCollection.push(JSONSchema as ITypedef);
+		typeDefsCollection.push(JSONSchema);
 		resolversCollection.push(JSONResolver);
 	}
 
@@ -30,21 +30,21 @@ function makeSchema(schemas, resolvers) {
 	resolversCollection.push(...resolvers);
 
 	return makeExecutableSchema({
-		typeDefs: typeDefsCollection,
+		typeDefs: typeDefsCollection as any,
 		resolvers: merge(...resolversCollection),
 	});
 }
 
 class GraphQLServer {
-	init(httpServer, schemas, resolvers, dataLoaders) {
+	async init(httpServer, schemas, resolvers = {}, dataLoaders = {}, plugins = {}) {
 		const executableSchema = makeSchema(Object.values(schemas), Object.values(resolvers));
 
 		const graphqlServer = new ApolloServer({
 			schema: executableSchema,
 
 			introspection: config.introspection,
-			playground: config.playground,
-			uploads: false,
+
+			plugins: Object.values(plugins),
 
 			context: async (context) => {
 				const contextLoaders = Object.keys(dataLoaders).reduce((group, key) => {
@@ -74,6 +74,8 @@ class GraphQLServer {
 				})
 			);
 		}
+
+		await graphqlServer.start();
 
 		graphqlServer.applyMiddleware({
 			app: httpServer.expressServer,

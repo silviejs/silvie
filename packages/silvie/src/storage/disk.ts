@@ -8,32 +8,28 @@ type TEncoding = 'utf8' | 'ascii' | 'utf-8' | 'utf16le' | 'ucs2' | 'ucs-2' | 'ba
 type TReadOptions = TEncoding | { encoding: TEncoding; flag?: string };
 type TWriteOptions = TEncoding | { encoding: TEncoding; flag?: string };
 
-type TReadStreamOptions =
-	| string
-	| {
-			flags?: string;
-			encoding?: TEncoding;
-			fd?: number;
-			mode?: number;
-			autoClose?: boolean;
-			emitClose?: boolean;
-			start?: number;
-			end?: number;
-			highWaterMark?: number;
-	  };
+type TReadStreamOptions = {
+	flags?: string;
+	encoding?: TEncoding;
+	fd?: number;
+	mode?: number;
+	autoClose?: boolean;
+	emitClose?: boolean;
+	start?: number;
+	end?: number;
+	highWaterMark?: number;
+};
 
-type TWriteStreamOptions =
-	| string
-	| {
-			flags?: string;
-			encoding?: TEncoding;
-			fd?: number;
-			mode?: number;
-			autoClose?: boolean;
-			emitClose?: boolean;
-			start?: number;
-			highWaterMark?: number;
-	  };
+type TWriteStreamOptions = {
+	flags?: string;
+	encoding?: TEncoding;
+	fd?: number;
+	mode?: number;
+	autoClose?: boolean;
+	emitClose?: boolean;
+	start?: number;
+	highWaterMark?: number;
+};
 
 export default class Disk {
 	private readonly basePath = null;

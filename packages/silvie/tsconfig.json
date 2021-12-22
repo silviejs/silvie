@@ -3,7 +3,7 @@
 		"declaration": true,
 		"module": "commonjs",
 		"esModuleInterop": true,
-		"target": "es5",
+		"target": "esnext",
 		"moduleResolution": "node",
 		"outDir": "./lib",
 		"sourceMap": true,
@@ -13,7 +13,8 @@
 		"paths": {
 			"src/*": ["./src/*"]
 		},
-		"plugins": [{ "transform": "typescript-transform-paths", "afterDeclarations": true }]
+		"plugins": [{ "transform": "typescript-transform-paths", "afterDeclarations": true }],
+		"skipLibCheck": true
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", "lib", "templates"]

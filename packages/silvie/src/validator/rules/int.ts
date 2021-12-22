@@ -5,6 +5,6 @@ import { isInt } from 'validator';
 @rule('int')
 export default class IntRule implements IValidationRule {
 	validate(validator: Validator, name: string, value: any): boolean {
-		return typeof value === 'number' || (typeof value === 'string' && isInt(value));
+		return typeof value === 'number' || (typeof value === 'string' && isInt(`${value}`));
 	}
 }

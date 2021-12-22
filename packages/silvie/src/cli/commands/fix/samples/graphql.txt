@@ -4,7 +4,6 @@ module.exports = {
 	path: '/graphql',
 	middleware: '',
 
-	playground: process.env.NODE_ENV === 'development',
 	introspection: true,
 
 	allowJSON: true,

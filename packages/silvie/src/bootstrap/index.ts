@@ -13,18 +13,25 @@ import GraphQLServer from 'src/graphql/server';
 import SocketServer from 'src/socket/server';
 
 type TBootstrapOptions = {
-	schemas: any;
-	resolvers: any;
-	dataLoaders: any;
-	socketNamespaces: any;
-	beforeInit?: any;
-	beforeStart?: any;
-	afterStart?: any;
+	graphql: {
+		schemas: any;
+		resolvers: any;
+		dataLoaders: any;
+		plugins: any;
+	};
+	socket: {
+		socketNamespaces: any;
+	};
+	events: {
+		beforeInit?: any;
+		beforeStart?: any;
+		afterStart?: any;
+	};
 };
 
-export default (options: TBootstrapOptions) => {
-	if (options.beforeInit instanceof Function) {
-		options.beforeInit();
+export default async (options: TBootstrapOptions) => {
+	if (options.events?.beforeInit instanceof Function) {
+		options.events?.beforeInit();
 	}
 
 	Auth.init();
@@ -37,20 +44,26 @@ export default (options: TBootstrapOptions) => {
 	HTTPServer.init();
 
 	if (process.configs?.graphql?.enabled) {
-		GraphQLServer.init(HTTPServer, options.schemas, options.resolvers, options.dataLoaders);
+		await GraphQLServer.init(
+			HTTPServer,
+			options.graphql?.schemas,
+			options.graphql?.resolvers,
+			options.graphql?.dataLoaders,
+			options.graphql?.plugins
+		);
 	}
 
 	if (process.configs?.socket?.enabled) {
-		SocketServer.init(HTTPServer, options.socketNamespaces);
+		SocketServer.init(HTTPServer, options.socket?.socketNamespaces);
 	}
 
-	if (options.beforeStart instanceof Function) {
-		options.beforeStart({ HTTPServer });
+	if (options.events?.beforeStart instanceof Function) {
+		options.events?.beforeStart({ HTTPServer });
 	}
 
 	HTTPServer.start();
 
-	if (options.afterStart instanceof Function) {
-		options.afterStart({ HTTPServer });
+	if (options.events?.afterStart instanceof Function) {
+		options.events?.afterStart({ HTTPServer });
 	}
 };

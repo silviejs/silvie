@@ -7,6 +7,7 @@ export const directories = {
 	'src/database/seeders': 'Seeders',
 	'src/graphql/dataloaders': 'Data Loaders',
 	'src/graphql/resolvers': 'Resolvers',
+	'src/graphql/plugins': 'Plugins',
 	'src/graphql/schemas': 'Schemas',
 	'src/socket/namespaces': 'Schemas',
 	'src/middlewares': 'Middlewares',
