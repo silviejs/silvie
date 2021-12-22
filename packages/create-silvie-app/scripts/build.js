@@ -8,7 +8,7 @@ const rootPath = process.cwd();
 (async () => {
 	try {
 		console.log('Cleaning Build Directory...');
-		await fs.rmdir(path.resolve(rootPath, 'lib'), { recursive: true });
+		await fs.rm(path.resolve(rootPath, 'lib'), { recursive: true });
 
 		console.log('Building...');
 		childProcess.exec(

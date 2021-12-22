@@ -1,10 +1,12 @@
+import CLASS_NAME from 'models/SINGULAR_NAME';
+
 class CLASS_NAMEResolver {
-	static SINGULAR_NAME(): CLASS_NAME {
-		return null;
+	static SINGULAR_NAME(): Promise<CLASS_NAME> {
+		return CLASS_NAME.find(id) as Promise<CLASS_NAME>;
 	}
 
-	static PLURAL_NAME(): CLASS_NAME[] {
-		return [];
+	static PLURAL_NAME(): Promise<CLASS_NAME[]> {
+		return CLASS_NAME.all() as Promise<CLASS_NAME[]>;
 	}
 }
 
