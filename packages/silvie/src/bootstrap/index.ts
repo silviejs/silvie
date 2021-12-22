@@ -13,16 +13,16 @@ import GraphQLServer from 'src/graphql/server';
 import SocketServer from 'src/socket/server';
 
 type TBootstrapOptions = {
-	graphql: {
+	graphql?: {
 		schemas: any;
 		resolvers: any;
 		dataLoaders: any;
 		plugins: any;
 	};
-	socket: {
+	socket?: {
 		socketNamespaces: any;
 	};
-	events: {
+	events?: {
 		beforeInit?: any;
 		beforeStart?: any;
 		afterStart?: any;
