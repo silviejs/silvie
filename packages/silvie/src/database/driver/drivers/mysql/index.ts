@@ -4,6 +4,7 @@ import Table from 'src/database/migration/table';
 import Column from 'src/database/migration/column';
 import QueryBuilder from 'src/database/builders/query';
 import { ICondition, TBaseValue, TColumn } from 'src/database/builders/condition';
+import SpatialData from 'src/database/driver/drivers/mysql/datatypes/spatial';
 
 interface MySQLOptions {
 	host: string;
@@ -684,11 +685,19 @@ export default class MySQLDriver implements IDatabaseDriver {
 		query += `(${fieldNames.map((fieldName) => this.col(fieldName)).join(', ')}) VALUES `;
 
 		const values = qb.options.insert.map((dataset) => {
+			const placeHolders = [];
+
 			fieldNames.forEach((fieldName) => {
-				params.push(dataset[fieldName]);
+				if (dataset[fieldName] instanceof SpatialData) {
+					params.push(dataset[fieldName].sql);
+					placeHolders.push('ST_GeomFromText(?)');
+				} else {
+					params.push(dataset[fieldName]);
+					placeHolders.push('?');
+				}
 			});
 
-			return `(${new Array(fieldNames.length).fill('?').join(', ')})`;
+			return `(${placeHolders.join(', ')})`;
 		});
 
 		query += `${values.join(', ')}`;
