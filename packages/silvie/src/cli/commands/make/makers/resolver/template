@@ -1,7 +1,7 @@
 import CLASS_NAME from 'models/SINGULAR_NAME';
 
 class CLASS_NAMEResolver {
-	static SINGULAR_NAME(): Promise<CLASS_NAME> {
+	static SINGULAR_NAME(self, { id }): Promise<CLASS_NAME> {
 		return CLASS_NAME.find(id) as Promise<CLASS_NAME>;
 	}
 
