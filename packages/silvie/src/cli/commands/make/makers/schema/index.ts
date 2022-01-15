@@ -1,5 +1,5 @@
 import log from 'src/utils/log';
-import { pascalCase, snakeCase } from 'change-case';
+import { camelCase, pascalCase, snakeCase } from 'change-case';
 import pluralize from 'pluralize';
 import path from 'path';
 import fs from 'fs';
@@ -21,8 +21,8 @@ export default (args: { _: string[] }) => {
 
 		if (!fs.existsSync(filepath)) {
 			const className = pascalCase(name);
-			const singularName = snakeCase(pluralize(name, 1));
-			const pluralName = snakeCase(pluralize(name));
+			const singularName = camelCase(pluralize(name, 1));
+			const pluralName = camelCase(pluralize(name));
 
 			const content = template
 				.replace(/CLASS_NAME/g, className)
