@@ -19,29 +19,36 @@ export default async (args: { _: string[]; rollback: boolean; refresh: boolean }
 
 	const migrationsDir = path.resolve(process.rootPath, 'src/database/migrations');
 
-	if (filename && fs.existsSync(path.resolve(migrationsDir, `${filename}.ts`))) {
-		const migration = require(path.resolve(migrationsDir, `${filename}.ts`)).default;
+	if (filename) {
+		const fn = path.resolve(migrationsDir, `${filename}.ts`);
 
-		if (migration) {
-			Database.init();
+		if (fs.existsSync(fn)) {
+			const migration = require(fn).default;
 
-			await Database.disableForeignKeyChecks();
+			if (migration) {
+				Database.init();
 
-			if (args.rollback) {
-				await migration.prototype.down();
-			} else {
-				if (args.refresh) {
+				await Database.disableForeignKeyChecks();
+
+				if (args.rollback) {
 					await migration.prototype.down();
+				} else {
+					if (args.refresh) {
+						await migration.prototype.down();
+					}
+
+					await migration.prototype.up();
 				}
 
-				await migration.prototype.up();
+				await Database.enableForeignKeyChecks();
+
+				Database.closeConnection();
+			} else {
+				log.error('[Silvie] Migration Not Found');
+				log(`There is no migration in '${filename}'`);
 			}
-
-			await Database.enableForeignKeyChecks();
-
-			Database.closeConnection();
 		} else {
-			log.error('[Silvie] Migration Not Found');
+			log.error('[Silvie] Migration File Not Found');
 			log(`There is no migration named '${filename}'`);
 		}
 	} else {

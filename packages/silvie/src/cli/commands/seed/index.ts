@@ -19,25 +19,32 @@ export default async (args: { _: string[] }) => {
 
 	const seedersDir = path.resolve(process.rootPath, 'src/database/seeders');
 
-	if (filename && fs.existsSync(path.resolve(seedersDir, `${filename}.ts`))) {
-		const seeder = require(path.resolve(seedersDir, `${filename}.ts`)).default;
+	if (filename) {
+		const fn = path.resolve(seedersDir, `${filename}.ts`);
 
-		if (seeder) {
-			Database.init();
+		if (fs.existsSync(fn)) {
+			const seeder = require(fn).default;
 
-			await seeder.prototype
-				.seed()
-				.then(() => {
-					log.success('Seeded', `Successfully seeded '${filename}'`);
-				})
-				.catch((err) => {
-					log.error('Seed Failed', `Could not seed '${filename}'`);
-					log(err);
-				});
+			if (seeder) {
+				Database.init();
 
-			Database.closeConnection();
+				await seeder.prototype
+					.seed()
+					.then(() => {
+						log.success('Seeded', `Successfully seeded '${filename}'`);
+					})
+					.catch((err) => {
+						log.error('Seed Failed', `Could not seed '${filename}'`);
+						log(err);
+					});
+
+				Database.closeConnection();
+			} else {
+				log.error('[Silvie] Seeder Not Found');
+				log(`There is no migration in '${filename}'`);
+			}
 		} else {
-			log.error('[Silvie] Seeder Not Found');
+			log.error('[Silvie] Seeder File Not Found');
 			log(`There is no seeder named '${filename}'`);
 		}
 	} else {
