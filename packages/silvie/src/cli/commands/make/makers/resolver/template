@@ -1,4 +1,4 @@
-import CLASS_NAME from 'models/SINGULAR_NAME';
+import CLASS_NAME from 'models/FILE_NAME';
 
 class CLASS_NAMEResolver {
 	static SINGULAR_NAME(self, { id }): Promise<CLASS_NAME> {

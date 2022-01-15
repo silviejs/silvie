@@ -21,10 +21,12 @@ export default (args: { _: string[] }) => {
 
 		if (!fs.existsSync(filepath)) {
 			const className = pascalCase(name);
+			const fileName = snakeCase(pluralize(name, 1));
 			const singularName = camelCase(pluralize(name, 1));
 			const pluralName = camelCase(pluralize(name));
 
 			const content = template
+				.replace(/FILE_NAME/g, fileName)
 				.replace(/CLASS_NAME/g, className)
 				.replace(/SINGULAR_NAME/g, singularName)
 				.replace(/PLURAL_NAME/g, pluralName);
