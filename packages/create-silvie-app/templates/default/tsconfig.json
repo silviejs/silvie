@@ -7,6 +7,7 @@
 		"sourceMap": true,
 		"outDir": "build",
 		"experimentalDecorators": true,
+		"downlevelIteration": true,
 		"baseUrl": ".",
 		"paths": {
 			"src/*": ["./src/*"],
