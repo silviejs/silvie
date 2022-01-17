@@ -1104,6 +1104,18 @@ export default class QueryBuilder {
 		return this;
 	}
 
+	groupWhereConditions() {
+		const condition: ICondition = {
+			type: 'group',
+			relation: 'and',
+			conditions: this.options.where,
+		};
+
+		this.options.where = [condition];
+
+		return this;
+	}
+
 	private baseHaving(
 		type: TConditionType,
 		relation: 'and' | 'or',
@@ -1332,6 +1344,18 @@ export default class QueryBuilder {
 			query,
 			params: params || [],
 		});
+
+		return this;
+	}
+
+	groupHavingConditions() {
+		const condition: ICondition = {
+			type: 'group',
+			relation: 'and',
+			conditions: this.options.having,
+		};
+
+		this.options.having = [condition];
 
 		return this;
 	}

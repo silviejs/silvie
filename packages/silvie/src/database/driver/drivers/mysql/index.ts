@@ -550,9 +550,9 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 		if (qb.options.useSoftDeletes && qb.options.softDeleteTimestamp) {
 			if (qb.options.onlyTrashed) {
-				qb.whereNotNull(qb.options.softDeleteTimestamp);
+				qb.groupWhereConditions().whereNotNull(qb.options.softDeleteTimestamp);
 			} else if (!qb.options.withTrashed) {
-				qb.whereNull(qb.options.softDeleteTimestamp);
+				qb.groupWhereConditions().whereNull(qb.options.softDeleteTimestamp);
 			}
 		}
 
