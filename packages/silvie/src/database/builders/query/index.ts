@@ -1105,13 +1105,15 @@ export default class QueryBuilder {
 	}
 
 	groupWhereConditions() {
-		const condition: ICondition = {
-			type: 'group',
-			relation: 'and',
-			conditions: this.options.where,
-		};
+		if (this.options.where.length > 0) {
+			const condition: ICondition = {
+				type: 'group',
+				relation: 'and',
+				conditions: this.options.where,
+			};
 
-		this.options.where = [condition];
+			this.options.where = [condition];
+		}
 
 		return this;
 	}
@@ -1349,13 +1351,15 @@ export default class QueryBuilder {
 	}
 
 	groupHavingConditions() {
-		const condition: ICondition = {
-			type: 'group',
-			relation: 'and',
-			conditions: this.options.having,
-		};
+		if (this.options.having.length > 0) {
+			const condition: ICondition = {
+				type: 'group',
+				relation: 'and',
+				conditions: this.options.having,
+			};
 
-		this.options.having = [condition];
+			this.options.having = [condition];
+		}
 
 		return this;
 	}
