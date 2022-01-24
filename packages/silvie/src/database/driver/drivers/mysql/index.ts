@@ -723,6 +723,11 @@ export default class MySQLDriver implements IDatabaseDriver {
 					return `${column} = NULL`;
 				}
 
+				if (value instanceof SpatialData) {
+					params.push(value.sql);
+					return 'ST_GeomFromText(?)';
+				}
+
 				params.push(value);
 				return `${column} = ?`;
 			})
