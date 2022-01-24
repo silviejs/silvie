@@ -725,7 +725,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 				if (value instanceof SpatialData) {
 					params.push(value.sql);
-					return 'ST_GeomFromText(?)';
+					return `${column} = ST_GeomFromText(?)`;
 				}
 
 				params.push(value);
