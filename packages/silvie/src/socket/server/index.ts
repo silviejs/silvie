@@ -1,5 +1,6 @@
 import { Server as SocketIO } from 'socket.io';
 import SocketNamespace from 'src/socket/namespace';
+import flattenImports from 'src/utils/import/flatten';
 
 const config = process.configs.socket;
 
@@ -24,7 +25,7 @@ class SocketServer {
 			cookie: config.cookie,
 		});
 
-		this.registerNamespace(...Object.values(namespaces));
+		this.registerNamespace(...flattenImports(namespaces));
 	}
 
 	registerNamespace(...namespaces: SocketNamespace[]) {

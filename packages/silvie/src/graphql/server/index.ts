@@ -9,6 +9,8 @@ import UploadSchema from 'src/graphql/base/schemas/upload.gql';
 import UploadResolver from 'src/graphql/base/resolvers/upload';
 import JSONSchema from 'src/graphql/base/schemas/json.gql';
 import JSONResolver from 'src/graphql/base/resolvers/json';
+import flattenImports from 'src/utils/import/flatten';
+import mapImports from 'src/utils/import/map';
 
 const config = process.configs.graphql;
 
@@ -37,20 +39,17 @@ function makeSchema(schemas, resolvers) {
 
 class GraphQLServer {
 	async init(httpServer, schemas, resolvers = {}, dataLoaders = {}, plugins = {}) {
-		const executableSchema = makeSchema(Object.values(schemas), Object.values(resolvers));
+		const executableSchema = makeSchema(flattenImports(schemas), flattenImports(resolvers));
 
 		const graphqlServer = new ApolloServer({
 			schema: executableSchema,
 
 			introspection: config.introspection,
 
-			plugins: Object.values(plugins),
+			plugins: flattenImports(plugins),
 
 			context: async (context) => {
-				const contextLoaders = Object.keys(dataLoaders).reduce((group, key) => {
-					group[key] = dataLoaders[key](context);
-					return group;
-				}, {});
+				const contextLoaders = mapImports(dataLoaders, (dataLoader) => dataLoader(context));
 
 				return {
 					res: context.res,
