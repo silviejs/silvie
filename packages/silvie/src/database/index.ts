@@ -133,6 +133,14 @@ export class Database {
 	}
 
 	/**
+	 * Creates a table from the given table instance
+	 * @param table
+	 */
+	updateTable(table: Table): Promise<any> {
+		return this.driver.updateTable(table);
+	}
+
+	/**
 	 * Empties a table
 	 * @param tableName
 	 */

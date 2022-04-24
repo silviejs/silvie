@@ -26,7 +26,7 @@ export const MySQLTypes = {
 	BigInteger: 'BIGINT',
 	Bit: 'BIT',
 	Boolean: 'TINYINT(1)',
-	Decimal: 'DECIMAL()',
+	Decimal: 'DECIMAL',
 	Float: 'FLOAT',
 	Double: 'DOUBLE',
 	Year: 'YEAR',
@@ -56,6 +56,46 @@ export const MySQLTypes = {
 	MultiLineString: 'MULTILINESTRING',
 	MultiPolygon: 'MULTIPOLYGON',
 	JSON: 'JSON',
+};
+
+export const ReverseMySQLTypes = {
+	tinyint: 'TinyInteger',
+	smallint: 'SmallInteger',
+	mediumint: 'MediumInteger',
+	int: 'Integer',
+	bigint: 'BigInteger',
+	bit: 'Bit',
+	boolean: 'Boolean',
+	decimal: 'Decimal',
+	float: 'Float',
+	double: 'Double',
+	year: 'Year',
+	date: 'Date',
+	time: 'Time',
+	datetime: 'DateTime',
+	timestamp: 'Timestamp',
+	char: 'Character',
+	varchar: 'String',
+	binary: 'Binary',
+	tinyblob: 'TinyBlob',
+	blob: 'Blob',
+	mediumblob: 'MediumBlob',
+	longblob: 'LongBlob',
+	tinytext: 'TinyText',
+	text: 'Text',
+	mediumtext: 'MediumText',
+	longtext: 'LongText',
+	enum: 'Enum',
+	set: 'Set',
+	geometry: 'Geometry',
+	point: 'Point',
+	linestring: 'LineString',
+	polygon: 'Polygon',
+	geometrycollection: 'GeometryCollection',
+	multipoint: 'MultiPoint',
+	multilinestring: 'MultiLineString',
+	multipolygon: 'MultiPolygon',
+	json: 'JSON',
 };
 
 export default class MySQLDriver implements IDatabaseDriver {
@@ -110,6 +150,8 @@ export default class MySQLDriver implements IDatabaseDriver {
 			queryParts.push(`${type}(${column.size})`);
 		} else if (column.type === 'Enum' || column.type === 'Set') {
 			queryParts.push(`${type}(${column.options.meta.values.map((val) => `"${val}"`).join(', ')})`);
+		} else if (column.type === 'Decimal') {
+			queryParts.push(`${type}(${column.options.meta.percision},${column.options.meta.scale})`);
 		} else {
 			queryParts.push(type);
 		}
@@ -196,6 +238,36 @@ export default class MySQLDriver implements IDatabaseDriver {
 
 	createTable(table: Table): Promise<any> {
 		return this.execute(...MySQLDriver.compileCreateTable(table));
+	}
+
+	async fetchTable(tableName: string): Promise<Table> {
+		const table = new Table(tableName);
+		const [{ 'Create Table': sql }] = await this.execute(`SHOW CREATE TABLE ${MySQLDriver.tbl(tableName)};`);
+
+		const lines = sql
+			.split('\n')
+			.slice(1, -1)
+			.map((line) => line.trim().replace(/,$/, ''));
+
+		lines.forEach((line) => {
+			if (line.startsWith('`')) {
+				const query = line.replace('tinyint(1)', 'boolean');
+				const col = Column.fromQuery(query, ReverseMySQLTypes);
+
+				table.columns.push(col);
+			} else {
+				// TODO: CONSTRAINT
+			}
+		});
+
+		return table;
+	}
+
+	async updateTable(table: Table) {
+		const t = await this.fetchTable(table.name);
+		console.log(t);
+
+		return null;
 	}
 
 	truncateTable(tableName: string): Promise<any> {
@@ -535,6 +607,7 @@ export default class MySQLDriver implements IDatabaseDriver {
 				return ['', []];
 			}
 
+			// eslint-disable-next-line no-loss-of-precision, @typescript-eslint/no-loss-of-precision
 			return [`Limit ?,?`, [offset, 18446744073709551615]];
 		}
 

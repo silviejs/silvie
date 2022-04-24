@@ -25,6 +25,7 @@ export default interface IDatabaseDriver {
 	restore(queryBuilder: QueryBuilder): Promise<IModificationResult>;
 
 	createTable(table: Table): Promise<any>;
+	updateTable(table: Table): Promise<any>;
 	truncateTable(tableName: string): Promise<any>;
 	dropTableIfExists(tableName: string): Promise<any>;
 	dropTable(tableName: string): Promise<any>;
