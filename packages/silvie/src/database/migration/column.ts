@@ -23,7 +23,7 @@ export default class Column {
 
 	options: ColumnOptions;
 
-	constructor(name: string, type: string, size: number, options: ColumnOptions = {}) {
+	constructor(name: string, type: string, size?: number, options: ColumnOptions = {}) {
 		this.name = name;
 		this.type = type;
 		this.size = size;
@@ -44,8 +44,72 @@ export default class Column {
 
 			...options,
 		};
+	}
 
-		return this;
+	static fromQuery(query: string, types: Record<string, string> = {}): Column {
+		let type;
+		let size;
+		let params = [];
+
+		const [, name] = query.match(/^`(.+)`/);
+		let [, sqlType] = query.match(/^`.+` (.+\(.+\))/) || [];
+		if (!sqlType) {
+			[, sqlType] = query.match(/^`.+` ([^\s]+)/);
+			type = sqlType;
+		} else {
+			let paramsStr;
+			[type, paramsStr] = sqlType.split('(', 2);
+
+			// 	eslint-disable-next-line no-eval
+			params = eval(`[${paramsStr.substring(0, paramsStr.length - 1)}]`);
+		}
+
+		type = types[type];
+
+		if (!['Enum', 'Set', 'Decimal'].includes(type)) {
+			[size] = params;
+		}
+
+		const column = new Column(name, type, size);
+
+		if (type === 'Decimal') {
+			column.meta({ precision: params[0], scale: params[1] || 0 });
+		}
+
+		if (type === 'Enum' || type === 'Set') {
+			column.meta({ values: params });
+		}
+
+		const [, charset] = query.match(/CHARACTER SET ([^\s]+)/i) || [];
+		if (charset) {
+			column.charset(charset);
+		}
+
+		const [, collation] = query.match(/COLLATE ([^\s]+)/i) || [];
+		if (collation) {
+			column.collate(collation);
+		}
+
+		const [, defaultValue] = query.match(/DEFAULT '(.+)'/i) || query.match(/DEFAULT ([^\s]+)/i) || [];
+		if (defaultValue) {
+			if (defaultValue === 'NULL') {
+				column.default(null);
+			} else if (['CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP'].includes(defaultValue)) {
+				column.useCurrent();
+			} else {
+				column.default(defaultValue);
+			}
+		}
+
+		if (!query.includes('NOT NULL')) {
+			column.nullable();
+		}
+
+		if (query.includes('AUTO_INCREMENT')) {
+			column.autoIncrement();
+		}
+
+		return column;
 	}
 
 	meta(metaData: unknown): Column {
