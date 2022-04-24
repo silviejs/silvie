@@ -14,73 +14,69 @@ babelRegister({
 	ignore: [],
 });
 
-export default async (args: { _: string[]; rollback: boolean; refresh: boolean }) => {
-	const filename = args._[1];
-
+export default async (args: { _: string[]; rollback: boolean; refresh: boolean; update: boolean }) => {
 	const migrationsDir = path.resolve(process.rootPath, 'src/database/migrations');
 
-	if (filename) {
-		const fn = path.resolve(migrationsDir, `${filename}.ts`);
+	let filenames = args._.slice(1);
 
-		if (fs.existsSync(fn)) {
-			const migration = require(fn).default;
+	if (filenames.length > 0) {
+		filenames = filenames.filter((file) => {
+			const exists = fs.existsSync(path.resolve(migrationsDir, `${file}.ts`));
 
-			if (migration) {
-				Database.init();
+			if (!exists) {
+				log.error('[Silvie] Migration File Not Found');
+				log(`There is no migration named '${file}'`);
+			}
 
-				await Database.disableForeignKeyChecks();
+			return exists;
+		});
+	}
 
-				if (args.rollback) {
-					await migration.prototype.down();
-				} else {
-					if (args.refresh) {
-						await migration.prototype.down();
-					}
+	if (filenames.length === 0) {
+		filenames = fs.readdirSync(migrationsDir).map((file) => file.replace(/\.ts$/, ''));
+	}
 
-					await migration.prototype.up();
+	if (filenames.length > 0) {
+		const migrations = filenames
+			.map((file) => {
+				const migration = require(path.resolve(migrationsDir, file)).default;
+
+				if (!migration) {
+					log.error('[Silvie] Migration Not Found');
+					log(`There is no migration in '${file}'`);
 				}
 
-				await Database.enableForeignKeyChecks();
+				return migration;
+			})
+			.sort((a, b) => (a.order || 0) - (b.order || 0));
 
-				Database.closeConnection();
+		Database.init();
+
+		await Database.disableForeignKeyChecks();
+
+		if (args.rollback || args.refresh) {
+			for (const migration of migrations) {
+				await migration.prototype.down();
+			}
+		}
+
+		if (!args.rollback) {
+			if (args.update) {
+				for (const migration of migrations) {
+					await migration.prototype.update();
+				}
 			} else {
-				log.error('[Silvie] Migration Not Found');
-				log(`There is no migration in '${filename}'`);
-			}
-		} else {
-			log.error('[Silvie] Migration File Not Found');
-			log(`There is no migration named '${filename}'`);
-		}
-	} else {
-		const files = fs.readdirSync(migrationsDir);
-
-		if (files.length > 0) {
-			const migrations = files
-				.map((file) => require(path.resolve(migrationsDir, file.replace(/\.ts$/, ''))).default)
-				.sort((a, b) => (a.order || 0) - (b.order || 0));
-
-			Database.init();
-
-			await Database.disableForeignKeyChecks();
-
-			if (args.rollback || args.refresh) {
-				for (const migration of Object.values(migrations) as any[]) {
-					await migration.prototype.down();
-				}
-			}
-
-			if (!args.rollback) {
-				for (const migration of Object.values(migrations) as any[]) {
+				for (const migration of migrations) {
 					await migration.prototype.up();
 				}
 			}
-
-			await Database.enableForeignKeyChecks();
-
-			Database.closeConnection();
-		} else {
-			log.warning('[Silvie] No Migrations Found');
-			log('You can create new migrations using', log.str`silvie make migration`.underscore().bright());
 		}
+
+		await Database.enableForeignKeyChecks();
+
+		Database.closeConnection();
+	} else {
+		log.warning('[Silvie] No Migrations Found');
+		log('You can create new migrations using', log.str`silvie make migration`.underscore().bright());
 	}
 };
