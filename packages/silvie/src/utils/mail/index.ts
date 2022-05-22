@@ -8,7 +8,8 @@ export default function sendMail(
 	to: string,
 	subject: string,
 	textBody: string,
-	htmlBody?: string
+	htmlBody?: string,
+	attachments?: any[]
 ) {
 	if (config) {
 		if (!config.host) {
@@ -55,6 +56,7 @@ export default function sendMail(
 					subject,
 					text: textBody,
 					html: htmlBody,
+					attachments,
 				});
 			} catch (error) {
 				throw new Error('Could not send mail');
