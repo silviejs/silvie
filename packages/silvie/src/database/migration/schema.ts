@@ -3,7 +3,7 @@ import Table from 'src/database/migration/table';
 import log from 'src/utils/log';
 
 export default class Schema {
-	static async create(tableName: string, tableCallback: (table: Table) => void, update = true): Promise<any> {
+	static async create(tableName: string, tableCallback: (table: Table) => void, update = false): Promise<any> {
 		try {
 			const table = new Table(tableName);
 
