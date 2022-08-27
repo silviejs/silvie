@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 const config = process.configs.mail;
 
-export default function sendMail(
+export default async function sendMail(
 	mail: string,
 	aliasName: string,
 	to: string,
@@ -50,7 +50,7 @@ export default function sendMail(
 					},
 				});
 
-				transporter.sendMail({
+				await transporter.sendMail({
 					from: fromMail,
 					to,
 					subject,
