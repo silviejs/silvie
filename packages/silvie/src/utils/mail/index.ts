@@ -34,33 +34,29 @@ export default async function sendMail(
 		if (aliasName) fromMail = `"${aliasName}" <${mail}>`;
 
 		if (account) {
-			try {
-				const transporter = nodemailer.createTransport({
-					host: config.host,
-					port: config.port,
+			const transporter = nodemailer.createTransport({
+				host: config.host,
+				port: config.port,
 
-					secure: config.secure,
-					tls: {
-						rejectUnauthorized: config.rejectUnauthorized,
-					},
+				secure: config.secure,
+				tls: {
+					rejectUnauthorized: config.rejectUnauthorized,
+				},
 
-					auth: {
-						user: account.username,
-						pass: account.password,
-					},
-				});
+				auth: {
+					user: account.username,
+					pass: account.password,
+				},
+			});
 
-				await transporter.sendMail({
-					from: fromMail,
-					to,
-					subject,
-					text: textBody,
-					html: htmlBody,
-					attachments,
-				});
-			} catch (error) {
-				throw new Error('Could not send mail');
-			}
+			await transporter.sendMail({
+				from: fromMail,
+				to,
+				subject,
+				text: textBody,
+				html: htmlBody,
+				attachments,
+			});
 		} else {
 			throw new Error(`Could not find mail '${mail}'`);
 		}
