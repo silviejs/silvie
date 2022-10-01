@@ -45,6 +45,7 @@ class GraphQLServer {
 			schema: executableSchema,
 
 			introspection: config.introspection,
+			nodeEnv: config.nodeEnv,
 
 			plugins: flattenImports(plugins),
 
