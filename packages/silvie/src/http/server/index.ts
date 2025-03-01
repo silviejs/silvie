@@ -342,12 +342,14 @@ class HTTPServer {
 	/**
 	 * Starts listening on a port in this order: --port, -p, .env.APP_PORT, config.port, customPort
 	 */
-	start(customPort = 5000) {
+	start(customPort = 5000, customHost = '0.0.0.0') {
 		const port = process.args.port || process.args.p || process.env.APP_PORT || config.port || customPort;
-		this.srv.listen(port, (error) => {
+		const host = process.args.host || process.args.h || process.env.APP_HOST || config.host || customHost;
+
+		this.srv.listen(port, host, (error) => {
 			if (error) log.error('Server Start Failed', 'An error occurred');
 
-			log.success('Server Started', `on http${config.HTTP2 || config.ssl.enabled ? 's' : ''}://localhost:${port}`);
+			log.success('Server Started', `on http${config.HTTP2 || config.ssl.enabled ? 's' : ''}://${host}:${port}`);
 		});
 	}
 }
