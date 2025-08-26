@@ -1,4 +1,4 @@
-import mysql from 'mysql';
+import mysql from 'mysql2';
 import IDatabaseDriver, { IInsertionResult, IModificationResult } from 'src/database/driver';
 import Table from 'src/database/migration/table';
 import Column from 'src/database/migration/column';
