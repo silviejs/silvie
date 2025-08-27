@@ -9,8 +9,8 @@ class SocketServer {
 
 	namespaces: SocketNamespace[] = [];
 
-	init(HTTPServer, namespaces: SocketNamespace[]) {
-		this.io = new SocketIO(HTTPServer.server, {
+	init(HTTPServer, namespaces: SocketNamespace[], instanceCallback?: any) {
+		let io = new SocketIO(HTTPServer.server, {
 			path: config.path,
 			connectTimeout: config.connectTimeout,
 			upgradeTimeout: config.upgradeTimeout,
@@ -24,6 +24,12 @@ class SocketServer {
 			cors: config.cors,
 			cookie: config.cookie,
 		});
+
+		if (instanceCallback instanceof Function) {
+			io = instanceCallback(io)
+		}
+
+		this.io = io;
 
 		this.registerNamespace(...flattenImports(namespaces));
 	}

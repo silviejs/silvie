@@ -101,8 +101,8 @@ export const ReverseMySQLTypes = {
 export default class MySQLDriver implements IDatabaseDriver {
 	private pool: any;
 
-	constructor(config: MySQLOptions) {
-		this.pool = mysql.createPool({
+	constructor(config: MySQLOptions, instanceCallback?: any) {
+		let pool = mysql.createPool({
 			host: config.host,
 			port: config.port,
 
@@ -115,6 +115,12 @@ export default class MySQLDriver implements IDatabaseDriver {
 			multipleStatements: config.multipleStatements || false,
 			charset: config.charset || 'utf8',
 		});
+
+		if (instanceCallback instanceof Function) {
+			pool = instanceCallback("mysql", pool)
+		}
+
+		this.pool = pool;
 	}
 
 	private static resolveType(typeName: string): string {

@@ -2,6 +2,12 @@ import nodemailer from 'nodemailer';
 
 const config = process.configs.mail;
 
+const transporters = {};
+
+export const instanceCallback = {
+	callback: null,
+};
+
 export default async function sendMail(
 	mail: string,
 	aliasName: string,
@@ -34,21 +40,30 @@ export default async function sendMail(
 		if (aliasName) fromMail = `"${aliasName}" <${mail}>`;
 
 		if (account) {
-			const transporter = nodemailer.createTransport({
-				host: config.host,
-				port: config.port,
+			if (!transporters[mail]) {
+				let trans = nodemailer.createTransport({
+					host: config.host,
+					port: config.port,
 
-				secure: config.secure,
-				tls: {
-					rejectUnauthorized: config.rejectUnauthorized,
-				},
+					secure: config.secure,
+					tls: {
+						rejectUnauthorized: config.rejectUnauthorized,
+					},
 
-				auth: {
-					user: account.username,
-					pass: account.password,
-				},
-			});
+					auth: {
+						user: account.username,
+						pass: account.password,
+					},
+				});
 
+				if (instanceCallback.callback instanceof Function) {
+					trans = instanceCallback.callback(mail, trans);
+				}
+
+				transporters[mail] = trans;
+			}
+
+			const transporter = transporters[mail];
 			await transporter.sendMail({
 				from: fromMail,
 				to,

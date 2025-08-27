@@ -32,14 +32,20 @@ class HTTPServer {
 	/**
 	 * Initialize a new HTTP Server
 	 */
-	init() {
-		this.app = Express();
+	init(instanceCallback?: any) {
+		let app = Express();
 
-		this.app.disable('x-powered-by');
+		app.disable('x-powered-by');
 
 		if (config.trustProxy) {
-			this.app.set('trust proxy', 1);
+			app.set('trust proxy', 1);
 		}
+
+		if (instanceCallback instanceof Function) {
+			app = instanceCallback(app)
+		}
+
+		this.app = app;
 
 		this.initCORS();
 		this.initBodyParser();

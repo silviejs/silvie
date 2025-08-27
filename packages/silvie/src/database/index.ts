@@ -49,7 +49,7 @@ export class Database {
 	/**
 	 * Initializes a database driver based on the given config
 	 */
-	init(): void {
+	init(instanceCallback?: any): void {
 		const type = config.type || process.env.DB_TYPE;
 
 		if (type in drivers) {
@@ -62,7 +62,7 @@ export class Database {
 				password: config.password || process.env.DB_PASSWORD,
 
 				...(config[type] ?? {}),
-			});
+			}, instanceCallback);
 		} else {
 			log.error('Invalid Driver', `'${type}' is not a valid database driver`);
 		}

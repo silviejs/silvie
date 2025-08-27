@@ -38,10 +38,12 @@ function makeSchema(schemas, resolvers) {
 }
 
 class GraphQLServer {
-	async init(httpServer, schemas, resolvers = {}, dataLoaders = {}, plugins = {}) {
+	srv: any;
+
+	async init(httpServer, schemas, resolvers = {}, dataLoaders = {}, plugins = {}, instanceCallback?: any) {
 		const executableSchema = makeSchema(flattenImports(schemas), flattenImports(resolvers));
 
-		const graphqlServer = new ApolloServer({
+		let graphqlServer = new ApolloServer({
 			schema: executableSchema,
 
 			introspection: config.introspection,
@@ -60,6 +62,12 @@ class GraphQLServer {
 				};
 			},
 		});
+
+		if (instanceCallback instanceof Function) {
+			graphqlServer = instanceCallback(graphqlServer)
+		}
+
+		this.srv = graphqlServer;
 
 		const path = config.path ?? '/graphql';
 
